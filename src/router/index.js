@@ -46,7 +46,7 @@ let router = new Router({
         {
           path: '/welcome',
           component: () => import("@/views/index/Index"),
-          name: '/welcome'
+          name: 'welcome'
         }
       ]
     },
@@ -58,6 +58,7 @@ let router = new Router({
         {
           path: '/business/index',
           component: () => import("@/views/business/Index"),
+          meta: {value: '/business/index'},   // 当前激活菜单
           name: 'business'
         }
       ]
@@ -68,9 +69,28 @@ let router = new Router({
       redirect: '/finance/index',
       children: [
         {
-          path: '/finance/index',
-          component: () => import("@/views/finance/Index"),
-          name: 'finance'
+          path: '/finance/index',   // 订单查询
+          component: () => import("@/views/finance/OrderInquiry"),
+          meta: {value: '/finance/index'},
+          name: 'inquiry'
+        },
+        {
+          path: '/finance/record',    // 订单对账
+          component: () => import("@/views/finance/OrderRecord"),
+          meta: {value: '/finance/record'},
+          name: 'record'
+        },
+        {
+          path: '/finance/fund',  // 资金管理
+          component: () => import("@/views/finance/FundManagement"),
+          meta: {value: '/finance/fund'},
+          name: 'fund'
+        },
+        {
+          path: '/finance/withdraw',    // 提现管理
+          component: () => import("@/views/finance/WithdrawalManagement"),
+          meta: {value: '/finance/withdraw'},
+          name: 'withdraw'
         }
       ]
     },
@@ -82,6 +102,7 @@ let router = new Router({
         {
           path: '/management/index',
           component: () => import("@/views/management/Index"),
+          meta: {value: '/management/index'},
           name: 'material'
         }
       ]

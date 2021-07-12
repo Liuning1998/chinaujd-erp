@@ -43,42 +43,32 @@ export default {
                     menuName: '邮票业务中心',
                     url: '/business',
                     children: [
-                        {
-                            menuName: '订单列表',
-                            url: '/business/index'
-                        },
+                        {menuName: '订单列表', url: '/business/index'},
+                        {menuName: '鉴评单列表', url: '/business/index'},
+                        {menuName: '封装单列表', url: '/business/index'},
+                        {menuName: '退货单列表', url: '/business/index'},
                     ],
                 },
                 {
                     menuName: '财务中心',
                     url: '/finance',
                     children: [
-                        {
-                            menuName: '订单查询',
+                        {menuName: '订单查询',
                             url: '/finance/index'
                         },
-                        {
-                            menuName: '订单对账',
-                            url: '/finance/record'
-                        },
-                        {
-                            menuName: '资金管理',
-                            url: '/finance/fund'
-                        },
-                        {
-                            menuName: '提现管理',
-                            url: '/finance/withdraw'
-                        },
+                        {menuName: '订单对账', url: '/finance/record'},
+                        {menuName: '资金管理', url: '/finance/fund'},
+                        {menuName: '提现管理', url: '/finance/withdraw'},
                     ],
                 },
                 {
                     menuName: '系统管理',
                     url: '/management',
                     children: [
-                        {
-                            menuName: '角色管理',
-                            url: '/management/index'
-                        },
+                        {menuName: '角色管理', url: '/management/index'},
+                        {menuName: '账号管理', url: '/management/index'},
+                        {menuName: '菜单管理', url: '/management/index'},
+                        {menuName: '账号设置', url: '/management/index'},
                     ],
                 },
             ]

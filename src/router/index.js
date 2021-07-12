@@ -49,6 +49,42 @@ let router = new Router({
           name: '/welcome'
         }
       ]
+    },
+    {
+      path: '/business',  // 邮政业务中心
+      component: () => import("@/components/Home"),
+      redirect: '/business/index',
+      children: [
+        {
+          path: '/business/index',
+          component: () => import("@/views/business/Index"),
+          name: 'business'
+        }
+      ]
+    },
+    {
+      path: '/finance',   // 财务中心
+      component: () => import("@/components/Home"),
+      redirect: '/finance/index',
+      children: [
+        {
+          path: '/finance/index',
+          component: () => import("@/views/finance/Index"),
+          name: 'finance'
+        }
+      ]
+    },
+    {
+      path: '/management',  // 系统管理
+      component: () => import("@/components/Home"),
+      redirect: '/management/index',
+      children: [
+        {
+          path: '/management/index',
+          component: () => import("@/views/management/Index"),
+          name: 'material'
+        }
+      ]
     }
   ]
 });

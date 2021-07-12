@@ -4,7 +4,7 @@
             <template v-for="(item, index) in menu">
                 <el-submenu :key="index" v-if="item.children && item.children.length" :index="item.url">
                     <template slot="title">
-                        <!-- <img :src="iconMaps[item.url][0]"> -->
+                        <i :class="iconMaps[index]"></i>
                         {{ item.menuName }}
                     </template>
                     <el-menu-item v-for="(value, key) in item.children" :key="key" :index="value.url" style="padding-left: 40px!important;">
@@ -13,7 +13,7 @@
                 </el-submenu>
                 <el-menu-item v-else :key="index" :index="item.url">
                     <template slot="title">
-                        <!-- <img :src="is_actice_url === item.url ? iconMaps[item.url][1] : iconMaps[item.url][0]"> -->
+                        <i :class="iconMaps[index]"></i>
                         {{ item.menuName }}
                     </template>
                 </el-menu-item>
@@ -34,6 +34,28 @@ export default {
             menu: [],
             path: '',
             is_actice_url: '/board',
+            iconMaps: [
+                'el-icon-edit',
+                'el-icon-share',
+                'el-icon-delete'
+            ],
+            menu: [
+                {
+                    menuName: '邮票业务中心',
+                    menuUrl: '/business',
+                    children: [],
+                },
+                {
+                    menuName: '财务中心',
+                    menuUrl: '/finance',
+                    children: [],
+                },
+                {
+                    menuName: '系统管理',
+                    menuUrl: '/management',
+                    children: [],
+                },
+            ]
         }
     },
     watch: {
@@ -46,7 +68,7 @@ export default {
     },
     created() {
         this.getCurrentUrl();
-        this.getUserMenu();
+        // this.getUserMenu();
     },
     methods: {
         getUserMenu() {

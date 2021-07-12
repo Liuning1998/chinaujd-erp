@@ -32,10 +32,10 @@ export default {
   methods: {
     // 看板页
     goHomePage() {
-      if (this.$route.name === '/board') {
+      if (['/welcome', '/index'].includes(this.$route.name)) {
         return;
       }
-      this.$router.push('/board');
+      this.$router.push('/welcome');
     },
     getUser() {
       this.name = sessionStorage.getItem('name');

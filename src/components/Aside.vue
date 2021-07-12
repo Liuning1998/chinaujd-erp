@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <el-menu :default-active="path" router active-text-color="#2D8CF0" @select="handleSelect" @open="handleOpen">
+        <el-menu :default-active="path" router active-text-color="#2D8CF0" @open="handleOpen">
             <template v-for="(item, index) in menu">
                 <el-submenu :key="index" v-if="item.children && item.children.length" :index="item.url">
                     <template slot="title">
@@ -33,7 +33,6 @@ export default {
         return {
             menu: [],
             path: '',
-            is_actice_url: '/board',
             iconMaps: [
                 'el-icon-edit',
                 'el-icon-share',
@@ -85,19 +84,12 @@ export default {
         },
         getCurrentUrl() {
             this.path = this.$route.meta.value;
-            this.is_actice_url = this.$route.meta.value;
         },
         handleOpen(key) {
-            console.log(key);
-            this.is_actice_url = key;
             this.path = key;
             this.$router.push({
                 path: this.path
             });
-        },
-        handleSelect(path) {
-            console.log(path);
-            this.is_actice_url = path;
         }
     }
 }

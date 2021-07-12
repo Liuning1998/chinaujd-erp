@@ -69,27 +69,35 @@ let router = new Router({
       redirect: '/finance/index',
       children: [
         {
-          path: '/finance/index',   // 订单查询
+          path: '/finance/index',
           component: () => import("@/views/finance/OrderInquiry"),
-          meta: {value: '/finance/index'},
+          meta: {value: '/finance/index', title: '订单查询'},
           name: 'inquiry'
         },
         {
-          path: '/finance/record',    // 订单对账
+          path: '/finance/record',
           component: () => import("@/views/finance/OrderRecord"),
-          meta: {value: '/finance/record'},
-          name: 'record'
+          meta: {value: '/finance/record', title: '订单对账'},
+          name: 'record',
+          children: [
+            {
+              path: '/finance/record/detail',
+              component: () => import("@/views/finance/OrderRecordDetail"),
+              meta: {value: '/finance/record', title: '对账详情'},
+              name: 'detail'
+            },
+          ]
         },
         {
-          path: '/finance/fund',  // 资金管理
+          path: '/finance/fund',
           component: () => import("@/views/finance/FundManagement"),
-          meta: {value: '/finance/fund'},
+          meta: {value: '/finance/fund', title: '资金管理'},
           name: 'fund'
         },
         {
-          path: '/finance/withdraw',    // 提现管理
+          path: '/finance/withdraw',
           component: () => import("@/views/finance/WithdrawalManagement"),
-          meta: {value: '/finance/withdraw'},
+          meta: {value: '/finance/withdraw', title: '提现管理'},
           name: 'withdraw'
         }
       ]

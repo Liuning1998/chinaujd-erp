@@ -42,17 +42,17 @@ export default {
             menu: [
                 {
                     menuName: '邮票业务中心',
-                    menuUrl: '/business',
+                    url: '/business',
                     children: [],
                 },
                 {
                     menuName: '财务中心',
-                    menuUrl: '/finance',
+                    url: '/finance',
                     children: [],
                 },
                 {
                     menuName: '系统管理',
-                    menuUrl: '/management',
+                    url: '/management',
                     children: [],
                 },
             ]
@@ -88,6 +88,7 @@ export default {
             this.is_actice_url = this.$route.meta.value;
         },
         handleOpen(key) {
+            console.log(key);
             this.is_actice_url = key;
             this.path = key;
             this.$router.push({
@@ -95,6 +96,7 @@ export default {
             });
         },
         handleSelect(path) {
+            console.log(path);
             this.is_actice_url = path;
         }
     }

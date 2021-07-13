@@ -140,6 +140,30 @@
                 :total="total">
             </el-pagination>
         </div>
+        <el-dialog
+            title="新增对账单"
+            :visible.sync="addOrderDialogVisible"
+            :before-close="addOrderDialogBeforeClose">
+            <div v-if="[4].includes(addOrderForm.orderCycle)">
+                <span>对账时间段：</span>
+                <el-date-picker
+                    v-model="addOrderForm.time"
+                    type="datetimerange"
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期">
+                </el-date-picker>
+            </div>
+            <div>
+                <span>对账方式：</span>
+                <div v-for="(item, index) in orderCycle" :key="index">
+                    <span @click="handleSelectOrderCycle(index)">{{ item.label }}</span>
+                </div>
+            </div>
+            <div slot="footer">
+                <el-button @click="handleAddOrderSubmit">生成对账单</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -159,6 +183,10 @@ export default {
                 recordStatus: '',
                 time: [],
             },
+            addOrderForm: {
+                orderCycle: null,
+                time: [],
+            },
             orderType: [],
             orderStatus: [],
             recordType: [],
@@ -167,6 +195,13 @@ export default {
             total: 20,
             currentPage: 0,
             pageSize: 10,
+            addOrderDialogVisible: false,
+            orderCycle: [
+                {label: '周', value: 1},
+                {label: '月', value: 2},
+                {label: '年', value: 3},
+                {label: '自定义', value: 4},
+            ],
         }
     },
     created() {
@@ -190,7 +225,9 @@ export default {
          * 新增对账单
          * @Function handleAddOrder
          */
-        handleAddOrder() {},
+        handleAddOrder() {
+            this.addOrderDialogVisible = true;
+        },
         /**
          * 申请结算
          * @Function handleAllSettle
@@ -242,6 +279,28 @@ export default {
             this.currentPage = currentPage;
             this.getData();
         },
+        /**
+         * 关闭新增对账单弹窗
+         * @Function addOrderDialogBeforeClose
+         */
+        addOrderDialogBeforeClose() {
+            this.addOrderDialogVisible = false;
+        },
+        /**
+         * 生成对账单
+         * @Function handleAddOrderSubmit
+         */
+        handleAddOrderSubmit() {
+            this.addOrderDialogVisible = false;
+        },
+        /**
+         * 选择对账方式 周/月/年/自定义
+         * @Function handleSelectOrderCycle
+         * @params {Number} index 下标
+         */
+        handleSelectOrderCycle(index) {
+            this.addOrderForm.orderCycle = this.orderCycle[index].value;
+        }
     }
 }
 </script>

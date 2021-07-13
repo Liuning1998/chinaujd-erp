@@ -22,7 +22,6 @@
     },
     methods: {
       getBreadcrumb() {
-        console.log(this.$route.matched)
         this.levelList = this.$route.matched;
       }
     }

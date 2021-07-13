@@ -69,7 +69,7 @@
             <div class="search-item">
                 <span>创建时间：</span>
                 <el-date-picker
-                    v-model="value1"
+                    v-model="form.createTime"
                     type="datetime"
                     placeholder="选择日期时间">
                 </el-date-picker>
@@ -77,7 +77,7 @@
             <div class="search-item">
                 <span>支付时间：</span>
                 <el-date-picker
-                    v-model="value1"
+                    v-model="form.paymentTime"
                     type="datetime"
                     placeholder="选择日期时间">
                 </el-date-picker>
@@ -168,6 +168,8 @@ export default {
                 orderStatus: '',
                 paymentStatus: '',
                 evaluateType: '',
+                createTime: '',
+                paymentTime: ''
             },
             orderType: [
                 {label: '普通订单', value: 1},
@@ -204,9 +206,6 @@ export default {
             total: 20,
             currentPage: 0,
             pageSize: 10,
-            model: '',  // TODO: 待更换字段
-            value1: '', // TODO: 待更换字段
-            prop: '',   // TODO: 待更换字段
             tableData: [
                 {
                     prop: 0,
@@ -230,8 +229,11 @@ export default {
                     prop7: 7,
                     prop8: 8,
                 },
-            ], // TODO: 待更换字段
+            ],
         }
+    },
+    created() {
+        this.getData();
     },
     methods: {
         /**

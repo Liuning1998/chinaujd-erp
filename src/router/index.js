@@ -85,7 +85,67 @@ let router = new Router({
 							name: 'orderPrint'
 						}
 					]
-        }
+        },
+				{
+					path: '/business/appraisalOrder',
+					component: () => import("@/components/Middle"),
+					redirect: '/business/appraisalOrder/index',
+					meta: {value: '/business/appraisalOrder', title: '鉴评单列表'},
+					name: 'appraisalOrder',
+					children: [
+						{
+							path: '/business/appraisalOrder/index',
+							component: () => import("@/views/business/appraisalOrder/index"),
+							meta: {value: '/business/appraisalOrder'},
+							name: 'appraisalOrderIndex'
+						},{
+							path: '/business/appraisalOrder/details',
+							component: () => import("@/views/business/appraisalOrder/details"),
+							meta: {value: '/business/appraisalOrder', title: '鉴评单详情'},
+							name: 'appraisalOrderDetails'
+						}
+					]
+				},
+				{
+					path: '/business/packageOrder',
+					component: () => import("@/components/Middle"),
+					redirect: '/business/packageOrder/index',
+					meta: {value: '/business/packageOrder', title: '封装单列表'},
+					name: 'packageOrder',
+					children: [
+						{
+							path: '/business/packageOrder/index',
+							component: () => import("@/views/business/packageOrder/index"),
+							meta: {value: '/business/packageOrder'},
+							name: 'packageOrderIndex'
+						},{
+							path: '/business/packageOrder/details',
+							component: () => import("@/views/business/packageOrder/details"),
+							meta: {value: '/business/packageOrder', title: '封装单详情'},
+							name: 'packageOrderDetails'
+						}
+					]
+				},
+				{
+					path: '/business/returnOrder',
+					component: () => import("@/components/Middle"),
+					redirect: '/business/returnOrder/index',
+					meta: {value: '/business/returnOrder', title: '退货单列表'},
+					name: 'returnOrder',
+					children: [
+						{
+							path: '/business/returnOrder/index',
+							component: () => import("@/views/business/returnOrder/index"),
+							meta: {value: '/business/returnOrder'},
+							name: 'returnOrderIndex'
+						},{
+							path: '/business/returnOrder/details',
+							component: () => import("@/views/business/returnOrder/details"),
+							meta: {value: '/business/returnOrder', title: '退货单详情'},
+							name: 'returnOrderDetails'
+						}
+					]
+				}
       ]
     },
     {

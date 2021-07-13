@@ -44,9 +44,9 @@ export default {
                     url: '/business',
                     children: [
                         {menuName: '订单列表', url: '/business/orderList'},
-                        {menuName: '鉴评单列表', url: '/business/index'},
-                        {menuName: '封装单列表', url: '/business/index'},
-                        {menuName: '退货单列表', url: '/business/index'},
+                        {menuName: '鉴评单列表', url: '/business/appraisalOrder'},
+                        {menuName: '封装单列表', url: '/business/packageOrder'},
+                        {menuName: '退货单列表', url: '/business/returnOrder'},
                     ],
                 },
                 {

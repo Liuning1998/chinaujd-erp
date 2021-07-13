@@ -1,6 +1,5 @@
 <template>
   <el-breadcrumb separator-class="el-icon-arrow-right" class="app-breadcrumb">
-    <el-breadcrumb-item>您当前所在的位置</el-breadcrumb-item>
     <template v-for="item in levelList">
       <el-breadcrumb-item :to="item.path" :key="item.path" v-if="item.meta.title">{{item.meta.title}}</el-breadcrumb-item>
     </template>

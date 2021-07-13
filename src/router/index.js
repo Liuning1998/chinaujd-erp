@@ -92,6 +92,7 @@ let router = new Router({
       path: '/finance',   // 财务中心
       component: () => import("@/components/Home"),
       redirect: '/finance/inquiry',
+      meta: {title: '财务中心'},
       children: [
         {
           path: '/finance/inquiry',
@@ -101,14 +102,21 @@ let router = new Router({
         },
         {
           path: '/finance/record',
-          component: () => import("@/views/finance/OrderRecord/Index"),
-          meta: {value: '/finance/record', title: '订单对账'},
+          component: () => import("@/components/Middle"),
+          meta: {value: '/finance/record/index', title: '订单对账'},
+          redirect: '/finance/inquiry/index',
           name: 'record',
           children: [
             {
+              path: '/finance/record/index',
+              component: () => import('@/views/finance/orderRecord/Index'),
+              meta: {value: '/finance/record/index'},
+              name: 'index'
+            },
+            {
               path: '/finance/record/detail',
               component: () => import("@/views/finance/OrderRecord/Detail"),
-              meta: {value: '/finance/record', title: '对账详情'},
+              meta: {value: '/finance/record/index', title: '对账详情'},
               name: 'detail'
             },
           ]

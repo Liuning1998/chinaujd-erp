@@ -91,23 +91,23 @@ let router = new Router({
     {
       path: '/finance',   // 财务中心
       component: () => import("@/components/Home"),
-      redirect: '/finance/index',
+      redirect: '/finance/inquiry',
       children: [
         {
-          path: '/finance/index',
-          component: () => import("@/views/finance/OrderInquiry"),
-          meta: {value: '/finance/index', title: '订单查询'},
+          path: '/finance/inquiry',
+          component: () => import("@/views/finance/OrderInquiry/Index"),
+          meta: {value: '/finance/inquiry', title: '订单查询'},
           name: 'inquiry'
         },
         {
           path: '/finance/record',
-          component: () => import("@/views/finance/OrderRecord"),
+          component: () => import("@/views/finance/OrderRecord/Index"),
           meta: {value: '/finance/record', title: '订单对账'},
           name: 'record',
           children: [
             {
               path: '/finance/record/detail',
-              component: () => import("@/views/finance/OrderRecordDetail"),
+              component: () => import("@/views/finance/OrderRecord/Detail"),
               meta: {value: '/finance/record', title: '对账详情'},
               name: 'detail'
             },
@@ -115,13 +115,13 @@ let router = new Router({
         },
         {
           path: '/finance/fund',
-          component: () => import("@/views/finance/FundManagement"),
+          component: () => import("@/views/finance/FundManagement/Index"),
           meta: {value: '/finance/fund', title: '资金管理'},
           name: 'fund'
         },
         {
           path: '/finance/withdraw',
-          component: () => import("@/views/finance/WithdrawalManagement"),
+          component: () => import("@/views/finance/WithdrawalManagement/Index"),
           meta: {value: '/finance/withdraw', title: '提现管理'},
           name: 'withdraw'
         }

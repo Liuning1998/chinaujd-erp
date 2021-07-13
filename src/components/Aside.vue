@@ -53,9 +53,7 @@ export default {
                     menuName: '财务中心',
                     url: '/finance',
                     children: [
-                        {menuName: '订单查询',
-                            url: '/finance/index'
-                        },
+                        {menuName: '订单查询', url: '/finance/inquiry'},
                         {menuName: '订单对账', url: '/finance/record'},
                         {menuName: '资金管理', url: '/finance/fund'},
                         {menuName: '提现管理', url: '/finance/withdraw'},

@@ -53,13 +53,38 @@ let router = new Router({
     {
       path: '/business',  // 邮政业务中心
       component: () => import("@/components/Home"),
-      redirect: '/business/index',
+      redirect: '/business/orderList/index',
+			meta: {value: '/business/orderList', title: '邮票业务中心'},
       children: [
         {
-          path: '/business/index',
-          component: () => import("@/views/business/Index"),
-          meta: {value: '/business/index'},   // 当前激活菜单
-          name: 'business'
+          path: '/business/orderList',
+          component: () => import("@/components/Middle"),
+					redirect: '/business/orderList/index',
+          meta: {value: '/business/orderList', title: '订单列表'},   // 当前激活菜单
+          name: 'orderList',
+					children: [
+						{
+							path: '/business/orderList/index',
+							component: () => import("@/views/business/orderList/index"),
+							meta: {value: '/business/orderList'},
+							name: 'orderIndex'
+						},{
+							path: '/business/orderList/add',
+							component: () => import("@/views/business/orderList/add"),
+							meta: {value: '/business/orderList', title: '新增订单'},
+							name: 'orderAdd'
+						},{
+							path: '/business/orderList/details',
+							component: () => import("@/views/business/orderList/details"),
+							meta: {value: '/business/orderList', title: '订单详情'},
+							name: 'orderDetails'
+						},{
+							path: '/business/orderList/print',
+							component: () => import("@/views/business/orderList/print"),
+							meta: {value: '/business/orderList', title: '打印订单'},
+							name: 'orderPrint'
+						}
+					]
         }
       ]
     },

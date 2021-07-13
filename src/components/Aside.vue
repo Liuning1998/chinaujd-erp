@@ -43,7 +43,7 @@ export default {
                     menuName: '邮票业务中心',
                     url: '/business',
                     children: [
-                        {menuName: '订单列表', url: '/business/index'},
+                        {menuName: '订单列表', url: '/business/orderList'},
                         {menuName: '鉴评单列表', url: '/business/index'},
                         {menuName: '封装单列表', url: '/business/index'},
                         {menuName: '退货单列表', url: '/business/index'},

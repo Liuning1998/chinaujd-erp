@@ -220,7 +220,9 @@ export default {
          * 查询
          * @Function handleSearch
          */
-        handleSearch() {},
+        handleSearch() {
+            this.getData();
+        },
         /**
          * 新增对账单
          * @Function handleAddOrder

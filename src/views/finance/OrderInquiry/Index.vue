@@ -249,7 +249,7 @@ export default {
          * @Function handleSearch
          */
         handleSearch() {
-
+            this.getData();
         },
         /**
          * 重置

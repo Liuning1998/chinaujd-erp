@@ -63,10 +63,10 @@ export default {
                     menuName: '系统管理',
                     url: '/management',
                     children: [
-                        {menuName: '角色管理', url: '/management/index'},
-                        {menuName: '账号管理', url: '/management/index'},
-                        {menuName: '菜单管理', url: '/management/index'},
-                        {menuName: '账号设置', url: '/management/index'},
+                        {menuName: '角色管理', url: '/management/rolemanagement'},
+                        {menuName: '账号管理', url: '/management/accountmanagement'},
+                        {menuName: '菜单管理', url: '/management/menumanagement'},
+                        {menuName: '账号设置', url: '/management/accountsetting'},
                     ],
                 },
             ]

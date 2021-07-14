@@ -222,13 +222,13 @@ let router = new Router({
 					]
 				},
 				{
-					path: '/finance/fund',
-					component: () => import("@/views/finance/fundManagement/Index"),
+					path: '/finance/settle',
+					component: () => import("@/views/finance/orderSettle/Index"),
 					meta: {
-						value: '/finance/fund',
-						title: '资金管理'
+						value: '/finance/settle',
+						title: '订单结算'
 					},
-					name: 'fund'
+					name: 'settle'
 				},
 				{
 					path: '/finance/withdraw',

@@ -144,14 +144,15 @@
             title="新增对账单"
             :visible.sync="addOrderDialogVisible"
             :before-close="addOrderDialogBeforeClose">
-            <div v-if="[4].includes(addOrderForm.orderCycle)">
+            <div>
                 <span>对账时间段：</span>
                 <el-date-picker
                     v-model="addOrderForm.time"
                     type="datetimerange"
                     range-separator="至"
                     start-placeholder="开始日期"
-                    end-placeholder="结束日期">
+                    end-placeholder="结束日期"
+                    :default-time="['00:00:00', '23:59:59']">
                 </el-date-picker>
             </div>
             <div>

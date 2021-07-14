@@ -16,15 +16,11 @@ if (process.env.NODE_ENV == 'development') { //开发环境
 
 
 /**
- * 上传导出 Start
+ * 财务中心 Start
  * */
-// 图片上传
-let imageUploadUrl = baseURL + '/message-base/upload/img';
 
-// 媒体文件上传
-let fileUploadUrl = baseURL + '/message-base/upload/file';
-export {
-  imageUploadUrl,
-  fileUploadUrl
-}
+/**
+ * 财务中心 End
+ * */
+
 

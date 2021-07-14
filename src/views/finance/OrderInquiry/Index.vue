@@ -185,15 +185,14 @@ export default {
                 {label: '核验', value: 5},
             ],
             orderStatus: [
-                {label: '已提交', value: 1},
-                {label: '待审核', value: 2},
-                {label: '待鉴评', value: 3},
-                {label: '已驳回', value: 4},
-                {label: '封装中', value: 5},
-                {label: '已关闭', value: 6},
-                {label: '已完成', value: 7},
-                {label: '待核验', value: 8},
-                {label: '已核验', value: 9},
+                {label: '待审核', value: 1},
+                {label: '待鉴评', value: 2},
+                {label: '已驳回', value: 3},
+                {label: '封装中', value: 4},
+                {label: '已关闭', value: 5},
+                {label: '已完成', value: 6},
+                {label: '待核验', value: 7},
+                {label: '已核验', value: 8},
             ],
             paymentStatus: [
                 {label: '未支付', value: 1},
@@ -256,7 +255,16 @@ export default {
          * @Function handleReset
          */
         handleReset() {
-
+            let form = {
+                orderType: '',
+                serviceType: '',
+                orderStatus: '',
+                paymentStatus: '',
+                evaluateType: '',
+                createTime: '',
+                paymentTime: ''
+            };
+            Object.assign(this.form, form);
         },
         /**
          * 导出

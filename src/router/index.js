@@ -156,7 +156,7 @@ let router = new Router({
       children: [
         {
           path: '/finance/inquiry',
-          component: () => import("@/views/finance/OrderInquiry/Index"),
+          component: () => import("@/views/finance/orderInquiry/Index"),
           meta: {value: '/finance/inquiry', title: '订单查询'},
           name: 'inquiry'
         },
@@ -175,7 +175,7 @@ let router = new Router({
             },
             {
               path: '/finance/record/detail',
-              component: () => import("@/views/finance/OrderRecord/Detail"),
+              component: () => import("@/views/finance/orderRecord/Detail"),
               meta: {value: '/finance/record/index', title: '对账详情'},
               name: 'detail'
             },
@@ -183,13 +183,13 @@ let router = new Router({
         },
         {
           path: '/finance/fund',
-          component: () => import("@/views/finance/FundManagement/Index"),
+          component: () => import("@/views/finance/fundManagement/Index"),
           meta: {value: '/finance/fund', title: '资金管理'},
           name: 'fund'
         },
         {
           path: '/finance/withdraw',
-          component: () => import("@/views/finance/WithdrawalManagement/Index"),
+          component: () => import("@/views/finance/withdrawalManagement/Index"),
           meta: {value: '/finance/withdraw', title: '提现管理'},
           name: 'withdraw'
         }

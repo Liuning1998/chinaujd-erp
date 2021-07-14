@@ -4,12 +4,12 @@
         <div class="search">
             <div class="search-item">
                 <span>订单编号：</span>
-                <el-input></el-input>
+                <el-input :v-model="form.orderNumber"></el-input>
             </div>
             <div class="search-item">
                 <span>订单类型：</span>
                 <el-select v-model="form.orderType" placeholder="">
-                    <el-option label="全部" value="0"></el-option>
+                    <el-option label="全部" :value="0"></el-option>
                     <el-option
                         v-for="item in orderType"
                         :key="item.value"
@@ -21,7 +21,7 @@
             <div class="search-item">
                 <span>服务类型：</span>
                 <el-select v-model="form.serviceType" placeholder="">
-                    <el-option label="全部" value="0"></el-option>
+                    <el-option label="全部" :value="0"></el-option>
                     <el-option
                         v-for="item in serviceType"
                         :key="item.value"
@@ -33,7 +33,6 @@
             <div class="search-item">
                 <span>订单状态：</span>
                 <el-select v-model="form.orderStatus" placeholder="">
-                    <el-option label="已提交" value="0"></el-option>
                     <el-option
                         v-for="item in orderStatus"
                         :key="item.value"
@@ -45,7 +44,7 @@
             <div class="search-item">
                 <span>支付状态：</span>
                 <el-select v-model="form.paymentStatus" placeholder="">
-                    <el-option label="已支付" value="0"></el-option>
+                    <el-option label="全部" :value="0"></el-option>
                     <el-option
                         v-for="item in paymentStatus"
                         :key="item.value"
@@ -57,7 +56,7 @@
             <div class="search-item">
                 <span>鉴评方式：</span>
                 <el-select v-model="form.evaluateType" placeholder="">
-                    <el-option label="全部" value="0"></el-option>
+                    <el-option label="全部" :value="0"></el-option>
                     <el-option
                         v-for="item in evaluateType"
                         :key="item.value"
@@ -163,11 +162,12 @@ export default {
     data() {
         return {
             form: {
-                orderType: '',
-                serviceType: '',
-                orderStatus: '',
-                paymentStatus: '',
-                evaluateType: '',
+                orderNumber: '',
+                orderType: 0,
+                serviceType: 0,
+                orderStatus: 0,
+                paymentStatus: 0,
+                evaluateType: 0,
                 createTime: '',
                 paymentTime: ''
             },
@@ -185,6 +185,7 @@ export default {
                 {label: '核验', value: 5},
             ],
             orderStatus: [
+                {label: '已提交', value: 0},
                 {label: '待审核', value: 1},
                 {label: '待鉴评', value: 2},
                 {label: '已驳回', value: 3},
@@ -202,7 +203,7 @@ export default {
                 {label: '远程鉴评', value: 1},
                 {label: '批量鉴评', value: 2},
             ],
-            total: 20,
+            total: 0,
             currentPage: 0,
             pageSize: 10,
             tableData: [
@@ -256,11 +257,12 @@ export default {
          */
         handleReset() {
             let form = {
-                orderType: '',
-                serviceType: '',
-                orderStatus: '',
-                paymentStatus: '',
-                evaluateType: '',
+                orderNumber: '',
+                orderType: 0,
+                serviceType: 0,
+                orderStatus: 0,
+                paymentStatus: 0,
+                evaluateType: 0,
                 createTime: '',
                 paymentTime: ''
             };

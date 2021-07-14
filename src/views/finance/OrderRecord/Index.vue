@@ -5,7 +5,7 @@
             <div class="search-item">
                 <span>订单类型：</span>
                 <el-select v-model="form.orderType" placeholder="">
-                    <el-option label="全部" value="0"></el-option>
+                    <el-option label="全部" :value="0"></el-option>
                     <el-option
                         v-for="item in orderType"
                         :key="item.value"
@@ -17,7 +17,7 @@
             <div class="search-item">
                 <span>订单状态：</span>
                 <el-select v-model="form.orderStatus" placeholder="">
-                    <el-option label="已提交" value="0"></el-option>
+                    <el-option label="已提交" :value="0"></el-option>
                     <el-option
                         v-for="item in orderStatus"
                         :key="item.value"
@@ -29,7 +29,7 @@
             <div class="search-item">
                 <span>对账类型：</span>
                 <el-select v-model="form.recordType" placeholder="">
-                    <el-option label="全部" value="0"></el-option>
+                    <el-option label="全部" :value="0"></el-option>
                     <el-option
                         v-for="item in recordType"
                         :key="item.value"
@@ -41,7 +41,7 @@
             <div class="search-item">
                 <span>订单状态：</span>
                 <el-select v-model="form.recordStatus" placeholder="">
-                    <el-option label="全部" value="0"></el-option>
+                    <el-option label="全部" :value="0"></el-option>
                     <el-option
                         v-for="item in recordStatus"
                         :key="item.value"
@@ -177,10 +177,10 @@ export default {
     data() {
         return {
             form: {
-                orderType: '',
-                orderStatus: '',
-                recordType: '',
-                recordStatus: '',
+                orderType: 0,
+                orderStatus: 0,
+                recordType: 0,
+                recordStatus: 0,
                 time: [],
             },
             addOrderForm: {
@@ -192,7 +192,7 @@ export default {
             recordType: [],
             recordStatus: [],
             tableData: [],
-            total: 20,
+            total: 0,
             currentPage: 0,
             pageSize: 10,
             addOrderDialogVisible: false,

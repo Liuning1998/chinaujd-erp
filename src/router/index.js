@@ -200,7 +200,7 @@ let router = new Router({
 						value: '/finance/record/index',
 						title: '订单对账'
 					},
-					redirect: '/finance/inquiry/index',
+					redirect: '/finance/record/index',
 					name: 'record',
 					children: [{
 							path: '/finance/record/index',

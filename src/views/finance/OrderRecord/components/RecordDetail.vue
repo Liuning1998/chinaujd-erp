@@ -41,7 +41,7 @@
                         <div v-if="scope.row.prop5 === 2">
                             <i class="el-icon-error"></i>
                             <span>异常未处理</span>
-                            <el-button type="text" @click="handleAbnormal">处理</el-button>
+                            <el-button type="text" @click="handleAbnormal(scope.row)">处理</el-button>
                         </div>
                         <div v-if="scope.row.prop5 === 3">
                             <i class="el-icon-info"></i>
@@ -96,11 +96,57 @@
         </div>
         <el-dialog
             title="异常处理"
+            center
             :visible.sync="abnormalDialogVisible"
             :before-close="dialogBeforeClose">
-            <div></div>
+            <div>
+                <div class="detail_type">
+                    <span>处理方式</span>
+                    <div class="btns" v-for="(item, index) in detailType" :key="index">
+                        <span @click="handleSelectDetailType(item.value)">{{ item.label }}</span>
+                    </div>
+                </div>
+                <div class="order" v-if="abnormalForm.type === 0">
+                    <span v-if="currentData.prop9 && !currentData.prop1">平台订单</span>
+                    <span v-if="!currentData.prop9 && currentData.prop1">三方订单</span>
+                    <el-input v-model="orderNumber"></el-input>
+                    <el-button type="primary">查询</el-button>
+                </div>
+                <div class="table" v-if="abnormalForm.type === 0">
+                    <el-table
+                        :data="abnormalTableData"
+                        @selection-change="handleSelectionChange">
+                        <el-table-column
+                            type="selection">
+                        </el-table-column>
+                        <el-table-column
+                            align="center"
+                            prop="prop1"
+                            label="订单号">
+                        </el-table-column>
+                        <el-table-column
+                            align="center"
+                            prop="prop2"
+                            label="交易时间">
+                        </el-table-column>
+                        <el-table-column
+                            align="center"
+                            prop="prop3"
+                            label="交易类型">
+                        </el-table-column>
+                        <el-table-column
+                            align="center"
+                            prop="prop4"
+                            label="交易金额">
+                        </el-table-column>
+                    </el-table>
+                </div>
+                <div class="remarks">
+                    <span>备注</span>
+                    <el-input type="textarea" v-model="abnormalForm.remarks" placeholder=""></el-input>
+                </div>
+            </div>
             <div slot="footer">
-                <el-button @click="dialogBeforeClose">取 消</el-button>
                 <el-button type="primary" @click="handleSubmit">确 定</el-button>
             </div>
         </el-dialog>
@@ -111,13 +157,17 @@
 export default {
     data() {
         return {
+            detailType: [
+                {label: '异常处理', value: 0},
+                {label: '挂起异常', value: 1},
+            ],
             tableData: [
                 {
-                    prop1: 1,
+                    prop1: null,
                     prop2: 2,
                     prop3: 3,
                     prop4: 4,
-                    prop5: 1,
+                    prop5: 2,
                     prop6: 6,
                     prop7: 7,
                     prop8: 8,
@@ -133,14 +183,29 @@ export default {
                     prop6: 6,
                     prop7: 7,
                     prop8: 8,
-                    prop9: 9,
+                    prop9: null,
                     prop10: 10,
+                }
+            ],
+            abnormalTableData: [
+                {
+                    prop1: 1,
+                    prop2: 2,
+                    prop3: 3,
+                    prop4: 4,
                 }
             ],
             total: 0,
             pageSize: 10,
             currentPage: 0,
+            currentData: {},
             abnormalDialogVisible: false,
+            orderNumber: '',
+            abnormalForm: {
+                type: 0,
+                order: [],
+                remarks: '',
+            }
         }
     },
     methods: {
@@ -173,7 +238,8 @@ export default {
          * 处理异常弹窗
          * @Function handleAbnormal
          */
-        handleAbnormal() {
+        handleAbnormal(data) {
+            this.currentData = data;
             this.abnormalDialogVisible = true;
         },
         /**
@@ -187,6 +253,7 @@ export default {
          */
         dialogBeforeClose() {
             this.abnormalDialogVisible = false;
+            this.abnormalForm.order = [];
         },
         /**
          * 提交异常处理结果
@@ -194,7 +261,25 @@ export default {
          */
         handleSubmit() {
             this.abnormalDialogVisible = false;
+            this.abnormalForm.order = [];
+        },
+        /**
+         * 选择异常处理方式
+         * @Function handleSelectDetailType
+         * @params {String} value
+         */
+        handleSelectDetailType(value) {
+            this.abnormalForm.type = value;
+        },
+        /**
+         * 选择异常的订单号
+         * @Function handleSelectionChange
+         */
+        handleSelectionChange(val) {
+            console.log(val);
+            this.abnormalForm.order = val.map(item => item.prop1);
         }
+
     }
 }
 </script>

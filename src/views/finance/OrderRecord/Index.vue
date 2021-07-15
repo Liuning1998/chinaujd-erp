@@ -89,7 +89,7 @@
                 </el-table-column>
                 <el-table-column
                     prop="prop5"
-                    label="收入净额">
+                    label="收支净额">
                 </el-table-column>
                 <el-table-column
                     prop="prop6"
@@ -193,7 +193,21 @@ export default {
             orderStatus: [],
             recordType: [],
             recordStatus: [],
-            tableData: [],
+            tableData: [
+                {
+                    prop1: 1,
+                    prop2: 2,
+                    prop3: 3,
+                    prop4: 4,
+                    prop5: 5,
+                    prop6: 6,
+                    prop7: 7,
+                    prop8: 8,
+                    prop9: 9,
+                    prop10: 10,
+                    prop11: 11,
+                }
+            ],
             total: 0,
             currentPage: 0,
             pageSize: 10,
@@ -243,7 +257,7 @@ export default {
          * @parsms {Object} data 订单详情
          */
         handleScan(data) {
-
+            this.$router.push('/finance/record/detail');
         },
         /**
          * 订单退款

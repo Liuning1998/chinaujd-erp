@@ -215,7 +215,7 @@ let router = new Router({
 							component: () => import("@/views/finance/orderRecord/Detail"),
 							meta: {
 								value: '/finance/record/index',
-								title: '对账详情'
+								title: '对账单详情'
 							},
 							name: 'detail'
 						},

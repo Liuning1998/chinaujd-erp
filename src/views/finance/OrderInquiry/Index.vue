@@ -4,7 +4,7 @@
         <div class="search">
             <div class="search-item">
                 <span>订单编号：</span>
-                <el-input :v-model="form.orderNumber"></el-input>
+                <el-input v-model="form.orderNumber"></el-input>
             </div>
             <div class="search-item">
                 <span>订单类型：</span>
@@ -128,7 +128,6 @@
                     label="创建时间">
                 </el-table-column>
                 <el-table-column
-                    prop="prop8"
                     label="操作">
                     <template slot-scope="scope">
                         <el-button type="text" @click="handleScan(scope.row)">查看</el-button>
@@ -216,7 +215,6 @@ export default {
                     prop5: 5,
                     prop6: 6,
                     prop7: 7,
-                    prop8: 8,
                 },
                 {
                     prop: 0,
@@ -227,7 +225,6 @@ export default {
                     prop5: 5,
                     prop6: 6,
                     prop7: 7,
-                    prop8: 8,
                 },
             ],
         }
@@ -303,7 +300,12 @@ export default {
          * @params {Object} data 订单详情
          */
         handleRefund(data) {
-
+            this.$confirm('确定申请退款么？', '请选择', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            }).then(() => {
+                console.log('退款');
+            }).catch(() => {});
         },
         /**
          * 更改每页条数

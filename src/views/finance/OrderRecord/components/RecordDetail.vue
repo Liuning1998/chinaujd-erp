@@ -274,6 +274,7 @@ export default {
         /**
          * 选择异常的订单号
          * @Function handleSelectionChange
+         * @params {Array} val
          */
         handleSelectionChange(val) {
             console.log(val);

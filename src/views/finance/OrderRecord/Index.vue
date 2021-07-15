@@ -166,6 +166,49 @@
                 <el-button @click="handleAddOrderSubmit">生成对账单</el-button>
             </div>
         </el-dialog>
+        <el-dialog
+            title="订单结算申请"
+            center
+            :visible.sync="settleDialogVisible"
+            :before-close="settleDialogBeforeClose">
+            <div>
+                <el-table
+                    :data="settleTableData"
+                    @selection-change="handleSelectionChange">
+                    <el-table-column
+                        type="selection">
+                    </el-table-column>
+                    <el-table-column
+                        align="center"
+                        prop="prop1"
+                        label="订单编号">
+                    </el-table-column>
+                     <el-table-column
+                        align="center"
+                        prop="prop2"
+                        label="账单时间段">
+                    </el-table-column>
+                     <el-table-column
+                        align="center"
+                        prop="prop3"
+                        label="收入金额">
+                    </el-table-column>
+                     <el-table-column
+                        align="center"
+                        prop="prop4"
+                        label="支出金额">
+                    </el-table-column>
+                     <el-table-column
+                        align="center"
+                        prop="prop5"
+                        label="收支净额">
+                    </el-table-column>
+                </el-table>
+            </div>
+            <div slot="footer">
+                <el-button type="primary" @click="handleSettleSubmit">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -208,10 +251,27 @@ export default {
                     prop11: 11,
                 }
             ],
+            settleTableData: [
+                {
+                    prop1: 1,
+                    prop2: 2,
+                    prop3: 3,
+                    prop4: 4,
+                    prop5: 5,
+                },
+                {
+                    prop1: 11,
+                    prop2: 22,
+                    prop3: 33,
+                    prop4: 44,
+                    prop5: 55,
+                },
+            ],
             total: 0,
             currentPage: 0,
             pageSize: 10,
             addOrderDialogVisible: false,
+            settleDialogVisible: false,
             orderCycle: [
                 {label: '周', value: 1},
                 {label: '月', value: 2},
@@ -278,7 +338,9 @@ export default {
          * @Function handleSettle
          * @params {Object} data 订单详情
          */
-        handleSettle(data) {},
+        handleSettle(data) {
+            this.settleDialogVisible = true;
+        },
         /**
          * 更改每页条数
          * @Function handleSizeChange
@@ -310,6 +372,28 @@ export default {
          */
         handleAddOrderSubmit() {
             this.addOrderDialogVisible = false;
+        },
+        /**
+         * 关闭订单结算申请弹窗
+         * @Function settleDialogBeforeClose
+         */
+        settleDialogBeforeClose() {
+            this.settleDialogVisible = false;
+        },
+        /**
+         * 申请结算
+         * @Function handleSettleSubmit
+         */
+        handleSettleSubmit() {
+            this.settleDialogVisible = false;
+        },
+        /**
+         * 选择申请结算的订单
+         * @Function handleSelectionChange
+         * @params {Array} val
+         */
+        handleSelectionChange(val) {
+            console.log(val);
         },
         /**
          * 选择对账方式 周/月/年/自定义

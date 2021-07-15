@@ -108,6 +108,25 @@
                 :total="total">
             </el-pagination>
         </div>
+        <el-dialog
+            title="结算审核"
+            center
+            :visible.sync="dialogVisible"
+            :before-close="dialogBeforeClose">
+            <div>
+                <div class="radio">
+                    <el-radio v-model="radio" label="1">备选项</el-radio>
+                    <el-radio v-model="radio" label="2">备选项</el-radio>
+                </div>
+                <div class="reject">
+                    <span>驳回原因</span>
+                    <el-input type="textarea" v-model="rejectReason"></el-input>
+                </div>
+            </div>
+            <div slot="footer">
+                <el-button type="primary" @click="handleSubmit">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -136,6 +155,9 @@ export default {
             total: 0,
             currentPage: 0,
             pageSize: 10,
+            dialogVisible: false,
+            radio: null,
+            rejectReason: '',
         }
     },
     created() {
@@ -155,7 +177,7 @@ export default {
          * @params {Object} data
          */
         handleExamine(data) {
-
+            this.dialogVisible = true;
         },
         /**
          * 查看
@@ -182,6 +204,24 @@ export default {
         handleCurrentChange(currentPage) {
             this.currentPage = currentPage;
             this.getData();
+        },
+        /**
+         * 关闭结算审核弹窗
+         * @Function dialogBeforeClose
+         */
+        dialogBeforeClose() {
+            this.dialogVisible = false;
+            this.radio = null;
+            this.rejectReason = '';
+        },
+        /**
+         * 审核结算
+         * @Function handleSubmit
+         */
+        handleSubmit() {
+            this.dialogVisible = false;
+            this.radio = null;
+            this.rejectReason = '';
         },
     }
 }

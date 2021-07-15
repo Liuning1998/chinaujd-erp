@@ -173,8 +173,8 @@ export default {
                 orderStatus: 0,
                 paymentStatus: 0,
                 evaluateType: 0,
-                createTime: '',
-                paymentTime: ''
+                createTime: [],
+                paymentTime: []
             },
             orderType: [
                 {label: '普通订单', value: 1},
@@ -266,8 +266,8 @@ export default {
                 orderStatus: 0,
                 paymentStatus: 0,
                 evaluateType: 0,
-                createTime: '',
-                paymentTime: ''
+                createTime: [],
+                paymentTime: []
             };
             Object.assign(this.form, form);
         },

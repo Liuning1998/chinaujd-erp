@@ -310,7 +310,9 @@ export default {
          * 申请结算
          * @Function handleAllSettle
          */
-        handleAllSettle() {},
+        handleAllSettle() {
+            this.settleDialogVisible = true;
+        },
         /**
          * 查看订单
          * @Function handleScan

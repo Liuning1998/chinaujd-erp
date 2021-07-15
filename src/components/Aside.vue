@@ -105,6 +105,7 @@ export default {
             this.$router.push({
                 path: this.path
             });
+            this.getCurrentUrl();
         }
     }
 }

@@ -148,7 +148,7 @@ export default {
          * @params {Object} data
          */
         handleScan(data) {
-
+            this.$router.push('/finance/settle/detail');
         },
         /**
          * 更改每页条数

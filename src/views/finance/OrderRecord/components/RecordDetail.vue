@@ -46,7 +46,7 @@
                         <div v-if="scope.row.prop5 === 3">
                             <i class="el-icon-info"></i>
                             <span>异常已挂起</span>
-                            <el-button type="text" @click="handleAbnormalDetail">详情</el-button>
+                            <el-button type="text" @click="handleAbnormal(scope.row)">处理</el-button>
                         </div>
                     </template>
                 </el-table-column>
@@ -242,11 +242,6 @@ export default {
             this.currentData = data;
             this.abnormalDialogVisible = true;
         },
-        /**
-         * 异常详情
-         * @Function handleAbnormalDetail
-         */
-        handleAbnormalDetail() {},
         /**
          * 关闭异常处理弹窗
          * @Function dialogBeforeClose

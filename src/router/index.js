@@ -223,12 +223,32 @@ let router = new Router({
 				},
 				{
 					path: '/finance/settle',
-					component: () => import("@/views/finance/orderSettle/Index"),
+					component: () => import("@/components/Middle"),
 					meta: {
-						value: '/finance/settle',
+						value: '/finance/settle/index',
 						title: '订单结算'
 					},
-					name: 'settle'
+					redirect: '/finance/settle/index',
+					name: 'settle',
+					children: [
+						{
+							path: '/finance/settle/index',
+							component: () => import('@/views/finance/orderSettle/Index'),
+							meta: {
+								value: '/finance/settle/index'
+							},
+							name: 'index'
+						},
+						{
+							path: '/finance/settle/detail',
+							component: () => import("@/views/finance/orderSettle/components/Detail"),
+							meta: {
+								value: '/finance/settle/index',
+								title: '对账单详情'
+							},
+							name: 'detail'
+						},
+					]
 				},
 				{
 					path: '/finance/withdraw',

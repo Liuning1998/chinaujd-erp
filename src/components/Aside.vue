@@ -55,7 +55,7 @@ export default {
                     children: [
                         {menuName: '订单查询', url: '/finance/inquiry'},
                         {menuName: '订单对账', url: '/finance/record/index'},
-                        {menuName: '订单结算', url: '/finance/settle'},
+                        {menuName: '订单结算', url: '/finance/settle/index'},
                         {menuName: '提现管理', url: '/finance/withdraw'},
                     ],
                 },

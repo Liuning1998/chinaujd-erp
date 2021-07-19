@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <span class="lcp">窗前明月光</span>
-    <span class="container-tip">疑是地上霜</span>
+    <p>欢迎进入</p>
+    <p>邮来邮网数字化集邮服务管理系统</p>
   </div>
 </template>
 
@@ -16,11 +16,11 @@ export default {
 
 <style lang="scss" scoped>
   .container {
-    .lcp {
-      color: #409eff;
-    }
-    &-tip {
-      color: #f56c6c;
-    }
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100%;
+    background: #fff;
   }
 </style>

@@ -208,7 +208,7 @@ let router = new Router({
 							meta: {
 								value: '/finance/record/index'
 							},
-							name: 'index'
+							name: 'recordindex'
 						},
 						{
 							path: '/finance/record/detail',
@@ -217,7 +217,7 @@ let router = new Router({
 								value: '/finance/record/index',
 								title: '对账单详情'
 							},
-							name: 'detail'
+							name: 'recorddetail'
 						},
 					]
 				},
@@ -237,7 +237,7 @@ let router = new Router({
 							meta: {
 								value: '/finance/settle/index'
 							},
-							name: 'index'
+							name: 'settleindex'
 						},
 						{
 							path: '/finance/settle/detail',
@@ -246,7 +246,7 @@ let router = new Router({
 								value: '/finance/settle/index',
 								title: '对账单详情'
 							},
-							name: 'detail'
+							name: 'settledetail'
 						},
 					]
 				},

@@ -1,33 +1,269 @@
 <template>
-  <div class="container">
+	<div class="container">
 		<Breadcrumb></Breadcrumb>
-订单列表
-  </div>
+		<div>
+			<el-form ref="form" :model="form" label-width="90px">
+				<el-row>
+					<el-col :span="8">
+						<el-form-item label="订单编号:">
+							<el-input v-model="form.a" class="w200"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="8">
+						<el-form-item label="邮票名称:">
+							<el-input v-model="form.a" class="w200"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="8">
+						<el-form-item label="用户手机号:">
+							<el-input v-model="form.a" class="w200"></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="8">
+						<el-form-item label="支付状态:">
+							<el-select v-model="form.a" placeholder="请选择" class="w200">
+								<el-option label="全部" value=""></el-option>
+								<el-option v-for="(item,index) in payState" :key="index" :label="item.name"
+									:value="item.value"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="8">
+						<el-form-item label="订单状态:">
+							<el-select v-model="form.a" placeholder="请选择" class="w200">
+								<el-option label="全部" value=""></el-option>
+								<el-option v-for="(item,index) in orderState" :key="index" :label="item.name"
+									:value="item.value"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="8">
+						<el-form-item label="服务类型:">
+							<el-select v-model="form.a" placeholder="请选择" class="w200">
+								<el-option label="全部" value=""></el-option>
+								<el-option v-for="(item,index) in serviceType" :key="index" :label="item.name"
+									:value="item.value"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="8">
+						<el-form-item label="物流状态:">
+							<el-select v-model="form.a" placeholder="请选择" class="w200">
+								<el-option label="全部" value=""></el-option>
+								<el-option v-for="(item,index) in logisticsStatus" :key="index" :label="item.name"
+									:value="item.value"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="8">
+						<el-form-item label="退款状态:">
+							<el-select v-model="form.a" placeholder="请选择" class="w200">
+								<el-option label="全部" value=""></el-option>
+								<el-option v-for="(item,index) in refundStatus" :key="index" :label="item.name"
+									:value="item.value"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="8">
+						<el-form-item label="鉴评方式:">
+							<el-select v-model="form.a" placeholder="请选择" class="w200">
+								<el-option label="全部" value=""></el-option>
+								<el-option v-for="(item,index) in appraisalMode" :key="index" :label="item.name"
+									:value="item.value"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="16">
+						<el-form-item label="创建时间:">
+							<el-date-picker
+								v-model="form.a"
+								type="datetimerange"
+								range-separator="至"
+								start-placeholder="开始日期"
+								end-placeholder="结束日期">
+							</el-date-picker>
+						</el-form-item>
+					</el-col>
+					<el-col :span="16">
+						<div style="padding-left: 20px;">
+							<el-button type="primary" @click="addOrder">新增业务单</el-button>
+							<el-button @click="query">查询</el-button>
+							<el-button @click="orderExport">导出</el-button>
+						</div>
+					</el-col>
+				</el-row>
+			</el-form>
+		</div>
+		<div class="table_box">
+			<el-table :data="tableData" border style="width: 100%">
+			  <el-table-column prop="a" label="订单号"></el-table-column>
+			  <el-table-column prop="a" label="子订单号"></el-table-column>
+			  <el-table-column prop="a" label="邮票名称"></el-table-column>
+				<el-table-column prop="a" label="邮票数量"></el-table-column>
+				<el-table-column label="订单金额">
+					<template slot-scope="scope">
+					  <p>¥{{scope.row.a}}</p>
+					</template>
+				</el-table-column>
+				<el-table-column prop="a" label="创建时间"></el-table-column>
+				<el-table-column prop="a" label="支付时间"></el-table-column>
+				<el-table-column prop="a" label="订单状态"></el-table-column>
+				<el-table-column prop="a" label="支付状态"></el-table-column>
+				<el-table-column prop="a" label="鉴评方式"></el-table-column>
+				<el-table-column prop="a" label="手机号"></el-table-column>
+			  <el-table-column fixed="right" label="操作" width="100" align="center">
+			    <template slot-scope="scope">
+			      <el-button @click="detail(scope.row)" type="text">查看</el-button>
+			    </template>
+			  </el-table-column>
+			</el-table>
+			<div class="page_box">
+			  <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pagebox.currentPage-0"
+			    :page-sizes="[20, 50, 100, 200]" :page-size="pagebox.pageSize-0" layout="total, sizes, prev, pager, next, jumper"
+			    :total="pagebox.total-0">
+			  </el-pagination>
+			</div>
+		</div>
+	</div>
 </template>
 <script>
 	import Breadcrumb from '@/components/Breadcrumb';
-  export default {
-    name: '',
+	export default {
+		name: '',
 		components: {
-		    Breadcrumb
+			Breadcrumb
 		},
-    data() {
-      return {
+		data() {
+			return {
+				form: {
+					a: ''
+				},
+				tableData:[],
+				currentPage:1,
+				pageSize:20,
+				pagebox: {},
+				// 物流状态
+				logisticsStatus:[
+					{name: '服务商未发货',value:0},
+					{name: '服务商已发货',value:1},
+					{name: '鉴评点未发货',value:2},
+					{name: '鉴评点已发货',value:3},
+					{name: '鉴评点已退货',value:4},
+					{name: '封装厂未发货',value:5},
+					{name: '封装厂已发货',value:6}
+				],
+				// 服务类型
+				serviceType:[
+					{name: '采集+鉴别',value:0},
+					{name: '采集+评级',value:1},
+					{name: '采集+鉴别+封装',value:2},
+					{name: '采集+评级+封装',value:3},
+					{name: '核验',value:4}
+				],
+				// 支付状态
+				payState:[
+					{name: '未支付',value:0},
+					{name: '已支付',value:1}
+				],
+				// 退款状态
+				refundStatus:[
+					{name: '退款中',value:0},
+					{name: '已退款',value:1}
+				],
+				// 鉴评方式
+				appraisalMode:[
+					{name: '远程鉴评',value:0},
+					{name: '批量鉴评',value:1}
+				],
+				// 订单状态
+				orderState: [{
+						name: '已提交',
+						value: 0
+					},
+					{
+						name: '待审核',
+						value: 1
+					},
+					{
+						name: '待鉴评',
+						value: 2
+					},
+					{
+						name: '封装中',
+						value: 3
+					},
+					{
+						name: '已完成',
+						value: 4
+					},
+					{
+						name: '售后中',
+						value: 5
+					},
+					{
+						name: '已关闭',
+						value: 6
+					},
+					{
+						name: '待核验',
+						value: 7
+					}
+				]
+			}
+		},
+		// 模板渲染前钩子函数
+		created() {
 
-      }
-    },
-    // 模板渲染前钩子函数
-    created() {
+		},
+		// 模板渲染后钩子函数
+		mounted() {
 
-    },
-    // 模板渲染后钩子函数
-    mounted() {
-
-    },
-    methods: {
-
-    },
-  }
+		},
+		methods: {
+			detail(val){
+				this.$router.push({
+				  path: '/business/orderList/details',
+				  query: {
+				    appraisalId: val.appraisalId,
+				  }
+				});
+			},
+			addOrder(){
+				this.$router.push({
+					path: '/business/orderList/add',
+				});
+			},
+			// 查询
+			query(){
+			  this.currentPage=1;
+			  this.getList();
+			},
+			handleSizeChange(val){
+			  this.pageSize=val;
+			  this.getList();
+			},
+			handleCurrentChange(val){
+			  this.currentPage=val;
+			  this.getList();
+			},
+			getList(){
+				
+			},
+			orderExport(){
+				
+			}
+		},
+	}
 </script>
 <style lang="scss" scoped>
+	.w200 {
+		width: 200px;
+	}
+	.table_box{
+		padding: 20px;
+	}
+	.page_box{
+	  text-align: center;
+	  margin:20px 0 0;
+	}
 </style>

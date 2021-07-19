@@ -46,7 +46,7 @@ export default {
         background: #fff;
     }
     .container>>>.el-main {
-        height: 100vh;
+        height: calc(100vh - 70px);
         margin: 10px 10px 0 10px;
         padding: 0;
     }

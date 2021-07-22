@@ -199,11 +199,15 @@ export default{
                             color: #333!important;
                             padding: 0;
                         }
-                        .el-input-group--append .el-input-group__append {
-                            background-color: #fff;
-                            border: 0;
-                            border-radius: 0;
-                            padding: 0;
+                        .el-input-group--append {
+                            height: 40px;
+                            .el-input-group__append {
+                                height: 40px;
+                                background-color: #fff;
+                                border: 0;
+                                border-radius: 0;
+                                padding: 0;
+                            }
                         }
                         input {
                             border-top-color: transparent;
@@ -241,6 +245,18 @@ export default{
                         pointer-events: none;
                         position: absolute;
                         right: 0;
+                    }
+                }
+                >>>.is-error {
+                    .el-form-item__content {
+                        input {
+                            border-top-color: transparent;
+                            border-left-color: transparent;
+                            border-right-color: transparent;
+                            border-bottom-color: #F5222D;
+                            border-radius: 0;
+                            outline: none;
+                        }
                     }
                 }
             }

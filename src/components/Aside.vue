@@ -118,6 +118,7 @@ export default {
     }
     .container>>>.el-menu {
         border-right: 0;
+
     }
     .container>>>.el-menu .el-submenu .el-submenu__title,
     .container>>>.el-menu .el-submenu .el-menu--inline .el-menu-item {
@@ -135,6 +136,9 @@ export default {
         width: 16px;
         height: 16px;
         margin-right: 10px;
+    }
+    .container>>>.el-menu .el-submenu .el-menu--inline .is-active {
+        border-right: 2px solid #1890FF;
     }
     .container>>>.el-menu .el-menu-item.is-active {
         background: #ecf5ff;

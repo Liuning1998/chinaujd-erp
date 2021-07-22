@@ -8,7 +8,8 @@
           </p>
         </el-col>
         <el-col :span="12" class="right">
-          <span>{{ name }}</span>
+          <i></i>
+          <span>{{ name }}1231231231</span>
           <el-divider direction="vertical"></el-divider>
           <span @click="logout">退出</span>
         </el-col>
@@ -61,40 +62,45 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   .container {
     width: 100%;
-    height: 60px;
-    line-height: 60px;
+    height: 48px;
+    line-height: 48px;
     background: #fff;
-    box-shadow: 0 2px 4px 0 rgba(222,222,222,0.50);
-  }
-  .container>>>.el-header {
-    padding: 0;
-  }
-  .left {
-    font-family: PingFangSC-Semibold;
-    font-size: 24px;
-    color: #2D8CF0;
-    margin-left: 53px;
-  }
-  .left p {
-    cursor: pointer;
-  }
-  .left p>:last-child {
-    color: #151515;
-  }
-  .right {
-    font-family: PingFangSC-Regular;
-    font-size: 14px;
-    color: #2A2A2A;
-    line-height: 20px;
-    margin-right: 30px;
-    text-align: right;
-  }
-  .right>:last-child {
-    font-family: PingFangSC-Medium;
-    color: #333333;
-    cursor: pointer;
+    box-shadow: 0 2px 6px 0 rgba(0, 21,41,0.12);
+    >>>.el-header {
+      padding: 0;
+    }
+    .left {
+      font-family: PingFang-SC-Heavy;;
+      font-size: 20px;
+      color: #333;
+      margin-left: 24px;
+      p {
+        cursor: pointer;
+      }
+    }
+    .right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      font-family: PingFangSC-Regular;
+      font-size: 14px;
+      color: #666;
+      line-height: 22px;
+      margin-right: 24px;
+      i {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        background: url('../assets/images/head/icon_top_head.png') no-repeat top center;
+        margin-right: 8px;
+        border-radius: 50%;
+      }
+      >:last-child {
+        cursor: pointer;
+      }
+    }
   }
 </style>

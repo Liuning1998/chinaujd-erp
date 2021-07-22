@@ -37,17 +37,21 @@ export default {
 
 <style scoped>
     .container {
-        background: rgb(243, 248, 249);
+        background: #F5F5F5;
     }
     .container>>>.el-header {
+        height: 48px!important;
         padding: 0!important;
+        z-index: 1;
     }
     .container>>>.el-aside {
+        min-height: calc(100vh - 48px);
         background: #fff;
+        box-shadow: 2px 0 6px 0 rgba(0,21,41,0.12);
     }
     .container>>>.el-main {
-        height: calc(100vh - 70px);
-        margin: 10px 10px 0 10px;
+        min-height: calc(100vh - 48px);
+        margin: 16px 16px 0 16px;
         padding: 0;
     }
 </style>

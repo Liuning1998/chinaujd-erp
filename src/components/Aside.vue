@@ -4,16 +4,16 @@
             <template v-for="(item, index) in menu">
                 <el-submenu :key="index" v-if="item.children && item.children.length" :index="item.url">
                     <template slot="title">
-                        <i :class="iconMaps[index]"></i>
+                        <img :src="is_actice_url === item.url ? iconMaps[item.url][1] : iconMaps[item.url][0]">
                         {{ item.menuName }}
                     </template>
-                    <el-menu-item v-for="(value, key) in item.children" :key="key" :index="value.url" style="padding-left: 40px!important;">
-                        <template slot="title"><span class="dot">·</span>{{ value.menuName }}</template>
+                    <el-menu-item v-for="(value, key) in item.children" :key="key" :index="value.url">
+                        <template slot="title">{{ value.menuName }}</template>
                     </el-menu-item>
                 </el-submenu>
                 <el-menu-item v-else :key="index" :index="item.url">
                     <template slot="title">
-                        <i :class="iconMaps[index]"></i>
+                        <img :src="is_actice_url === item.url ? iconMaps[item.url][1] : iconMaps[item.url][0]">
                         {{ item.menuName }}
                     </template>
                 </el-menu-item>
@@ -33,11 +33,13 @@ export default {
         return {
             menu: [],
             path: '',
-            iconMaps: [
-                'el-icon-edit',
-                'el-icon-share',
-                'el-icon-delete'
-            ],
+            is_actice_url: '/welcome',
+            iconMaps: {
+                '/welcome': ['', ''],
+                '/business': [require('../assets/images/aside/icon_business.png'), require('../assets/images/aside/icon_business_select.png')],
+                '/finance': [require('../assets/images/aside/icon_finance.png'), require('../assets/images/aside/icon_finance_select.png')],
+                '/management': [require('../assets/images/aside/icon_system.png'), require('../assets/images/aside/icon_system_select.png')]
+            },
             menu: [
                 {
                     menuName: '邮票业务中心',
@@ -89,16 +91,12 @@ export default {
             POST_BASE_MENU_ROUTE_LIST({
                 regSys: 1
             }).then(res =>{
-                res.forEach((item, index) => {
-                    if (['/board', '/material/index', '/template/index'].includes(item.url)) {
-                        delete item.children;
-                    }
-                });
                 this.menu = res;
             });
         },
         getCurrentUrl() {
             this.path = this.$route.meta.value;
+            this.is_actice_url = `/${this.$route.meta.value.split('/')[1]}`;
         },
         handleOpen(key) {
             this.path = key;
@@ -106,20 +104,31 @@ export default {
                 path: this.path
             });
             this.getCurrentUrl();
-        }
+        },
     }
 }
 </script>
 
 <style scoped>
+    .container {
+        font-family: PingFangSC-Regular;
+        margin-top: 20px;
+        font-size: 14px;
+        color: #666;
+    }
     .container>>>.el-menu {
         border-right: 0;
     }
-    .container>>>.el-menu .el-menu-item,
     .container>>>.el-menu .el-submenu .el-submenu__title,
-    .container>>>.el-menu .el-menu--inline .el-menu-item {
+    .container>>>.el-menu .el-submenu .el-menu--inline .el-menu-item {
+        height: 40px;
+        line-height: 40px;
+        margin-bottom: 8px;
         color: #555;
-        padding: 0 32px!important;
+        padding-left: 16px!important;
+    }
+    .container>>>.el-menu .el-submenu .el-menu--inline .el-menu-item {
+        padding-left: 46px!important;
     }
     .container>>>.el-menu .el-menu-item img,
     .container>>>.el-menu .el-submenu img {
@@ -129,9 +138,5 @@ export default {
     }
     .container>>>.el-menu .el-menu-item.is-active {
         background: #ecf5ff;
-    }
-    .container>>>.dot {
-        font-size: 24px;
-        margin: 0 6px 0 -12px;
     }
 </style>

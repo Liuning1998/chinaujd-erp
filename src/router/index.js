@@ -44,6 +44,9 @@ let router = new Router({
 			children: [{
 				path: '/welcome',
 				component: () => import("@/views/index/Index"),
+				meta: {
+					value: '/welcome',
+				},
 				name: 'welcome'
 			}]
 		},

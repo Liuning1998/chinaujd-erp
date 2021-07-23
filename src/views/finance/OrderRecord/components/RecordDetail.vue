@@ -1,16 +1,12 @@
 <template>
     <div class="container">
         <el-table
-            :data="tableData"
-            style="width: 100%">
+            :data="tableData">
             <el-table-column
                 align="center">
                 <template slot="header" slot-scope="">
                     <div class="header">
                         <span>平台订单对账数据</span>
-                        <el-upload action="#" class="btn">
-                            <el-button type="text" size="small">点击上传</el-button>
-                        </el-upload>
                     </div>
                 </template>
                 <el-table-column
@@ -32,21 +28,22 @@
             </el-table-column>
             <el-table-column>
                 <el-table-column
-                    label="每单对账状态">
+                    label="每单对账状态"
+                    width="180">
                     <template slot-scope="scope">
                         <div v-if="scope.row.prop5 === 1">
-                            <i class="el-icon-success"></i>
+                            <i class="dot-success"></i>
                             <span>正常</span>
                         </div>
                         <div v-if="scope.row.prop5 === 2">
-                            <i class="el-icon-error"></i>
+                            <i class="dot-error"></i>
                             <span>异常未处理</span>
-                            <el-button type="text" @click="handleAbnormal(scope.row)">处理</el-button>
+                            <el-button class="detail" type="text" @click="handleAbnormal(scope.row)">处理</el-button>
                         </div>
                         <div v-if="scope.row.prop5 === 3">
-                            <i class="el-icon-info"></i>
+                            <i class="dot-warning"></i>
                             <span>异常已挂起</span>
-                            <el-button type="text" @click="handleAbnormal(scope.row)">处理</el-button>
+                            <el-button class="detail" type="text" @click="handleAbnormal(scope.row)">处理</el-button>
                         </div>
                     </template>
                 </el-table-column>
@@ -56,9 +53,14 @@
                 <template slot="header" slot-scope="">
                     <div class="header">
                         <span>三方账户对账数据</span>
-                        <el-upload action="#" class="btn">
-                            <el-button type="text" size="small">点击上传</el-button>
-                        </el-upload>
+                        <div class="btns">
+                            <span class="download">
+                                <el-button type="text" size="small"><i></i>模版下载</el-button>
+                            </span>
+                            <el-upload action="#" class="upload">
+                                <el-button type="text" size="small"><i></i>上传对账数据</el-button>
+                            </el-upload>
+                        </div>
                     </div>
                 </template>
                 <el-table-column
@@ -90,7 +92,7 @@
                 @current-change="handleCurrentChange"
                 :current-page="currentPage"
                 :page-size="pageSize"
-                layout="prev, pager, next"
+                layout="prev, pager, next, sizes, jumper"
                 :total="total">
             </el-pagination>
         </div>
@@ -167,11 +169,47 @@ export default {
                     prop2: 2,
                     prop3: 3,
                     prop4: 4,
-                    prop5: 2,
+                    prop5: 1,
                     prop6: 6,
                     prop7: 7,
                     prop8: 8,
                     prop9: 9,
+                    prop10: 10,
+                },
+                {
+                    prop1: 1,
+                    prop2: 2,
+                    prop3: 3,
+                    prop4: 4,
+                    prop5: 2,
+                    prop6: 6,
+                    prop7: 7,
+                    prop8: 8,
+                    prop9: null,
+                    prop10: 10,
+                },
+                {
+                    prop1: 1,
+                    prop2: 2,
+                    prop3: 3,
+                    prop4: 4,
+                    prop5: 3,
+                    prop6: 6,
+                    prop7: 7,
+                    prop8: 8,
+                    prop9: null,
+                    prop10: 10,
+                },
+                {
+                    prop1: 1,
+                    prop2: 2,
+                    prop3: 3,
+                    prop4: 4,
+                    prop5: 1,
+                    prop6: 6,
+                    prop7: 7,
+                    prop8: 8,
+                    prop9: null,
                     prop10: 10,
                 },
                 {
@@ -195,8 +233,8 @@ export default {
                     prop4: 4,
                 }
             ],
-            total: 0,
-            pageSize: 10,
+            total: 110,
+            pageSize: 15,
             currentPage: 0,
             currentData: {},
             abnormalDialogVisible: false,
@@ -281,5 +319,118 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+    .container {
+        padding: 24px 24px 0 24px;
+        border-bottom-left-radius: 2px;
+        border-bottom-right-radius: 2px;
+        background: #fff;
+        box-sizing: border-box;
+        >>>.el-table {
+            .header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 14px;
+                font-family: PingFangSC-Medium;
+                font-size: 14px;
+                color: #333333;
+                .btns {
+                    display: flex;
+                    .el-button {
+                        height: 24px;
+                        line-height: 24px;
+                        background: #FFF;
+                        border: 1px solid #1890FF;
+                        border-radius: 2px;
+                        font-family: PingFangSC-Regular;
+                        font-size: 14px;
+                        color: #1890FF;
+                        padding: 0;
+                        font-weight: 100;
+                        box-sizing: border-box;
+                    }
+                    .download .el-button{
+                        width: 100px;
+                        margin-right: 24px;
+                    }
+                    .upload .el-button {
+                        width: 128px;
+                    }
+                    .download i {
+                        width: 12px;
+                        height: 12px;
+                        display: inline-block;
+                        margin-right: 6px;
+                        background: url('~@/assets/images/finance/icon_download.png') no-repeat top center;
+                    }
+                    .upload i {
+                        width: 12px;
+                        height: 12px;
+                        display: inline-block;
+                        margin-right: 6px;
+                        background: url('~@/assets/images/finance/icon_upload.png') no-repeat top center;
+                    }
+                }
+            }
+            .dot-success {
+                width: 6px;
+                height: 6px;
+                background: #52C41A;
+                margin: 0 8px 0 6px;
+                display: inline-block;
+                border-radius: 50%;
+            }
+            .dot-error {
+                width: 6px;
+                height: 6px;
+                background: #F5222D;
+                margin: 0 8px 0 6px;
+                display: inline-block;
+                border-radius: 50%;
+            }
+            .dot-warning {
+                width: 6px;
+                height: 6px;
+                background: #FAAD14;
+                margin: 0 8px 0 6px;
+                display: inline-block;
+                border-radius: 50%;
+            }
+            .detail {
+                margin-left: 16px;
+            }
+        }
+        .pagination {
+            width: 100%;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 24px;
+            background: #fff;
+            box-sizing: border-box;
+            >>>.el-pagination {
+                .btn-next,
+                .btn-prev,
+                .el-pager li {
+                    background: #FFF;
+                    border: 1px solid #D9D9D9;
+                    border-radius: 2px;
+                }
+                .el-pager li {
+                    font-family: HelveticaNeue;
+                    font-size: 14px;
+                    font-weight: 100;
+                    color: rgba(0,0,0,0.65);
+                }
+                .el-pager li:not(.disabled).active {
+                    background-color: #409EFF;
+                    color: #FFF;
+                }
+                .el-pagination__jump {
+                    margin: 0;
+                }
+            }
+        }
+    }
 </style>

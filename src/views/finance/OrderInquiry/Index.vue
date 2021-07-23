@@ -209,9 +209,9 @@ export default {
                 {label: '远程鉴评', value: 1},
                 {label: '批量鉴评', value: 2},
             ],
-            total: 101,
+            total: 0,
             currentPage: 0,
-            pageSize: 10,
+            pageSize: 15,
             tableData: [
                 {
                     prop: 0,
@@ -444,6 +444,7 @@ export default {
         .table {
             margin-top: 16px;
             padding: 16px 24px 0 24px;
+            border-radius: 2px;
             background: #fff;
             >>>.el-table {
                 thead {
@@ -465,6 +466,10 @@ export default {
                         padding: 0;
                         .el-button--text {
                             color:#1890FF;
+                        }
+                        .el-divider--vertical {
+                            margin: 0 4px;
+                            background: #E9E9E9;
                         }
                     }
                 }

@@ -9,9 +9,9 @@
         </el-col>
         <el-col :span="12" class="right">
           <i></i>
-          <span>{{ name }}1231231231</span>
+          <span>{{ name | capitalize }}</span>
           <el-divider direction="vertical"></el-divider>
-          <span @click="logout">退出</span>
+          <span class="logout" @click="logout">退出</span>
         </el-col>
       </el-row>
     </el-header>
@@ -24,11 +24,18 @@ export default {
   name: 'Index',
   data () {
     return {
-      name: '',
+      name: '18210652597',
     }
   },
   created() {
-    this.getUser();
+    // this.getUser();
+  },
+  filters: {
+    capitalize: function (value) {
+      console.log(value);
+      if (!value) return '';
+      return value.substr(0,3) + "****" + value.substr(7);
+    }
   },
   methods: {
     // 看板页
@@ -98,7 +105,8 @@ export default {
         margin-right: 8px;
         border-radius: 50%;
       }
-      >:last-child {
+      >.logout {
+        color: #999;
         cursor: pointer;
       }
     }

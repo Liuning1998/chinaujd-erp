@@ -128,7 +128,7 @@ export default {
             ],
             total: 0,
             currentPage: 0,
-            pageSize: 10,
+            pageSize: 15,
         }
     },
     created() {

@@ -156,12 +156,12 @@ export default {
                     padding: 10px 24px 0;
                     .el-tabs__item {
                         font-size: 16px;
-                        .is-bottom:nth-child(2) {
-                            padding: 0 0 0 44px;
-                        }
-                        .is-bottom:last-child {
-                            padding: 0 0 0 44px;
-                        }
+                    }
+                    .el-tabs__item:first-child{
+                        padding: 0 44px 0 0;
+                    }
+                    .el-tabs__item:last-child {
+                        padding: 0 0 0 44px;
                     }
                 }
                 .el-tabs__nav-wrap::after {

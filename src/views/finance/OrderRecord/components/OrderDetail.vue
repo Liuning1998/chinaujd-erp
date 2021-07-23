@@ -68,19 +68,7 @@
 export default {
     data() {
         return {
-            tableData: [
-                {
-                    prop1: 1,
-                    prop2: 2,
-                    prop3: 3,
-                    prop4: 4,
-                    prop5: 5,
-                    prop6: 6,
-                    prop7: 7,
-                    prop8: 8,
-                    prop9: 9,
-                }
-            ],
+            tableData: [],
             total: 0,
             pageSize: 15,
             currentPage: 0,

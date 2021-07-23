@@ -51,7 +51,7 @@ export default {
     }
     .container>>>.el-main {
         min-height: calc(100vh - 48px);
-        margin: 16px 16px 0 16px;
+        margin: 0 16px;
         padding: 0;
     }
 </style>

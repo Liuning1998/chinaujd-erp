@@ -2,11 +2,11 @@
     <div class="container">
         <Breadcrumb></Breadcrumb>
         <div class="search">
-            <div class="search-item">
+            <div class="search-item text-align-left">
                 <span>订单编号：</span>
                 <el-input v-model="form.orderNumber"></el-input>
             </div>
-            <div class="search-item">
+            <div class="search-item text-align-center">
                 <span>订单类型：</span>
                 <el-select v-model="form.orderType" placeholder="">
                     <el-option label="全部" :value="0"></el-option>
@@ -18,7 +18,7 @@
                     </el-option>
                 </el-select>
             </div>
-            <div class="search-item">
+            <div class="search-item text-align-end">
                 <span>服务类型：</span>
                 <el-select v-model="form.serviceType" placeholder="">
                     <el-option label="全部" :value="0"></el-option>
@@ -30,7 +30,7 @@
                     </el-option>
                 </el-select>
             </div>
-            <div class="search-item">
+            <div class="search-item text-align-left">
                 <span>订单状态：</span>
                 <el-select v-model="form.orderStatus" placeholder="">
                     <el-option
@@ -41,7 +41,7 @@
                     </el-option>
                 </el-select>
             </div>
-            <div class="search-item">
+            <div class="search-item text-align-center">
                 <span>支付状态：</span>
                 <el-select v-model="form.paymentStatus" placeholder="">
                     <el-option label="全部" :value="0"></el-option>
@@ -53,7 +53,7 @@
                     </el-option>
                 </el-select>
             </div>
-            <div class="search-item">
+            <div class="search-item text-align-end">
                 <span>鉴评方式：</span>
                 <el-select v-model="form.evaluateType" placeholder="">
                     <el-option label="全部" :value="0"></el-option>
@@ -65,7 +65,7 @@
                     </el-option>
                 </el-select>
             </div>
-            <div class="search-item">
+            <div class="search-item text-align-left" style="width: 35%">
                 <span>创建时间：</span>
                 <el-date-picker
                     v-model="form.createTime"
@@ -76,8 +76,8 @@
                     :default-time="['00:00:00', '23:59:59']">
                 </el-date-picker>
             </div>
-            <div class="search-item">
-                <span>支付时间：</span>
+            <div class="search-item text-align-center" style="width: 35%">
+                <span style="margin-left: 21px">支付时间：</span>
                 <el-date-picker
                     v-model="form.paymentTime"
                     type="datetimerange"
@@ -87,17 +87,18 @@
                     :default-time="['00:00:00', '23:59:59']">
                 </el-date-picker>
             </div>
-        </div>
-        <div class="btns">
-            <el-button type="primary" @click="handleSearch">查询</el-button>
-            <el-button type="primary" @click="handleReset">重置</el-button>
-            <el-button type="primary" @click="handleExport">导出</el-button>
+            <div class="search-item text-align-end" style="width: 30%">
+                <el-button class="search-btn" @click="handleSearch">查询</el-button>
+                <el-button class="reset-btn" @click="handleReset">重置</el-button>
+                <el-button class="export-btn" @click="handleExport">导出</el-button>
+            </div>
         </div>
         <div class="table">
             <el-table
                 :data="tableData"
                 style="width: 100%">
                 <el-table-column
+                    align="center"
                     type="index"
                     label="序号">
                 </el-table-column>
@@ -150,7 +151,7 @@
                 @current-change="handleCurrentChange"
                 :current-page="currentPage"
                 :page-size="pageSize"
-                layout="prev, pager, next"
+                layout="prev, pager, next, sizes, jumper"
                 :total="total">
             </el-pagination>
         </div>
@@ -208,7 +209,7 @@ export default {
                 {label: '远程鉴评', value: 1},
                 {label: '批量鉴评', value: 2},
             ],
-            total: 0,
+            total: 101,
             currentPage: 0,
             pageSize: 10,
             tableData: [
@@ -366,5 +367,140 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+    .container {
+        .search {
+            width: 100%;
+            height: 176px;
+            background: #fff;
+            border-radius: 2px;
+            padding: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            box-sizing: border-box;
+            .search-item {
+                width: 33.33%;
+                height: 32px;
+                margin-bottom: 16px;
+                span {
+                    width: 70px;
+                    height: 32px;
+                    line-height: 32px;
+                }
+                >>>.el-input {
+                    width: 240px;
+                    .el-input__inner {
+                        width: 240px;
+                        height: 32px;
+                        line-height: 32px;
+                        border-radius: 2px;
+                    }
+                    .el-select__caret {
+                        line-height: 32px;
+                    }
+                }
+                >>>.el-date-editor--datetimerange {
+                    width: 294px;
+                    height: 32px;
+                    padding: 0 2px;
+                    border-radius: 2px;
+                }
+                >>>.el-button {
+                    width: 65px;
+                    height: 32px;
+                    line-height: 32px;
+                    border-radius: 2px;
+                    padding: 0;
+                    font-family: PingFangSC-Regular;
+                    font-size: 14px;
+                }
+            }
+            .text-align-left {
+                text-align: left;
+            }
+            .text-align-center {
+                span {
+                    margin-left: 40px;
+                }
+            }
+            .text-align-end {
+                text-align: end;
+                .search-btn {
+                    background: #1890FF;
+                    border: 0;
+                    color: #fff;
+                }
+                .reset-btn {
+                    background: #fff;
+                    border: 1px solid #D9D9D9;
+                    color: #666666;
+                }
+                .export-btn {
+                    background: #fff;
+                    border: 1px solid #1890FF;
+                    color: #1890FF;
+                }
+            }
+        }
+        .table {
+            margin-top: 16px;
+            padding: 16px 24px 0 24px;
+            background: #fff;
+            >>>.el-table {
+                thead {
+                    tr>th {
+                        height: 54px;
+                        font-family: PingFangSC-Medium;
+                        font-size: 14px;
+                        color: rgba(0,0,0,0.85);
+                        background: #FAFAFA;
+                        border-radius: 4px 4px 0 0;
+                    }
+                }
+                tbody {
+                    tr>td {
+                        font-family: PingFangSC-Regular;
+                        font-size: 14px;
+                        color: #666;
+                        height: 54px;
+                        padding: 0;
+                        .el-button--text {
+                            color:#1890FF;
+                        }
+                    }
+                }
+            }
+        }
+        .pagination {
+            width: 100%;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 24px;
+            background: #fff;
+            box-sizing: border-box;
+            >>>.el-pagination {
+                .btn-next,
+                .btn-prev,
+                .el-pager li {
+                    background: #FFF;
+                    border: 1px solid #D9D9D9;
+                    border-radius: 2px;
+                }
+                .el-pager li {
+                    font-family: HelveticaNeue;
+                    font-size: 14px;
+                    font-weight: 100;
+                    color: rgba(0,0,0,0.65);
+                }
+                .el-pager li:not(.disabled).active {
+                    background-color: #409EFF;
+                    color: #FFF;
+                }
+                .el-pagination__jump {
+                    margin: 0;
+                }
+            }
+        }
+    }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <el-breadcrumb separator-class="el-icon-arrow-right" class="app-breadcrumb">
+  <el-breadcrumb class="app-breadcrumb">
     <template v-for="item in levelList">
       <el-breadcrumb-item :to="item.path" :key="item.path" v-if="item.meta.title">{{item.meta.title}}</el-breadcrumb-item>
     </template>
@@ -30,25 +30,27 @@
 
 <style>
   .app-breadcrumb {
-    height: 55px;
-    line-height: 55px !important;
+    height: 44px;
+    line-height: 44px !important;
   }
 
   .el-breadcrumb__inner {
-    color: #333333;
+    font-size: 12px;
+    color: #868686;
   }
 
   .el-breadcrumb__item:last-child .el-breadcrumb__inner {
-    color: #017FC5;
+    color: #333;
   }
 
   .el-breadcrumb__item:last-child .el-breadcrumb__inner:hover {
-    color: #017FC5;
+    color: #409eff;
+    cursor: pointer;
   }
 
   .el-breadcrumb__inner.is-link,
   .el-breadcrumb__inner a {
     font-weight: normal;
-    color: #333;
+    color: #868686;
   }
 </style>

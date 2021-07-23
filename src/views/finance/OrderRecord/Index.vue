@@ -231,6 +231,7 @@ export default {
             ],
             multipleSelection: [],
             tableData: [],
+            settleTableData: [],
             total: 0,
             currentPage: 0,
             pageSize: 15,

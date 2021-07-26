@@ -2,11 +2,11 @@
     <div class="container">
         <Breadcrumb></Breadcrumb>
         <div class="search">
-            <div class="search-item">
-                <span>订单编号：</span>
+            <div class="search-item search-item-left">
+                <span>结算订单编号：</span>
                 <el-input v-model="form.orderNumber"></el-input>
             </div>
-            <div class="search-item">
+            <div class="search-item search-item-center">
                 <span>订单类型：</span>
                 <el-select v-model="form.orderType" placeholder="">
                     <el-option label="全部" :value="0"></el-option>
@@ -18,33 +18,35 @@
                     </el-option>
                 </el-select>
             </div>
-            <div class="search-item">
-                <span>服务类型：</span>
-                <el-select v-model="form.serviceType" placeholder="">
+            <div class="search-item search-item-end">
+                <span>审核状态：</span>
+                <el-select v-model="form.examineStatus" placeholder="">
                     <el-option label="全部" :value="0"></el-option>
                     <el-option
-                        v-for="item in serviceType"
+                        v-for="item in examineStatus"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value">
                     </el-option>
                 </el-select>
             </div>
-            <div class="search-item">
+            <div class="search-item search-item-left">
                 <span>申请时间：</span>
                 <el-date-picker
                     v-model="form.applyTime"
                     type="datetimerange"
+                    :picker-options="pickerOptions"
                     range-separator="至"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
                     :default-time="['00:00:00', '23:59:59']">
                 </el-date-picker>
             </div>
-            <div class="search-item">
-                <span>申请时间：</span>
+            <div class="search-item search-item-center">
+                <span>审核时间：</span>
                 <el-date-picker
                     v-model="form.examineTime"
+                    :picker-options="pickerOptions"
                     type="datetimerange"
                     range-separator="至"
                     start-placeholder="开始日期"
@@ -52,13 +54,13 @@
                     :default-time="['00:00:00', '23:59:59']">
                 </el-date-picker>
             </div>
+            <div class="search-btns">
+                <el-button type="primary" @click="handleSearch">查询</el-button>
+                <el-button type="primary" @click="handleReset">重置</el-button>
+                <el-button type="primary" @click="handleExport">导出</el-button>
+            </div>
         </div>
-         <div class="btns">
-            <el-button type="primary" @click="handleSearch">查询</el-button>
-            <el-button type="primary" @click="handleReset">重置</el-button>
-            <el-button type="primary" @click="handleExport">导出</el-button>
-        </div>
-        <div class="order_detail">
+        <div class="order-detail">
             <el-tabs v-model="activeName">
                 <el-tab-pane label="待审核" name="unreview">
                     <unreview></unreview>
@@ -89,25 +91,29 @@ export default {
     },
     data() {
         return {
+            pickerOptions: {
+                disabledDate(time) {
+                    return time.getTime() > Date.now();
+                }
+            },
             form: {
                 orderNumber: '',
                 orderType: 0,
-                serviceType: 0,
+                examineStatus: 0,
                 applyTime: [],
                 examineTime: []
             },
             orderType: [
-                {label: '普通订单', value: 1},
-                {label: '售后订单', value: 2},
-                {label: '结算订单', value: 3},
-                {label: '对账订单', value: 4},
+                {label: '售后订单', value: 1},
+                {label: '结算订单', value: 2},
+                {label: '提现订单', value: 3},
             ],
-            serviceType: [
-                {label: '采集+鉴别', value: 1},
-                {label: '采集+评级', value: 2},
-                {label: '采集+鉴别+封装', value: 3},
-                {label: '采集+评级+封装', value: 4},
-                {label: '核验', value: 5},
+            examineStatus: [
+                {label: '待审核', value: 1},
+                {label: '待结算', value: 2},
+                {label: '已结算', value: 3},
+                {label: '已拒绝', value: 4},
+                {label: '已关闭', value: 5},
             ],
             activeName: 'unreview',
         }
@@ -136,7 +142,7 @@ export default {
             let form = {
                 orderNumber: '',
                 orderType: 0,
-                serviceType: 0,
+                examineStatus: 0,
                 applyTime: [],
                 examineTime: []
             };
@@ -168,5 +174,121 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+    .container {
+        .search {
+            width: 100%;
+            height: 176px;
+            background: #fff;
+            border-radius: 2px;
+            padding: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            box-sizing: border-box;
+            &-item {
+                height: 32px;
+                margin-bottom: 16px;
+                span {
+                    height: 32px;
+                    line-height: 32px;
+                }
+                >>>.el-input {
+                    width: 240px;
+                    .el-input__inner {
+                        width: 240px;
+                        height: 32px;
+                        line-height: 32px;
+                        border-radius: 2px;
+                    }
+                    .el-select__caret {
+                        line-height: 32px;
+                    }
+                    .el-icon-date {
+                        line-height: 32px;
+                    }
+                }
+                >>>.el-date-editor--datetimerange {
+                    width: 294px;
+                    height: 32px;
+                    padding: 0 2px;
+                    border-radius: 2px;
+                }
+                >>>.el-button {
+                    width: 65px;
+                    height: 32px;
+                    line-height: 32px;
+                    border-radius: 2px;
+                    padding: 0;
+                    font-family: PingFangSC-Regular;
+                    font-size: 14px;
+                }
+            }
+            &-item-left {
+                width: 38%;
+                span {
+                    width: 100px;
+                    display: inline-block;
+                    text-align: end;
+                }
+            }
+            &-item-center {
+                width: 34%;
+                span {
+                    width: 70px;
+                    display: inline-block;
+                    text-align: left;
+                }
+            }
+            &-item-end {
+                width: 28%;
+                span {
+                    width: 70px;
+                    display: inline-block;
+                    text-align: left;
+                }
+            }
+            &-btns {
+                width: 100%;
+                text-align: end;
+                >>>.el-button {
+                    height: 32px;
+                    background: #1890FF;
+                    border-radius: 2px;
+                    border: 0;
+                    font-family: PingFangSC-Regular;
+                    font-size: 14px;
+                    font-weight: 100;
+                    color: #FFFFFF;
+                    padding: 5px 12px;
+                }
+            }
+        }
+        .order-detail {
+            margin-top: 16px;
+            background: #fff;
+            border-radius: 2px;
+            >>>.el-tabs {
+                .el-tabs__header {
+                    margin: 0;
+                }
+                .el-tabs__nav-wrap {
+                    padding: 10px 24px 0;
+                    .el-tabs__item {
+                        font-size: 16px;
+                    }
+                    .el-tabs__item:nth-child(2) {
+                        padding: 0 44px 0 0;
+                    }
+                    .el-tabs__item:nth-child(3) {
+                        padding: 0 44px;
+                    }
+                    .el-tabs__item:last-child {
+                        padding: 0 0 0 44px;
+                    }
+                }
+                .el-tabs__nav-wrap::after {
+                    height: 1px;
+                }
+            }
+        }
+    }
 </style>

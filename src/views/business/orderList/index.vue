@@ -1,27 +1,27 @@
 <template>
 	<div class="container">
 		<Breadcrumb></Breadcrumb>
-		<div>
-			<el-form ref="form" :model="form" label-width="90px">
+		<div class="bgfff">
+			<el-form ref="form" :model="form" label-width="100px">
 				<el-row>
 					<el-col :span="8">
-						<el-form-item label="订单编号:">
-							<el-input v-model="form.a" class="w200"></el-input>
+						<el-form-item label="业务订单编号:">
+							<el-input v-model="form.a" class="w240"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="邮票名称:">
-							<el-input v-model="form.a" class="w200"></el-input>
+							<el-input v-model="form.a" class="w240"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="用户手机号:">
-							<el-input v-model="form.a" class="w200"></el-input>
+							<el-input v-model="form.a" class="w240"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="支付状态:">
-							<el-select v-model="form.a" placeholder="请选择" class="w200">
+							<el-select v-model="form.a" placeholder="请选择" class="w240">
 								<el-option label="全部" value=""></el-option>
 								<el-option v-for="(item,index) in payState" :key="index" :label="item.name"
 									:value="item.value"></el-option>
@@ -30,7 +30,7 @@
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="订单状态:">
-							<el-select v-model="form.a" placeholder="请选择" class="w200">
+							<el-select v-model="form.a" placeholder="请选择" class="w240">
 								<el-option label="全部" value=""></el-option>
 								<el-option v-for="(item,index) in orderState" :key="index" :label="item.name"
 									:value="item.value"></el-option>
@@ -38,26 +38,8 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
-						<el-form-item label="服务类型:">
-							<el-select v-model="form.a" placeholder="请选择" class="w200">
-								<el-option label="全部" value=""></el-option>
-								<el-option v-for="(item,index) in serviceType" :key="index" :label="item.name"
-									:value="item.value"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="8">
-						<el-form-item label="物流状态:">
-							<el-select v-model="form.a" placeholder="请选择" class="w200">
-								<el-option label="全部" value=""></el-option>
-								<el-option v-for="(item,index) in logisticsStatus" :key="index" :label="item.name"
-									:value="item.value"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="8">
 						<el-form-item label="退款状态:">
-							<el-select v-model="form.a" placeholder="请选择" class="w200">
+							<el-select v-model="form.a" placeholder="请选择" class="w240">
 								<el-option label="全部" value=""></el-option>
 								<el-option v-for="(item,index) in refundStatus" :key="index" :label="item.name"
 									:value="item.value"></el-option>
@@ -66,15 +48,45 @@
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="鉴评方式:">
-							<el-select v-model="form.a" placeholder="请选择" class="w200">
+							<el-select v-model="form.a" placeholder="请选择" class="w240">
 								<el-option label="全部" value=""></el-option>
 								<el-option v-for="(item,index) in appraisalMode" :key="index" :label="item.name"
 									:value="item.value"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
-					<el-col :span="16">
+					<el-col :span="8">
+						<el-form-item label="服务类型:">
+							<el-select v-model="form.a" placeholder="请选择" class="w240">
+								<el-option label="全部" value=""></el-option>
+								<el-option v-for="(item,index) in serviceType" :key="index" :label="item.name"
+									:value="item.value"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="8">
+						<el-form-item label="服务商名称:">
+							<el-select v-model="form.a" placeholder="请选择" class="w240">
+								<el-option label="全部" value=""></el-option>
+								<el-option v-for="(item,index) in logisticsStatus" :key="index" :label="item.name"
+									:value="item.value"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="12">
 						<el-form-item label="创建时间:">
+							<el-date-picker
+								v-model="form.a"
+								type="datetimerange"
+								range-separator="至"
+								start-placeholder="开始日期"
+								end-placeholder="结束日期"
+								:default-time="['00:00:00', '23:59:59']">
+							</el-date-picker>
+						</el-form-item>
+					</el-col>
+					<el-col :span="12">
+						<el-form-item label="支付时间:">
 							<el-date-picker
 								v-model="form.a"
 								type="datetimerange"
@@ -87,19 +99,20 @@
 					</el-col>
 					<el-col :span="16">
 						<div style="padding-left: 20px;">
+							<el-button type="primary" @click="query">查询</el-button>
+							<el-button>重置</el-button>
 							<el-button type="primary" @click="addOrder">新增业务单</el-button>
-							<el-button @click="query">查询</el-button>
 							<el-button @click="orderExport">导出</el-button>
 						</div>
 					</el-col>
 				</el-row>
 			</el-form>
 		</div>
-		<div class="table_box">
+		<div class="table_box bgfff">
 			<el-table :data="tableData" border style="width: 100%">
-			  <el-table-column prop="a" label="订单号"></el-table-column>
-			  <el-table-column prop="a" label="子订单号"></el-table-column>
-			  <el-table-column prop="a" label="邮票名称"></el-table-column>
+			  <el-table-column prop="a" label="业务订单编号"></el-table-column>
+			  <el-table-column prop="a" label="手机号"></el-table-column>
+			  <el-table-column prop="a" label="服务商名称"></el-table-column>
 				<el-table-column prop="a" label="邮票数量"></el-table-column>
 				<el-table-column label="订单金额">
 					<template slot-scope="scope">
@@ -111,7 +124,6 @@
 				<el-table-column prop="a" label="订单状态"></el-table-column>
 				<el-table-column prop="a" label="支付状态"></el-table-column>
 				<el-table-column prop="a" label="鉴评方式"></el-table-column>
-				<el-table-column prop="a" label="手机号"></el-table-column>
 			  <el-table-column fixed="right" label="操作" width="100" align="center">
 			    <template slot-scope="scope">
 			      <el-button @click="detail(scope.row)" type="text">查看</el-button>
@@ -139,7 +151,7 @@
 				form: {
 					a: ''
 				},
-				tableData:[],
+				tableData:[{a:1}],
 				currentPage:1,
 				pageSize:20,
 				pagebox: {},
@@ -257,14 +269,19 @@
 	}
 </script>
 <style lang="scss" scoped>
-	.w200 {
-		width: 200px;
+	.w240 {
+		width: 240px;
 	}
 	.table_box{
 		padding: 20px;
+		margin-top: 16px;
 	}
 	.page_box{
 	  text-align: center;
 	  margin:20px 0 0;
+	}
+	.bgfff{
+		background: #FFFFFF;
+		padding: 24px;
 	}
 </style>

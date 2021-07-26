@@ -114,21 +114,22 @@
         </div>
         <el-dialog
             title="结算审核"
-            center
+            width="480px"
             :visible.sync="dialogVisible"
             :before-close="dialogBeforeClose">
             <div>
                 <div class="radio">
-                    <el-radio v-model="radio" label="1">备选项</el-radio>
-                    <el-radio v-model="radio" label="2">备选项</el-radio>
+                    <el-radio v-model="radio" :label="1">通过</el-radio>
+                    <el-radio v-model="radio" :label="2">驳回</el-radio>
                 </div>
-                <div class="reject">
-                    <span>驳回原因</span>
+                <div class="reject" v-if="radio === 2">
+                    <span>驳回原因：</span>
                     <el-input type="textarea" v-model="rejectReason"></el-input>
                 </div>
             </div>
             <div slot="footer">
-                <el-button type="primary" @click="handleSubmit">确 定</el-button>
+                <el-button class="cancel" @click="dialogBeforeClose">取 消</el-button>
+                <el-button class="submit" @click="handleSubmit">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -223,6 +224,15 @@ export default {
          * @Function handleSubmit
          */
         handleSubmit() {
+            if (!this.radio) {
+                this.$message.warning('请选择审核意见');
+                return;
+            }
+            if (this.radio === 2 && !this.rejectReason) {
+                this.$message.warning('请输入拒绝原因');
+                return;
+            }
+            this.$message.success('审核完成');
             this.dialogVisible = false;
             this.radio = null;
             this.rejectReason = '';
@@ -261,6 +271,48 @@ export default {
                         margin: 0 4px;
                         background: #E9E9E9;
                     }
+                }
+            }
+        }
+        >>>.el-dialog__wrapper {
+            .el-dialog__header {
+                padding: 16px 24px;
+                .el-dialog__title {
+                    font-family: PingFangSC-Medium;
+                    font-size: 16px;
+                    color: #333333;
+                }
+            }
+            .el-dialog__body {
+                padding: 8px 24px 0;
+                .reject {
+                    margin-top: 24px;
+                    display: flex;
+                    span {
+                        width:100px;
+                    }
+                    .el-textarea__inner {
+                        width: 328px;
+                        height: 80px;
+                    }
+                }
+            }
+            .el-dialog__footer {
+                padding: 24px;
+                .el-button {
+                    width: 65px;
+                    height: 32px;
+                    line-height: 32px;
+                    background: #1890FF;
+                    border-radius: 2px;
+                    color: #fff;
+                    padding: 0;
+                    border: 0;
+                }
+                .cancel {
+                    background: #FFFFFF;
+                    border: 1px solid #D9D9D9;
+                    color: #666;
                 }
             }
         }

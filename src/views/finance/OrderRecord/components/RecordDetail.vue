@@ -114,13 +114,13 @@
                         </span>
                     </div>
                 </div>
-                <div class="detail-order">
+                <div class="detail-order" v-if="abnormalForm.type === 0">
                     <!-- <span v-if="currentData.prop9 && !currentData.prop1">平台订单</span> -->
                     <span>三方订单：</span>
                     <el-input v-model="orderNumber"></el-input>
-                    <el-button type="primary">查询</el-button>
+                    <el-button type="primary" @click="handleSearch(handleSearch)">查询</el-button>
                 </div>
-                <div class="table">
+                <div class="table" v-if="abnormalForm.type === 0">
                     <el-table
                         :data="abnormalTableData"
                         @selection-change="handleSelectionChange">
@@ -145,16 +145,19 @@
                             label="交易类型">
                         </el-table-column>
                         <el-table-column
-                            prop="prop4"
                             width="90"
                             label="交易金额">
+                            <template slot-scope="scope">
+                                <span v-if="!scope.row.modify">{{ scope.row.prop4 }}</span>
+                                <el-input v-else v-model="scope.row.prop4" @blur="handleBlur(scope.row.prop1)"></el-input>
+                            </template>
                         </el-table-column>
                         <el-table-column
                             label="操作">
                             <template slot-scope="scope">
-                                <el-button type="text" @click="handleModify(scope.row)">修改</el-button>
+                                <el-button type="text" @click="handleModify(scope.row.prop1)">修改</el-button>
                                 <el-divider direction="vertical"></el-divider>
-                                <el-button type="text" @click="handleDelete(scope.row)">删除</el-button>
+                                <el-button type="text" @click="handleDelete(scope.row.prop1)">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -166,7 +169,7 @@
             </div>
             <div slot="footer">
                 <el-button class="cancel" @click="dialogBeforeClose">取 消</el-button>
-                <el-button class="submit" @click="handleSubmit">确 定</el-button>
+                <el-button class="submit" :disabled="!abnormalForm.order.length" @click="handleSubmit">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -194,14 +197,7 @@ export default {
                     prop10: 10,
                 }
             ],
-            abnormalTableData: [
-                {
-                    prop1: '443234444444345',
-                    prop2: '2020.08.21 12:00:00',
-                    prop3: '付款',
-                    prop4: 40000,
-                }
-            ],
+            abnormalTableData: [],
             total: 110,
             pageSize: 15,
             currentPage: 0,
@@ -262,6 +258,7 @@ export default {
          * @Function handleSubmit
          */
         handleSubmit() {
+            this.$message.success('已确认关联，系统开始再次对账');
             this.abnormalDialogVisible = false;
             this.abnormalForm.order = [];
         },
@@ -274,20 +271,61 @@ export default {
             this.abnormalForm.type = value;
         },
         /**
+         * 搜索异常数据
+         * @Function handleSearch
+         * @parans {String} keyword 订单号
+         */
+        handleSearch(keyword) {
+            let data = [
+                {
+                    prop1: '443234444444345',
+                    prop2: '2020.08.21 12:00:00',
+                    prop3: '付款',
+                    prop4: 40000,
+                },
+                {
+                    prop1: '443234444444346',
+                    prop2: '2020.08.21 12:00:00',
+                    prop3: '付款',
+                    prop4: 10000,
+                }
+            ];
+            data.forEach(item => {
+                item.modify = false;
+            });
+            this.abnormalTableData = data;
+        },
+        /**
          * 选择异常的订单号
          * @Function handleSelectionChange
          * @params {Array} val
          */
         handleSelectionChange(val) {
-            console.log(val);
             this.abnormalForm.order = val.map(item => item.prop1);
+        },
+        /**
+         * 输入框失去焦点修改金额
+         * @function handleBlur
+         */
+        handleBlur(data) {
+            this.abnormalTableData.forEach(item => {
+                if (item.prop1 === data) {
+                    item.modify = false;
+                }
+            });
         },
         /**
          * 修改异常订单
          * @Function handleModify
          * @params {Object} data
          */
-        handleModify(data) {},
+        handleModify(data) {
+            this.abnormalTableData.forEach(item => {
+                if (item.prop1 === data) {
+                    item.modify = true;
+                }
+            });
+        },
         /**
          * 删除异常订单
          * @Function handleDelete
@@ -441,6 +479,7 @@ export default {
                                 display: inline-block;
                                 text-align: center;
                                 margin-right: 24px;
+                                cursor: pointer;
                             }
                         }
                         &-select {
@@ -508,6 +547,11 @@ export default {
                                 .el-divider--vertical {
                                     margin: 0 4px;
                                     background: #E9E9E9;
+                                }
+                                .el-input__inner {
+                                    height: 32px;
+                                    line-height: 32px;
+                                    border-radius: 2px;
                                 }
                             }
                         }

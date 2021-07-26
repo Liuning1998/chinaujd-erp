@@ -8,7 +8,7 @@
             </div>
             <div class="search-item text-align-center">
                 <span>订单类型：</span>
-                <el-select v-model="form.orderType" placeholder="">
+                <el-select v-model="form.orderType" @change="handleChangeOrderType">
                     <el-option label="全部" :value="0"></el-option>
                     <el-option
                         v-for="item in orderType"
@@ -20,7 +20,7 @@
             </div>
             <div class="search-item text-align-end">
                 <span>服务类型：</span>
-                <el-select v-model="form.serviceType" placeholder="">
+                <el-select v-model="form.serviceType">
                     <el-option label="全部" :value="0"></el-option>
                     <el-option
                         v-for="item in serviceType"
@@ -32,7 +32,8 @@
             </div>
             <div class="search-item text-align-left">
                 <span>订单状态：</span>
-                <el-select v-model="form.orderStatus" placeholder="">
+                <el-select v-model="form.orderStatus">
+                    <el-option label="全部" :value="0"></el-option>
                     <el-option
                         v-for="item in orderStatus"
                         :key="item.value"
@@ -42,7 +43,7 @@
                 </el-select>
             </div>
             <div class="search-item text-align-center">
-                <span>支付状态：</span>
+                <span>退款状态：</span>
                 <el-select v-model="form.paymentStatus" placeholder="">
                     <el-option label="全部" :value="0"></el-option>
                     <el-option
@@ -104,42 +105,59 @@
                 </el-table-column>
                 <el-table-column
                     prop="prop"
+                    width="150"
                     label="订单号">
                 </el-table-column>
                 <el-table-column
                     prop="prop1"
+                    width="120"
                     label="用户手机号">
                 </el-table-column>
                 <el-table-column
                     prop="prop2"
+                    width="130"
                     label="服务类型">
                 </el-table-column>
                 <el-table-column
                     prop="prop3"
+                    width="100"
                     label="鉴评方式">
                 </el-table-column>
                 <el-table-column
                     prop="prop4"
+                    width="100"
                     label="订单类型">
                 </el-table-column>
                 <el-table-column
-                    prop="prop5"
-                    label="订单状态">
+                    width="100"
+                    label="订单金额">
+                    <template slot-scope="scope">
+                        ¥{{ scope.row.prop5 }}
+                    </template>
                 </el-table-column>
                 <el-table-column
                     prop="prop6"
-                    label="支付状态">
+                    width="100"
+                    label="订单状态">
                 </el-table-column>
                 <el-table-column
                     prop="prop7"
+                    width="100"
+                    label="支付状态">
+                </el-table-column>
+                <el-table-column
+                    prop="prop8"
+                    width="95"
                     label="创建时间">
                 </el-table-column>
                 <el-table-column
+                    width="60"
                     label="操作">
                     <template slot-scope="scope">
                         <el-button type="text" @click="handleScan(scope.row)">查看</el-button>
-                        <el-divider direction="vertical"></el-divider>
-                        <el-button type="text" @click="handleRefund(scope.row)">退款</el-button>
+                        <!-- 退款第一期不做 -->
+                        <!-- <el-divider direction="vertical"></el-divider>
+                        <el-button type="text" @click="handleRefund(scope.row)">退款</el-button> -->
                     </template>
                 </el-table-column>
             </el-table>
@@ -172,16 +190,15 @@ export default {
                 orderType: 0,
                 serviceType: 0,
                 orderStatus: 0,
-                paymentStatus: 0,
+                paymentStatus: 0, // TODO: 支付状态还是退款状态需确定
                 evaluateType: 0,
                 createTime: [],
                 paymentTime: []
             },
             orderType: [
-                {label: '普通订单', value: 1},
-                {label: '售后订单', value: 2},
-                {label: '结算订单', value: 3},
-                {label: '对账订单', value: 4},
+                {label: '售后订单', value: 1},
+                {label: '结算订单', value: 2},
+                {label: '提现订单', value: 3},
             ],
             serviceType: [
                 {label: '采集+鉴别', value: 1},
@@ -190,29 +207,32 @@ export default {
                 {label: '采集+评级+封装', value: 4},
                 {label: '核验', value: 5},
             ],
-            orderStatus: [
-                {label: '已提交', value: 0},
-                {label: '待审核', value: 1},
-                {label: '待鉴评', value: 2},
-                {label: '已驳回', value: 3},
-                {label: '封装中', value: 4},
-                {label: '已关闭', value: 5},
-                {label: '已完成', value: 6},
-                {label: '待核验', value: 7},
-                {label: '已核验', value: 8},
-            ],
+            orderStatus: [],
             paymentStatus: [
-                {label: '未支付', value: 1},
+                {label: '待支付', value: 1},
                 {label: '已支付', value: 2},
             ],
             evaluateType: [
                 {label: '远程鉴评', value: 1},
                 {label: '批量鉴评', value: 2},
+                {label: '核验', value: 3},
             ],
             total: 0,
             currentPage: 0,
             pageSize: 15,
-            tableData: [],
+            tableData: [
+                {
+                    prop: '443234444444345',
+                    prop1: 12345678901,
+                    prop2: '采集+鉴别+封装',
+                    prop3: '批量鉴评',
+                    prop4: '普通订单',
+                    prop5: '80.00',
+                    prop6: '待支付',
+                    prop7: '未支付',
+                    prop8: '2020.08.21 12:00:00'
+                }
+            ],
         }
     },
     created() {
@@ -226,6 +246,44 @@ export default {
          */
         getData() {
 
+        },
+        /**
+         * 更改订单类型
+         * @Function handleChangeOrderType
+         */
+        handleChangeOrderType(val) {
+            if (val === 0) {
+                this.orderStatus = [];
+            }
+            if (val === 1) {
+                this.form.orderStatus = 0;
+                this.orderStatus = [
+                    {label: '售后中', value: 11},
+                    {label: '已关闭', value: 7},
+                ];
+            }
+            if (val === 2) {
+                this.form.orderStatus = 0;
+                this.orderStatus = [
+                    {label: '对账中', value: 1},
+                    {label: '待结算', value: 2},
+                    {label: '待审核', value: 3},
+                    {label: '待付款', value: 4},
+                    {label: '已结算', value: 5},
+                    {label: '已拒绝', value: 6},
+                    {label: '已关闭', value: 7},
+                ];
+            }
+            if (val === 3) {
+                this.form.orderStatus = 0;
+                this.orderStatus = [
+                    {label: '已提交', value: 8},
+                    {label: '处理中', value: 9},
+                    {label: '已到账', value: 10},
+                    {label: '已拒绝', value: 6},
+                    {label: '已关闭', value: 7}
+                ];
+            }
         },
         /**
          * 查询
@@ -249,6 +307,7 @@ export default {
                 createTime: [],
                 paymentTime: []
             };
+            this.orderStatus = [];
             Object.assign(this.form, form);
         },
         /**

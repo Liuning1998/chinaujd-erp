@@ -142,7 +142,7 @@
                         <el-table-column
                             prop="prop3"
                             width="90"
-                            label="交易类型">
+                            label="支付类型">
                         </el-table-column>
                         <el-table-column
                             width="90"
@@ -169,7 +169,11 @@
             </div>
             <div slot="footer">
                 <el-button class="cancel" @click="dialogBeforeClose">取 消</el-button>
-                <el-button class="submit" :disabled="!abnormalForm.order.length" @click="handleSubmit">确 定</el-button>
+                <el-button class="submit"
+                    :disabled="abnormalForm.type === 0 && !abnormalForm.order.length"
+                    @click="handleSubmit">
+                    确 定
+                </el-button>
             </div>
         </el-dialog>
     </div>

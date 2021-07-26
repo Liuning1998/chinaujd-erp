@@ -31,6 +31,7 @@
                 <el-date-picker
                     v-model="form.time"
                     type="date"
+                    :picker-options="pickerOptions"
                     placeholder="选择日期">
                 </el-date-picker>
             </div>
@@ -52,7 +53,7 @@
                 <el-table-column
                     prop="prop2"
                     width="100"
-                    label="账单时间">
+                    label="账单时间段">
                 </el-table-column>
                 <el-table-column
                     prop="prop3"
@@ -132,6 +133,7 @@
                 <el-date-picker
                     v-model="addOrderForm.time"
                     type="datetimerange"
+                    :picker-options="pickerOptions"
                     range-separator="至"
                     start-placeholder="开始日期"
                     end-placeholder="结束日期"
@@ -197,7 +199,7 @@
             </div>
             <div slot="footer">
                 <el-button class="cancel" @click="settleDialogBeforeClose">取 消</el-button>
-                <el-button @click="handleSettleSubmit">确 定</el-button>
+                <el-button :disabled="!multipleSelection.length" @click="handleSettleSubmit">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -212,10 +214,15 @@ export default {
     },
     data() {
         return {
+            pickerOptions: {
+                disabledDate(time) {
+                    return time.getTime() > Date.now();
+                }
+            },
             form: {
                 orderStatus: 0,
                 recordStatus: 0,
-                time: [],
+                time: '',
             },
             addOrderForm: {
                 orderCycle: null,
@@ -238,10 +245,10 @@ export default {
             addOrderDialogVisible: false,
             settleDialogVisible: false,
             orderCycle: [
+                {label: '全部', value: 0},
                 {label: '周', value: 1},
                 {label: '月', value: 2},
                 {label: '年', value: 3},
-                {label: '自定义', value: 4},
             ],
         }
     },
@@ -284,6 +291,7 @@ export default {
          * @parsms {Object} data 订单详情
          */
         handleScan(data) {
+            // TODO: 更换订单详情页
             this.$router.push('/finance/record/detail');
         },
         /**
@@ -292,21 +300,48 @@ export default {
          * @params {Object} data 订单详情
          */
         handleRefund(data) {
-
+            this.$router.push('/finance/record/detail');
         },
         /**
          * 删除订单
          * @Function handleDelete
          * @params {Object} data 订单详情
          */
-        handleDelete(data) {},
+        handleDelete(data) {
+            this.$confirm('您确认要删除该对账单?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            }).then(() => {
+                if (true) {
+                    // TODO: 对账中
+                    this.$message.success('已删除');
+                }
+                if (true) {
+                    // TODO: 待结算
+                    this.$message.warning('该对账单已结算');
+                }
+            }).catch(() => {});
+        },
         /**
          * 订单结算
          * @Function handleSettle
          * @params {Object} data 订单详情
          */
         handleSettle(data) {
-            this.settleDialogVisible = true;
+            this.$confirm('您确认要结算该对账单?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            }).then(() => {
+                if (true) {
+                    // TODO: !待结算
+                    this.$message.success('订单未对账，不可结算');
+                    return;
+                }
+                if (true) {
+                    // TODO: 待结算
+                    this.$message.warning('已提交');
+                }
+            }).catch(() => {});
         },
         /**
          * 更改每页条数
@@ -349,6 +384,7 @@ export default {
                 time: [],
             };
             Object.assign(this.addOrderForm, obj);
+            this.$message.success('已生成对账单');
         },
         /**
          * 关闭订单结算申请弹窗
@@ -367,6 +403,8 @@ export default {
             this.settleDialogVisible = false;
             // 清空选择
             this.$refs.materialTable.clearSelection();
+            this.$message.success('已申请');
+            this.getData();
         },
         /**
          * 选择申请结算的订单

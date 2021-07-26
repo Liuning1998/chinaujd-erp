@@ -98,58 +98,75 @@
         </div>
         <el-dialog
             title="异常处理"
-            center
+            width="640px"
+            class="abnormal-dialog"
             :visible.sync="abnormalDialogVisible"
             :before-close="dialogBeforeClose">
             <div>
-                <div class="detail_type">
-                    <span>处理方式</span>
-                    <div class="btns" v-for="(item, index) in detailType" :key="index">
-                        <span @click="handleSelectDetailType(item.value)">{{ item.label }}</span>
+                <div class="detail-type">
+                    <span>处理方式：</span>
+                    <div class="btns">
+                        <span
+                            :class="abnormalForm.type === item.value ? 'detail-type-select' : null"
+                            v-for="(item, index) in detailType" :key="index"
+                            @click="handleSelectDetailType(item.value)">
+                            {{ item.label }}
+                        </span>
                     </div>
                 </div>
-                <div class="order" v-if="abnormalForm.type === 0">
-                    <span v-if="currentData.prop9 && !currentData.prop1">平台订单</span>
-                    <span v-if="!currentData.prop9 && currentData.prop1">三方订单</span>
+                <div class="detail-order">
+                    <!-- <span v-if="currentData.prop9 && !currentData.prop1">平台订单</span> -->
+                    <span>三方订单：</span>
                     <el-input v-model="orderNumber"></el-input>
                     <el-button type="primary">查询</el-button>
                 </div>
-                <div class="table" v-if="abnormalForm.type === 0">
+                <div class="table">
                     <el-table
                         :data="abnormalTableData"
                         @selection-change="handleSelectionChange">
                         <el-table-column
+                            width="60"
+                            align="center"
                             type="selection">
                         </el-table-column>
                         <el-table-column
-                            align="center"
                             prop="prop1"
+                            width="150"
                             label="订单号">
                         </el-table-column>
                         <el-table-column
-                            align="center"
                             prop="prop2"
+                            width="95"
                             label="交易时间">
                         </el-table-column>
                         <el-table-column
-                            align="center"
                             prop="prop3"
+                            width="90"
                             label="交易类型">
                         </el-table-column>
                         <el-table-column
-                            align="center"
                             prop="prop4"
+                            width="90"
                             label="交易金额">
+                        </el-table-column>
+                        <el-table-column
+                            label="操作">
+                            <template slot-scope="scope">
+                                <el-button type="text" @click="handleModify(scope.row)">修改</el-button>
+                                <el-divider direction="vertical"></el-divider>
+                                <el-button type="text" @click="handleDelete(scope.row)">删除</el-button>
+                            </template>
                         </el-table-column>
                     </el-table>
                 </div>
                 <div class="remarks">
-                    <span>备注</span>
+                    <span>备注：</span>
                     <el-input type="textarea" v-model="abnormalForm.remarks" placeholder=""></el-input>
                 </div>
             </div>
             <div slot="footer">
-                <el-button type="primary" @click="handleSubmit">确 定</el-button>
+                <el-button class="cancel" @click="dialogBeforeClose">取 消</el-button>
+                <el-button class="submit" @click="handleSubmit">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -163,13 +180,26 @@ export default {
                 {label: '异常处理', value: 0},
                 {label: '挂起异常', value: 1},
             ],
-            tableData: [],
-            abnormalTableData: [
+            tableData: [
                 {
                     prop1: 1,
                     prop2: 2,
                     prop3: 3,
                     prop4: 4,
+                    prop5: 2,
+                    prop6: 6,
+                    prop7: 7,
+                    prop8: 8,
+                    prop9: 9,
+                    prop10: 10,
+                }
+            ],
+            abnormalTableData: [
+                {
+                    prop1: '443234444444345',
+                    prop2: '2020.08.21 12:00:00',
+                    prop3: '付款',
+                    prop4: 40000,
                 }
             ],
             total: 110,
@@ -251,8 +281,19 @@ export default {
         handleSelectionChange(val) {
             console.log(val);
             this.abnormalForm.order = val.map(item => item.prop1);
-        }
-
+        },
+        /**
+         * 修改异常订单
+         * @Function handleModify
+         * @params {Object} data
+         */
+        handleModify(data) {},
+        /**
+         * 删除异常订单
+         * @Function handleDelete
+         * @params {Object} data
+         */
+        handleDelete(data) {},
     }
 }
 </script>
@@ -368,6 +409,156 @@ export default {
                 }
                 .el-pagination__jump {
                     margin: 0;
+                }
+            }
+        }
+        .abnormal-dialog {
+            >>>.el-dialog {
+                .el-dialog__header {
+                    padding: 16px 24px;
+                    font-family: PingFangSC-Medium;
+                    font-size: 16px;
+                    color: #333333;
+                }
+                .el-dialog__body {
+                    padding: 8px 24px 0;
+                    .detail-type {
+                        display: flex;
+                        span {
+                            width: 70px;
+                            height: 22px;
+                            line-height: 22px;
+                            font-family: PingFangSC-Regular;
+                            font-size: 14px;
+                        }
+                        .btns {
+                            span {
+                                width: 88px;
+                                height: 22px;
+                                background: #F5F5F5;
+                                border: 1px solid #D9D9D9;
+                                border-radius: 2px;
+                                display: inline-block;
+                                text-align: center;
+                                margin-right: 24px;
+                            }
+                        }
+                        &-select {
+                            background: #FFFFFF!important;
+                            border: 1px solid #1890FF!important;
+                            color: #1890FF;
+                        }
+                    }
+                    .detail-order {
+                        margin-top: 24px;
+                        display: flex;
+                        align-items: center;
+                        span {
+                            width: 70px;
+                            height: 22px;
+                            line-height: 22px;
+                            font-family: PingFangSC-Regular;
+                            font-size: 14px;
+                        }
+                        .el-input {
+                            width: 328px;
+                            padding: 0;
+                            .el-input__inner {
+                                height: 32px;
+                                line-height: 32px;
+                                border-radius: 2px;
+                            }
+                        }
+                        .el-button {
+                            width: 65px;
+                            height: 32px;
+                            line-height: 32px;
+                            padding: 0;
+                            background: #1890FF;
+                            border-radius: 2px;
+                            font-size: 14px;
+                            color: #FFFFFF;
+                            margin-left: 24px;
+                        }
+                    }
+                    .table {
+                        margin-top: 24px;
+                        border-radius: 2px;
+                        background: #fff;
+                        thead {
+                            tr>th {
+                                height: 54px;
+                                font-family: PingFangSC-Medium;
+                                font-size: 14px;
+                                color: #333;
+                                background: #FAFAFA;
+                                border-radius: 4px 4px 0 0;
+                            }
+                        }
+                        tbody {
+                            tr>td {
+                                font-family: PingFangSC-Regular;
+                                font-size: 14px;
+                                color: #666;
+                                height: 54px;
+                                padding: 0;
+                                .el-button--text {
+                                    color:#1890FF;
+                                }
+                                .el-divider--vertical {
+                                    margin: 0 4px;
+                                    background: #E9E9E9;
+                                }
+                            }
+                        }
+                    }
+                    .remarks {
+                        margin-top: 24px;
+                        display: flex;
+                        span {
+                            width: 70px;
+                            height: 22px;
+                            line-height: 22px;
+                            font-family: PingFangSC-Regular;
+                            font-size: 14px;
+                            text-align: right;
+                        }
+                        .el-textarea__inner {
+                            width: 328px;
+                            height: 80px;
+                        }
+                    }
+                }
+                .el-dialog__footer {
+                    padding: 24px;
+                    font-size: 0;
+                    >div {
+                        display: flex;
+                        justify-content: flex-end;
+                    }
+                    .cancel {
+                        width: 65px;
+                        height:32px;
+                        line-height: 32px;
+                        border-radius: 2px;
+                        padding: 0;
+                        background: #fff;
+                        border: 1px solid #D9D9D9;
+                        color: #666;
+                        font-size: 14px;
+                        margin-right: 8px;
+                    }
+                    .submit {
+                        width: 65px;
+                        height:32px;
+                        line-height: 32px;
+                        border-radius: 2px;
+                        padding: 0;
+                        background: #1890FF;
+                        border: 0;
+                        color: #fff;
+                        font-size: 14px;
+                    }
                 }
             }
         }

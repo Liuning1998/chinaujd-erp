@@ -4,13 +4,15 @@
             :data="tableData">
             <el-table-column
                 align="center"
-                label="结算订单统计">
+                label="订单结算统计">
                 <el-table-column
                     prop="prop1"
-                    label="订单编号">
+                    width="100"
+                    label="结算订单编号">
                 </el-table-column>
                 <el-table-column
                     prop="prop2"
+                    width="100"
                     label="结算时间段">
                 </el-table-column>
                 <el-table-column
@@ -85,9 +87,11 @@
                 </el-table-column>
                 <el-table-column
                     prop="prop14"
+                    width="100"
                     label="申请时间">
                 </el-table-column>
                 <el-table-column
+                    width="150"
                     label="操作">
                     <template slot-scope="scope">
                         <el-button type="text" @click="handleDownload(scope.row)">下载</el-button>
@@ -106,7 +110,7 @@
                 @current-change="handleCurrentChange"
                 :current-page="currentPage"
                 :page-size="pageSize"
-                layout="prev, pager, next"
+                layout="prev, pager, next, sizes, jumper"
                 :total="total">
             </el-pagination>
         </div>
@@ -119,20 +123,20 @@ export default {
         return {
             tableData: [
                 {
-                    prop1: 1,
-                    prop2: 2,
-                    prop3: 3,
-                    prop4: 4,
-                    prop5: 5,
-                    prop6: 6,
-                    prop7: 7,
-                    prop8: 8,
-                    prop9: 9,
-                    prop10: 10,
-                    prop11: 11,
-                    prop12: 12,
-                    prop13: 13,
-                    prop14: 14,
+                    prop1: 'JS2021070916451234',
+                    prop2: '2021.06.01~2021.06.30',
+                    prop3: 132,
+                    prop4: 400000,
+                    prop5: 511,
+                    prop6: 60000,
+                    prop7: 70000,
+                    prop8: 8000,
+                    prop9: 9000,
+                    prop10: 10000,
+                    prop11: 11000,
+                    prop12: '待审核',
+                    prop13: '张三',
+                    prop14: '2021.06.01',
                 }
             ],
             total: 0,
@@ -196,5 +200,69 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+    .container {
+        >>>.el-table {
+            padding: 24px 24px 0 24px;
+            border-radius: 2px;
+            background: #fff;
+            thead {
+                tr>th {
+                    height: 54px;
+                    font-family: PingFangSC-Medium;
+                    font-size: 14px;
+                    color: rgba(0,0,0,0.85);
+                    background: #FAFAFA;
+                    border-radius: 4px 4px 0 0;
+                }
+            }
+            tbody {
+                tr>td {
+                    font-family: PingFangSC-Regular;
+                    font-size: 14px;
+                    color: #666;
+                    height: 54px;
+                    padding: 0;
+                    .el-button--text {
+                        color:#1890FF;
+                    }
+                    .el-divider--vertical {
+                        margin: 0 4px;
+                        background: #E9E9E9;
+                    }
+                }
+            }
+        }
+        .pagination {
+            width: 100%;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 24px;
+            background: #fff;
+            box-sizing: border-box;
+            >>>.el-pagination {
+                .btn-next,
+                .btn-prev,
+                .el-pager li {
+                    background: #FFF;
+                    border: 1px solid #D9D9D9;
+                    border-radius: 2px;
+                }
+                .el-pager li {
+                    font-family: HelveticaNeue;
+                    font-size: 14px;
+                    font-weight: 100;
+                    color: rgba(0,0,0,0.65);
+                }
+                .el-pager li:not(.disabled).active {
+                    background-color: #409EFF;
+                    color: #FFF;
+                }
+                .el-pagination__jump {
+                    margin: 0;
+                }
+            }
+        }
+    }
 </style>

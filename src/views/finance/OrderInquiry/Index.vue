@@ -385,7 +385,7 @@ export default {
             display: flex;
             flex-wrap: wrap;
             box-sizing: border-box;
-            .search-item {
+            &-item {
                 width: 33.33%;
                 height: 32px;
                 margin-bottom: 16px;

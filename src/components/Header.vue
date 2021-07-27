@@ -32,7 +32,6 @@ export default {
   },
   filters: {
     capitalize: function (value) {
-      console.log(value);
       if (!value) return '';
       return value.substr(0,3) + "****" + value.substr(7);
     }

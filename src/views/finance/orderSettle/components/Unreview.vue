@@ -116,19 +116,19 @@
             title="结算审核"
             width="480px"
             :visible.sync="dialogVisible"
-            :before-close="dialogBeforeClose">
+            :before-close="handleClose">
             <div>
                 <div class="radio">
-                    <el-radio v-model="radio" :label="1">通过</el-radio>
-                    <el-radio v-model="radio" :label="2">驳回</el-radio>
+                    <el-radio v-model="reviewForm.radio" :label="1">通过</el-radio>
+                    <el-radio v-model="reviewForm.radio" :label="2">驳回</el-radio>
                 </div>
-                <div class="reject" v-if="radio === 2">
+                <div class="reject" v-if="reviewForm.radio === 2">
                     <span>驳回原因：</span>
-                    <el-input type="textarea" v-model="rejectReason"></el-input>
+                    <el-input type="textarea" v-model="reviewForm.rejectReason"></el-input>
                 </div>
             </div>
             <div slot="footer">
-                <el-button class="cancel" @click="dialogBeforeClose">取 消</el-button>
+                <el-button class="cancel" @click="handleClose">取 消</el-button>
                 <el-button class="submit" @click="handleSubmit">确 定</el-button>
             </div>
         </el-dialog>
@@ -161,8 +161,10 @@ export default {
             currentPage: 0,
             pageSize: 15,
             dialogVisible: false,
-            radio: null,
-            rejectReason: '',
+            reviewForm: {
+                radio: null,
+                rejectReason: ''
+            },
         }
     },
     created() {
@@ -212,31 +214,37 @@ export default {
         },
         /**
          * 关闭结算审核弹窗
-         * @Function dialogBeforeClose
+         * @Function handleClose
          */
-        dialogBeforeClose() {
+        handleClose() {
             this.dialogVisible = false;
-            this.radio = null;
-            this.rejectReason = '';
+            let obj = {
+                radio: null,
+                rejectReason: ''
+            };
+            Object.assign(this.reviewForm, obj);
         },
         /**
          * 审核结算
          * @Function handleSubmit
          */
         handleSubmit() {
-            if (!this.radio) {
+            if (!this.reviewForm.radio) {
                 this.$message.warning('请选择审核意见');
                 return;
             }
-            if (this.radio === 2 && !this.rejectReason) {
+            if (this.reviewForm.radio === 2 && !this.reviewForm.rejectReason) {
                 this.$message.warning('请输入拒绝原因');
                 return;
             }
             this.$message.success('审核完成');
             this.dialogVisible = false;
-            this.radio = null;
-            this.rejectReason = '';
-            // TODO: 待结算 列表中的操作
+            let obj = {
+                radio: null,
+                rejectReason: ''
+            };
+            Object.assign(this.reviewForm, obj);
+            this.getData();
         },
     }
 }

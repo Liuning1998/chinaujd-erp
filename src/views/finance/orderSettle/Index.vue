@@ -157,8 +157,8 @@ export default {
             const blob = new Blob([res], {
                 type: 'application/vnd.ms-excel;charset=utf-8'
             });
-            let curDate = `${new Date().getFullYear()}年${(new Date().getMonth() + 1)}月${new Date().getDate()}日`
-            const file_name = `订单明细${curDate}.xls`;
+            let curDate = `${new Date().getFullYear()}年${(new Date().getMonth() + 1)}月${new Date().getDate()}日`;
+            const file_name = `结算订单${curDate}.xls`;
             if (window.navigator && window.navigator.msSaveOrOpenBlob) {
                 window.navigator.msSaveOrOpenBlob(blob, file_name);
             } else {

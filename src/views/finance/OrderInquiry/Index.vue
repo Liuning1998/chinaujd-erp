@@ -66,7 +66,7 @@
                     </el-option>
                 </el-select>
             </div>
-            <div class="search-item text-align-left" style="width: 35%">
+            <div class="search-item" style="width: 38%;">
                 <span>创建时间：</span>
                 <el-date-picker
                     v-model="form.createTime"
@@ -77,8 +77,8 @@
                     :default-time="['00:00:00', '23:59:59']">
                 </el-date-picker>
             </div>
-            <div class="search-item text-align-center" style="width: 35%">
-                <span style="margin-left: 21px">支付时间：</span>
+            <div class="search-item" style="width:38%; text-align: center;">
+                <span>支付时间：</span>
                 <el-date-picker
                     v-model="form.paymentTime"
                     type="datetimerange"
@@ -88,7 +88,7 @@
                     :default-time="['00:00:00', '23:59:59']">
                 </el-date-picker>
             </div>
-            <div class="search-item text-align-end" style="width: 30%">
+            <div class="search-item" style="width: 24%; text-align: end;">
                 <el-button class="search-btn" @click="handleSearch">查询</el-button>
                 <el-button class="reset-btn" @click="handleReset">重置</el-button>
                 <el-button class="export-btn" @click="handleExport">导出</el-button>
@@ -386,7 +386,7 @@ export default {
             flex-wrap: wrap;
             box-sizing: border-box;
             &-item {
-                width: 33.33%;
+                width: 33.333%;
                 height: 32px;
                 margin-bottom: 16px;
                 span {
@@ -407,7 +407,7 @@ export default {
                     }
                 }
                 >>>.el-date-editor--datetimerange {
-                    width: 294px;
+                    width: 340px;
                     height: 32px;
                     padding: 0 2px;
                     border-radius: 2px;
@@ -426,9 +426,6 @@ export default {
                 text-align: left;
             }
             .text-align-center {
-                span {
-                    margin-left: 40px;
-                }
             }
             .text-align-end {
                 text-align: end;

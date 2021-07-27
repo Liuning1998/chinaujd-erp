@@ -14,7 +14,8 @@ if (process.env.NODE_ENV == 'development') { //开发环境
   baseURL = 'http://msg5gtest.zuul.srpqa.top';
 }
 
-
+export function login() {};
+export function getImageCode() {};
 /**
  * 财务中心 Start
  * */

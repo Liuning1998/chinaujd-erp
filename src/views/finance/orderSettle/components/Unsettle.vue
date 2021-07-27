@@ -106,20 +106,34 @@
         <el-dialog
             title="结算支付"
             width="480px"
-            :visible.sync="dialogVisible"
-            :before-close="dialogBeforeClose">
-            <div>
-                <div class="radio">
-                    <el-radio v-model="radio" :label="1">通过</el-radio>
-                    <el-radio v-model="radio" :label="2">驳回</el-radio>
+            :visible.sync="settleDialogVisible"
+            :before-close="handleClose">
+            <div class="settle-item">
+                <span>结算方式：</span>
+                <div class="settle-btns">
+                    <span
+                        v-for="(item, index) in settleType" :key="index"
+                        :class="settleForm.settle_type === item.value ? 'select-btns' : null"
+                        @click="handleSelectSettleType(index)">
+                        {{ item.label }}
+                    </span>
                 </div>
-                <div class="reject" v-if="radio === 2">
-                    <span>驳回原因：</span>
-                    <el-input type="textarea" v-model="rejectReason"></el-input>
+            </div>
+            <div class="settle-item">
+                <span>支付凭证：</span>
+                <div class="upload">
+                    <el-upload
+                        action="#"
+                        multiple
+                        accept=".jpg,.png,.gif"
+                        list-type="picture-card"
+                        :file-list="settleForm.fileList">
+                        <i class="el-icon-plus"></i>
+                    </el-upload>
                 </div>
             </div>
             <div slot="footer">
-                <el-button class="cancel" @click="dialogBeforeClose">取 消</el-button>
+                <el-button class="cancel" @click="handleClose">取 消</el-button>
                 <el-button class="submit" @click="handleSubmit">确 定</el-button>
             </div>
         </el-dialog>
@@ -162,6 +176,15 @@ export default {
             total: 0,
             currentPage: 0,
             pageSize: 15,
+            settleDialogVisible: false,
+            settleType: [
+                {label: '线上支付', value: 1},
+                {label: '线下支付', value: 2}
+            ],
+            settleForm: {
+                settle_type: null,
+                fileList: []
+            }
         }
     },
     created() {
@@ -181,14 +204,30 @@ export default {
          * @params {Object} data
          */
         handleDownload(data) {
-
+            // res 接口返回
+            const blob = new Blob([res], {
+                type: 'application/vnd.ms-excel;charset=utf-8'
+            });
+            let curDate = `${new Date().getFullYear()}年${(new Date().getMonth() + 1)}月${new Date().getDate()}日`;
+            const file_name = `待结算订单${curDate}.xls`;
+            if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+                window.navigator.msSaveOrOpenBlob(blob, file_name);
+            } else {
+                const aLink = document.createElement('a');
+                aLink.href = URL.createObjectURL(blob);
+                aLink.setAttribute('download', file_name);
+                aLink.click();
+                window.URL.revokeObjectURL(blob);
+            }
         },
         /**
          * 支付
          * @Function handlePayment
          * @params {Object} data
          */
-        handlePayment(data) {},
+        handlePayment(data) {
+            this.settleDialogVisible = true;
+        },
         /**
          * 查看
          * @Function handleScan
@@ -215,6 +254,42 @@ export default {
             this.currentPage = currentPage;
             this.getData();
         },
+        /**
+         * 取消结算支付
+         * @Function handleClose
+         */
+        handleClose() {
+            this.settleDialogVisible = false;
+            let obj = {
+                settle_type: null,
+            };
+            Object.assign(this.settleForm, obj);
+        },
+        /**
+         * 结算支付
+         * @Function handleSubmit
+         */
+        handleSubmit() {
+            if (!this.settleForm.settle_type) {
+                this.$message.warning('请选择结算方式');
+                return;
+            }
+            let obj = {
+                settle_type: null,
+            };
+            this.$message.success('已完成结算');
+            Object.assign(this.settleForm, obj);
+            this.settleDialogVisible = false;
+            this.getData();
+        },
+        /**
+         * 选择结算方式
+         * @Function handleSelectSettleType
+         * @params {Number} index
+         */
+        handleSelectSettleType(index) {
+            this.settleForm.settle_type = this.settleType[index].value;
+        }
     }
 }
 </script>
@@ -263,20 +338,51 @@ export default {
             }
             .el-dialog__body {
                 padding: 8px 24px 0;
-                .reject {
-                    margin-top: 24px;
+                .settle-item {
+                    margin-bottom: 24px;
                     display: flex;
-                    span {
-                        width:100px;
+                    align-items: center;
+                    >span {
+                        width: 70px;
+                        font-family: PingFangSC-Regular;
+                        font-size: 14px;
+                        color: #333;
                     }
-                    .el-textarea__inner {
-                        width: 328px;
-                        height: 80px;
+                    .settle-btns {
+                        span {
+                            width: 88px;
+                            height: 22px;
+                            line-height: 22px;
+                            background: #F5F5F5;
+                            border: 1px solid #D9D9D9;
+                            border-radius: 2px;
+                            margin-right: 24px;
+                            display: inline-block;
+                            font-family: PingFangSC-Regular;
+                            font-size: 14px;
+                            color: #333333;
+                            text-align: center;
+                            cursor: pointer;
+                        }
+                        .select-btns {
+                            background: #FFFFFF;
+                            border: 1px solid #1890FF;
+                            color: #1890FF;
+                        }
+                    }
+                    .upload {
+                        .el-upload--picture-card {
+                            width: 88px;
+                            height: 88px;
+                            line-height: 88px;
+                            border-radius: 2px;
+                            background: rgba(0,0,0,0.04);
+                        }
                     }
                 }
             }
             .el-dialog__footer {
-                padding: 24px;
+                padding: 0 24px 24px 24px;
                 .el-button {
                     width: 65px;
                     height: 32px;

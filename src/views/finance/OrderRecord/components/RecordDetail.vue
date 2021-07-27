@@ -101,7 +101,7 @@
             width="640px"
             class="abnormal-dialog"
             :visible.sync="abnormalDialogVisible"
-            :before-close="dialogBeforeClose">
+            :before-close="handleClose">
             <div>
                 <div class="detail-type">
                     <span>处理方式：</span>
@@ -168,7 +168,7 @@
                 </div>
             </div>
             <div slot="footer">
-                <el-button class="cancel" @click="dialogBeforeClose">取 消</el-button>
+                <el-button class="cancel" @click="handleClose">取 消</el-button>
                 <el-button class="submit"
                     :disabled="abnormalForm.type === 0 && !abnormalForm.order.length"
                     @click="handleSubmit">
@@ -251,9 +251,9 @@ export default {
         },
         /**
          * 关闭异常处理弹窗
-         * @Function dialogBeforeClose
+         * @Function handleClose
          */
-        dialogBeforeClose() {
+        handleClose() {
             this.abnormalDialogVisible = false;
             this.abnormalForm.order = [];
         },

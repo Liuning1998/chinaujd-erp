@@ -116,7 +116,7 @@
             title="结算审核"
             width="480px"
             :visible.sync="dialogVisible"
-            :before-close="dialogBeforeClose">
+            :before-close="handleClose">
             <div>
                 <div class="radio">
                     <el-radio v-model="reviewForm.radio" :label="1">通过</el-radio>
@@ -128,7 +128,7 @@
                 </div>
             </div>
             <div slot="footer">
-                <el-button class="cancel" @click="dialogBeforeClose">取 消</el-button>
+                <el-button class="cancel" @click="handleClose">取 消</el-button>
                 <el-button class="submit" @click="handleSubmit">确 定</el-button>
             </div>
         </el-dialog>
@@ -214,9 +214,9 @@ export default {
         },
         /**
          * 关闭结算审核弹窗
-         * @Function dialogBeforeClose
+         * @Function handleClose
          */
-        dialogBeforeClose() {
+        handleClose() {
             this.dialogVisible = false;
             let obj = {
                 radio: null,

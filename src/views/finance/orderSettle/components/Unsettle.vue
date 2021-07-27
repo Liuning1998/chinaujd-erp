@@ -107,7 +107,7 @@
             title="结算支付"
             width="480px"
             :visible.sync="settleDialogVisible"
-            :before-close="dialogBeforeClose">
+            :before-close="handleClose">
             <div class="settle-item">
                 <span>结算方式：</span>
                 <div class="settle-btns">
@@ -133,7 +133,7 @@
                 </div>
             </div>
             <div slot="footer">
-                <el-button class="cancel" @click="dialogBeforeClose">取 消</el-button>
+                <el-button class="cancel" @click="handleClose">取 消</el-button>
                 <el-button class="submit" @click="handleSubmit">确 定</el-button>
             </div>
         </el-dialog>
@@ -256,9 +256,9 @@ export default {
         },
         /**
          * 取消结算支付
-         * @Function dialogBeforeClose
+         * @Function handleClose
          */
-        dialogBeforeClose() {
+        handleClose() {
             this.settleDialogVisible = false;
             let obj = {
                 settle_type: null,

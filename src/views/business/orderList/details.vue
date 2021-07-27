@@ -80,7 +80,7 @@
 				<div class="floor">
 					<h3>邮票列表</h3>
 					<div class="tableList">
-						<el-table :data="tableData" :header-cell-style="{'background':'#fafafa','font-size':'14px'}">
+						<el-table :data="tableData" :header-cell-style="{'background':'#fafafa','font-size':'14px','color':'#333333'}">
 							<el-table-column prop="date" label="序号"></el-table-column>
 							<el-table-column prop="date" label="子订单号"></el-table-column>
 							<el-table-column prop="date" label="邮票名称"></el-table-column>
@@ -108,10 +108,10 @@
 				</div>
 			</el-form>
 			<div class="buttom_btn">
-				<el-button @click="goBack">返回</el-button>
-				<el-button type="primary">审 核</el-button>
-				<el-button type="primary" @click="cancel">取消订单</el-button>
-				<el-button type="primary" @click="print">打印订单</el-button>
+				<el-button @click="goBack" size="small">返回</el-button>
+				<el-button type="primary" size="small">审核</el-button>
+				<el-button type="primary" size="small" @click="goBack">取消订单</el-button>
+				<el-button type="primary" size="small" @click="print">打印订单</el-button>
 			</div>
 		</div>
 	</div>
@@ -149,7 +149,7 @@
 		methods: {
 			goDetails(val){
 				this.$router.push({
-				  path: '/business/orderList/details',
+				  path: '/business/orderList/childDetails',
 				  query: {
 				    appraisalId: val.appraisalId,
 				  }
@@ -165,19 +165,11 @@
 			},
 			goBack(){
 				this.$router.go(-1);
-			},
-			cancel(){
-				
 			}
 		},
 	}
 </script>
 <style lang="scss" scoped>
-	.selectRadio {
-		width: 90%;
-		margin: 20px auto;
-	}
-
 	.w350 {
 		width: 350px;
 	}
@@ -186,16 +178,17 @@
 		width: 200px;
 	}
 
-	.getcode {
-		background: #1890FF;
-		color: #FFFFFF;
-		margin-left: 8px;
-	}
-
 	.floor {
 		background: #FFFFFF;
 		margin-bottom: 16px;
 		padding-bottom: 10px;
+		>>>.el-form-item__label{
+			color: #151515;
+		}
+		>>>.el-input__inner{
+			height: 32px;
+			line-height: 32px;
+		}
 		.tableList{
 			padding: 0 20px 10px;
 		}
@@ -210,11 +203,7 @@
 
 			span {
 				display: inline-block;
-				line-height: 40px;
-			}
-
-			.addBtn {
-				float: right;
+				line-height: 32px;
 			}
 		}
 	}

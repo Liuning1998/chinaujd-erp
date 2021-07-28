@@ -58,11 +58,11 @@
 </template>
 
 <script>
-import addBankCard from '@/views/finance/withdrawalManagement/components/addBankCard';
+import AddBankCard from '@/views/finance/withdrawalManagement/components/AddBankCard';
 export default {
     name: '',
     components: {
-        addBankCard
+        AddBankCard
     },
     data() {
         return {

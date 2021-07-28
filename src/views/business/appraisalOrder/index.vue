@@ -100,14 +100,16 @@
 					<template slot-scope="scope">
 						<el-link type="primary" :underline="false" @click="send(scope.row)">发货</el-link>
 						<el-divider direction="vertical"></el-divider>
+						<el-link type="primary" :underline="false" @click="receiving(scope.row)">收货</el-link>
+						<el-divider direction="vertical"></el-divider>
 						<el-link type="primary" :underline="false" @click="detail(scope.row)">查看</el-link>
 					</template>
 				</el-table-column>
 			</el-table>
-			<div class="page_box">
+			<div class="page_box pagination">
 				<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-					:current-page="pagebox.currentPage-0" :page-sizes="[20, 50, 100, 200]"
-					:page-size="pagebox.pageSize-0" layout="total, sizes, prev, pager, next, jumper"
+					:current-page="pagebox.currentPage-0" background
+					:page-size="pagebox.pageSize-0" layout="prev, pager, next, sizes, jumper"
 					:total="pagebox.total-0">
 				</el-pagination>
 			</div>
@@ -307,6 +309,23 @@
 			send(val) {
 				this.sendAlert=true;
 			},
+			// 收货确认
+			receiving(val){
+				this.$confirm('是否确认收货，该操作不可撤销？', '提示', {
+					confirmButtonText: '确定收货',
+					cancelButtonText: '取消',
+				}).then(() => {
+					this.$message({
+						type: 'success',
+						message: '收货成功!'
+					});
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '取消收货'
+					});  
+				});
+			},
 			// 查询
 			query() {
 				this.currentPage = 1;
@@ -392,5 +411,37 @@
 		>>>.el-dialog__body{
 			padding: 10px 20px;
 		}
+	}
+	.pagination {
+	    width: 100%;
+	    height: 64px;
+	    display: flex;
+	    align-items: center;
+	    justify-content: flex-end;
+	    padding-right: 24px;
+	    background: #fff;
+	    box-sizing: border-box;
+	    >>>.el-pagination {
+	        .btn-next,
+	        .btn-prev,
+	        .el-pager li {
+	            background: #FFF;
+	            border: 1px solid #D9D9D9;
+	            border-radius: 2px;
+	        }
+	        .el-pager li {
+	            font-family: HelveticaNeue;
+	            font-size: 14px;
+	            font-weight: 100;
+	            color: rgba(0,0,0,0.65);
+	        }
+	        .el-pager li:not(.disabled).active {
+	            background-color: #409EFF;
+	            color: #FFF;
+	        }
+	        .el-pagination__jump {
+	            margin: 0;
+	        }
+	    }
 	}
 </style>

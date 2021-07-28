@@ -136,6 +136,24 @@
 				<el-button @click="Reconfirm" size="small" type="primary">确定</el-button>
 			</div>
 		</el-dialog>
+		<!-- 物流信息弹窗 -->
+		<el-dialog title="物流信息" width="480px" class="sendDialog" :visible.sync="expressAlert">
+			<div class="info">
+				<span>物流公司：</span>
+				<span>顺丰速运</span>
+			</div>
+			<div class="info">
+				<span>快递单号：</span>
+				<span>SF344255424255</span>
+			</div>
+			<div>
+				<span>物流动态：</span>
+				<p>2021-07-02 17:14:32  您的货物已发出，祝您签收愉快</p>
+			</div>
+			<div slot="footer">
+				<el-button @click="expressAlert = false" size="small">关闭</el-button>
+			</div>
+		</el-dialog>
 	</div>
 </template>
 <script>
@@ -162,6 +180,7 @@
 				options: [],
 				tableData:[{date:1}],
 				sendAlert:false,
+				expressAlert:false,
 				// 物流公司
 				logisticsCompany:[
 					{name: '顺丰快递',value: 0},
@@ -187,7 +206,7 @@
 				});
 			},
 			logistics(val){
-				
+				this.expressAlert=true;
 			},
 			goBack(){
 				this.$router.go(-1);
@@ -301,6 +320,18 @@
 	.sendDialog{
 		>>>.el-dialog__body{
 			padding: 10px 20px;
+		}
+		.info{
+			margin-bottom: 10px;
+			color: #333333;
+		}
+		div{
+			color: #333333;
+			p{
+				color: #666666;
+				margin-top: 10px;
+				line-height: 22px;
+			}
 		}
 	}
 </style>

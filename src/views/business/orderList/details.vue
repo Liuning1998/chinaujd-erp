@@ -92,11 +92,9 @@
 							<el-table-column prop="date" label="订单状态"></el-table-column>
 							<el-table-column prop="date" label="操作">
 								<template slot-scope="scope">
-									<el-link type="primary" :underline="false" @click="goDetails(scope.row)">补缴确认</el-link>
-									<el-divider direction="vertical"></el-divider>
 									<el-link type="primary" :underline="false" @click="goDetails(scope.row)">绑定</el-link>
 									<el-divider direction="vertical"></el-divider>
-									<el-link type="primary" :underline="false" @click="goDetails(scope.row)">解绑</el-link>
+									<el-link type="primary" :underline="false" @click="Unbound(scope.row)">解绑</el-link>
 									<el-divider direction="vertical"></el-divider>
 									<el-link type="primary" :underline="false" @click="goDetails(scope.row)">调价</el-link>
 									<el-divider direction="vertical"></el-divider>
@@ -110,7 +108,8 @@
 			<div class="buttom_btn">
 				<el-button @click="goBack" size="small">返回</el-button>
 				<el-button type="primary" size="small">审核</el-button>
-				<el-button type="primary" size="small" @click="goBack">取消订单</el-button>
+				<el-button type="primary" size="small" @click="goConfirm">补缴确认</el-button>
+				<el-button type="primary" size="small" @click="cancel">取消订单</el-button>
 				<el-button type="primary" size="small" @click="print">打印订单</el-button>
 			</div>
 		</div>
@@ -165,7 +164,59 @@
 			},
 			goBack(){
 				this.$router.go(-1);
-			}
+			},
+			// 取消订单
+			cancel(){
+				this.$confirm('您确认要取消全部订单吗？', '提示：取消订单', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+				}).then(() => {
+					this.$message({
+						type: 'success',
+						message: '取消成功!'
+					});
+					this.goBack();
+				}).catch(() => {
+					// this.$message({
+					// 	type: 'info',
+					// 	message: '取消发货'
+					// });  
+				});
+			},
+			// 解绑操作
+			Unbound(val){
+				this.$confirm('您确认要解除该子订单与邮票关系吗？', '提示：解绑', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+				}).then(() => {
+					this.$message({
+						type: 'success',
+						message: '解绑成功!'
+					});
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '取消解绑'
+					});  
+				});
+			},
+			// 补缴确认
+			goConfirm(){
+				this.$confirm('确认该订单是否已补缴？', '提示：补缴确认', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+				}).then(() => {
+					this.$message({
+						type: 'success',
+						message: '确认成功!'
+					});
+				}).catch(() => {
+					this.$message({
+						type: 'info',
+						message: '取消确认'
+					});  
+				});
+			},
 		},
 	}
 </script>

@@ -137,7 +137,7 @@ let router = new Router({
 						component: () => import("@/views/business/appraisalOrder/childDetails"),
 						meta: {
 							value: '/business/appraisalOrder',
-							title: '字订单详情'
+							title: '子订单详情'
 						},
 						name: 'appraisalChildOrderDetails'
 					}]

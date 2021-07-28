@@ -98,6 +98,14 @@ let router = new Router({
 							title: '打印订单'
 						},
 						name: 'orderPrint'
+					}, {
+						path: '/business/orderList/childdetails',
+						component: () => import("@/views/business/orderList/childDetails"),
+						meta: {
+							value: '/business/orderList',
+							title: '子订单详情'
+						},
+						name: 'childOrderDetails'
 					}]
 				},
 				{
@@ -124,6 +132,14 @@ let router = new Router({
 							title: '鉴评单详情'
 						},
 						name: 'appraisalOrderDetails'
+					}, {
+						path: '/business/appraisalOrder/childDetails',
+						component: () => import("@/views/business/appraisalOrder/childDetails"),
+						meta: {
+							value: '/business/appraisalOrder',
+							title: '字订单详情'
+						},
+						name: 'appraisalChildOrderDetails'
 					}]
 				},
 				{

@@ -77,6 +77,7 @@
 						<el-form-item label="创建时间:">
 							<el-date-picker
 								v-model="form.a"
+								size="small"
 								type="datetimerange"
 								range-separator="至"
 								start-placeholder="开始日期"
@@ -89,6 +90,7 @@
 						<el-form-item label="支付时间:">
 							<el-date-picker
 								v-model="form.a"
+								size="small"
 								type="datetimerange"
 								range-separator="至"
 								start-placeholder="开始日期"
@@ -99,17 +101,17 @@
 					</el-col>
 					<el-col :span="16">
 						<div style="padding-left: 20px;">
-							<el-button type="primary" @click="query">查询</el-button>
-							<el-button>重置</el-button>
-							<el-button type="primary" @click="addOrder">新增业务单</el-button>
-							<el-button @click="orderExport">导出</el-button>
+							<el-button type="primary" size="small" @click="query">查询</el-button>
+							<el-button size="small">重置</el-button>
+							<el-button type="primary" size="small" @click="addOrder">新增业务单</el-button>
+							<el-button @click="orderExport" size="small">导出</el-button>
 						</div>
 					</el-col>
 				</el-row>
 			</el-form>
 		</div>
 		<div class="table_box bgfff">
-			<el-table :data="tableData" border style="width: 100%">
+			<el-table :data="tableData" :header-cell-style="{'background':'#fafafa','font-size':'14px','color':'#333333'}" style="width: 100%">
 			  <el-table-column prop="a" label="业务订单编号"></el-table-column>
 			  <el-table-column prop="a" label="手机号"></el-table-column>
 			  <el-table-column prop="a" label="服务商名称"></el-table-column>
@@ -283,5 +285,15 @@
 	.bgfff{
 		background: #FFFFFF;
 		padding: 24px;
+		>>>.el-form-item{
+			margin-bottom: 10px;
+		}
+		>>>.el-form-item__label{
+			color:  rgba(0,0,0,0.85);
+		}
+		>>>.el-input__inner{
+			height: 32px;
+			line-height: 32px;
+		}
 	}
 </style>

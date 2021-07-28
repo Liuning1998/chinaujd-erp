@@ -35,8 +35,8 @@
 					</el-form-item>
 					<el-form-item label="验证码">
 						<el-input v-model="form.phone" type="text" class="w200"></el-input>
-						<el-button @click="getCode" v-if="show" style="width: 138px;" class="getcode">获取验证码</el-button>
-						<el-button v-if="!show" style="width: 138px;">{{codeTime}}S</el-button>
+						<el-button @click="getCode" v-if="show" style="width: 138px;" size="small" class="getcode">获取验证码</el-button>
+						<el-button v-if="!show" style="width: 138px;" size="small">{{codeTime}}S</el-button>
 					</el-form-item>
 				</div>
 				<div class="floor">
@@ -60,10 +60,10 @@
 				<div class="floor">
 					<h3>
 						<span>邮票列表</span>
-						<el-button class="addBtn" type="primary">新增</el-button>
+						<el-button class="addBtn" type="primary" size="small">新增</el-button>
 					</h3>
 					<div class="tableList">
-						<el-table :data="tableData" :header-cell-style="{'background':'#fafafa','font-size':'14px'}">
+						<el-table :data="tableData" :header-cell-style="{'background':'#fafafa','font-size':'14px','color':'#333333'}">
 							<el-table-column prop="date" label="序号"></el-table-column>
 							<el-table-column prop="date" label="邮票名称"></el-table-column>
 							<el-table-column prop="date" label="单位"></el-table-column>
@@ -81,8 +81,8 @@
 				</div>
 			</el-form>
 			<div class="buttom_btn">
-				<el-button>取消</el-button>
-				<el-button type="primary">提交订单</el-button>
+				<el-button size="small">取消</el-button>
+				<el-button type="primary" size="small">提交订单</el-button>
 			</div>
 		</div>
 	</div>
@@ -157,6 +157,13 @@
 		background: #FFFFFF;
 		margin-bottom: 16px;
 		padding-bottom: 10px;
+		>>>.el-form-item__label{
+			color: #151515;
+		}
+		>>>.el-input__inner{
+			height: 32px;
+			line-height: 32px;
+		}
 		.tableList{
 			padding: 0 20px 10px;
 		}
@@ -171,7 +178,7 @@
 
 			span {
 				display: inline-block;
-				line-height: 40px;
+				line-height: 32px;
 			}
 
 			.addBtn {

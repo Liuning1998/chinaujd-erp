@@ -41,10 +41,6 @@
                     <span>{{ form.prop1 }}</span>
                 </el-form-item>
             </el-form>
-            <div slot="footer">
-                <el-button class="cancel" @click="handleClose">取 消</el-button>
-                <el-button class="submit" @click="handleSubmit">确 定</el-button>
-            </div>
         </el-dialog>
     </div>
 </template>

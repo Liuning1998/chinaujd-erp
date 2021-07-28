@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import WithdrawalDetail from '@/views/finance/orderSettle/components/WithdrawalDetail';
+import WithdrawalDetail from '@/views/finance/withdrawalManagement/components/WithdrawalDetail';
 
 export default {
     name: '',

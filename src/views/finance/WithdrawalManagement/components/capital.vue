@@ -23,7 +23,7 @@
                 </div>
                 <div class="profit">
                     <span class="top">+1000</span>
-                    <span class="bottom">已到账</span>
+                    <span class="bottom">已到账<i class="received"></i></span>
                 </div>
             </div>
             <div class="capital-info-item">
@@ -37,7 +37,7 @@
                 </div>
                 <div class="profit">
                     <span class="top">+1000</span>
-                    <span class="bottom">入账中</span>
+                    <span class="bottom">入账中<i class="account"></i></span>
                 </div>
                 <div class="more">
                     <el-button type="text" @click="showMore">查看详情<i class="down"></i></el-button>
@@ -145,7 +145,9 @@ export default {
          * @Function showMore
          * @params {Number} index
          */
-        showMore(index) {},
+        showMore(index) {
+            // icon 更换class up
+        },
         /**
          * 更改每页条数
          * @Function handleSizeChange
@@ -232,6 +234,20 @@ export default {
                         font-family: PingFangSC-Regular;
                         font-size: 14px;
                         color: #999;
+                        display: flex;
+                        align-items: center;
+                        i {
+                            width: 14px;
+                            height: 14px;
+                            margin-left: 12px;
+                            display: inline-block;
+                        }
+                        .received {
+                            background: url('~@/assets/images/finance/icon_received.png') no-repeat center center;
+                        }
+                        .account {
+                            background: url('~@/assets/images/finance/icon_in_account.png') no-repeat center center;
+                        }
                     }
                     .success {
                         color: #1890FF;

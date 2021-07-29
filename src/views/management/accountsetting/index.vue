@@ -3,13 +3,13 @@
 		<Breadcrumb></Breadcrumb>
 		<el-form ref="form" :rules="rules" :model="form" label-width="100px">
 			<el-form-item label="密码：" prop="password">
-				<el-input v-model="form.password" placeholder="请输入"></el-input>
+				<el-input type="password"  maxlength="20" v-model="form.password" placeholder="请输入"></el-input>
 			</el-form-item>
 			<el-form-item label="新密码：" prop="newpassword">
-				<el-input v-model="form.newpassword" placeholder="请输入"></el-input>
+				<el-input type="password"  maxlength="20" v-model="form.newpassword" placeholder="请输入"></el-input>
 			</el-form-item>
 			<el-form-item label="确认密码：" prop="surepassword">
-				<el-input v-model="form.surepassword" placeholder="请输入"></el-input>
+				<el-input type="password"  maxlength="20" v-model="form.surepassword" placeholder="请输入"></el-input>
 			</el-form-item>
 		</el-form>
 		<div class="btns">
@@ -47,7 +47,15 @@ export default {
 		 * 修改密码
 		 * @function handleSave
 		 */
-		handleSave() {},
+		handleSave() {
+			let {password = '', newpassword = '', surepassword = ''} = this.form;
+			this.$message.error('原密码不正确');
+			if (newpassword !== surepassword) {
+				this.$message.error('新密码与确认密码不一致');
+				return;
+			}
+			this.$message.success('修改密码成功');
+		},
 	}
 }
 </script>

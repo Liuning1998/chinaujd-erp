@@ -111,8 +111,8 @@
 			 */
 			handleDelete(data) {
 				this.$confirm('你确认要删除该角色吗？', '提示', {
-				confirmButtonText: '确定',
-				cancelButtonText: '取消',
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
 				}).then(() => {
 					if (true) {
 						this.$message.warning('该角色下有账号，暂不可删除');

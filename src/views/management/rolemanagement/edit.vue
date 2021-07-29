@@ -166,10 +166,10 @@ export default {
 <style lang="scss" scoped>
 	.container {
   		>>>.el-form {
-				width: 100%;
-				padding: 24px;
-				background: #fff;
-				box-sizing: border-box;
+			width: 100%;
+			padding: 24px;
+			background: #fff;
+			box-sizing: border-box;
 			&-item:not(:last-child) {
 				margin-bottom: 24px;
 			}

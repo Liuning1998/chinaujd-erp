@@ -377,7 +377,7 @@ let router = new Router({
 						component: () => import("@/views/management/menumanagement/edit"),
 						meta: {
 							value: '/management/menumanagement',
-							title: '编辑菜单'
+							title: '编辑'
 						},
 						name: 'menuEdit'
 					}]

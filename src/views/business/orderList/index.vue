@@ -132,10 +132,11 @@
 			    </template>
 			  </el-table-column>
 			</el-table>
-			<div class="page_box">
-			  <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pagebox.currentPage-0"
-			    :page-sizes="[20, 50, 100, 200]" :page-size="pagebox.pageSize-0" layout="total, sizes, prev, pager, next, jumper"
-			    :total="pagebox.total-0">
+			<div class="page_box pagination">
+			  <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+			  	:current-page="pagebox.currentPage-0" background
+			  	:page-size="pagebox.pageSize-0" layout="prev, pager, next, sizes, jumper"
+			  	:total="pagebox.total-0">
 			  </el-pagination>
 			</div>
 		</div>
@@ -295,5 +296,37 @@
 			height: 32px;
 			line-height: 32px;
 		}
+	}
+	.pagination {
+	    width: 100%;
+	    height: 64px;
+	    display: flex;
+	    align-items: center;
+	    justify-content: flex-end;
+	    padding-right: 24px;
+	    background: #fff;
+	    box-sizing: border-box;
+	    >>>.el-pagination {
+	        .btn-next,
+	        .btn-prev,
+	        .el-pager li {
+	            background: #FFF;
+	            border: 1px solid #D9D9D9;
+	            border-radius: 2px;
+	        }
+	        .el-pager li {
+	            font-family: HelveticaNeue;
+	            font-size: 14px;
+	            font-weight: 100;
+	            color: rgba(0,0,0,0.65);
+	        }
+	        .el-pager li:not(.disabled).active {
+	            background-color: #409EFF;
+	            color: #FFF;
+	        }
+	        .el-pagination__jump {
+	            margin: 0;
+	        }
+	    }
 	}
 </style>

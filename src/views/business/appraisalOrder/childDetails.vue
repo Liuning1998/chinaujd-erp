@@ -77,24 +77,32 @@
 					<el-table-column prop="date" label="数量"></el-table-column>
 					<el-table-column prop="date" label="操作">
 						<template slot-scope="scope">
-							<el-link type="primary" :underline="false" @click="goDetails(scope.row)">查看</el-link>
+							<el-link type="primary" :underline="false" @click="openDetails(scope.row)">查看</el-link>
 						</template>
 					</el-table-column>
 				</el-table>
 			</div>
 		</div>
+		<el-dialog title="订单详情" :visible.sync="detailsAlert" width="640px" class="details">
+			<div style="height: 400px; overflow: auto;">
+				<Details></Details>
+			</div>
+		</el-dialog>
   </div>
 </template>
 <script>
 	import Breadcrumb from '@/components/Breadcrumb';
+	import Details from '@/views/business/Index';
   export default {
     name: '',
 		components: {
-			Breadcrumb
+			Breadcrumb,
+			Details
 		},
     data() {
       return {
-				tableData:[{date:1}]
+				tableData:[{date:1}],
+				detailsAlert:false
       }
     },
     // 模板渲染前钩子函数
@@ -106,7 +114,9 @@
 
     },
     methods: {
-
+			openDetails(val){
+				this.detailsAlert=true;
+			}
     },
   }
 </script>
@@ -148,6 +158,11 @@
 				color: #666666;
 				margin: 0 100px;
 			}
+		}
+	}
+	.details{
+		>>>.el-dialog__body{
+			padding: 10px 20px;
 		}
 	}
 </style>

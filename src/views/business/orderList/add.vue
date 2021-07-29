@@ -85,6 +85,45 @@
 				<el-button type="primary" size="small">提交订单</el-button>
 			</div>
 		</div>
+		<!-- 新增弹窗 -->
+		<el-dialog title="新增邮票" width="560px" class="addDialog" :visible.sync="addAlert" @close="clearAlert">
+			<el-form ref="formAlert" :model="formAlert" label-width="100px">
+				<el-form-item label="关联邮票：">
+					<el-autocomplete class="w328" v-model="formAlert.signalNo" :fetch-suggestions="querySearch"
+					  placeholder="请输入内容" :trigger-on-focus="false" @select="handleSelect" @change.native="handleChange">
+					  <template slot-scope="{item}">
+					    <div>{{ item.value=item.name }}</div>
+					  </template>
+					</el-autocomplete>
+					<p style="font-size: 12px;color: #999999;height: 20px;">请搜索关键字（志编号、名称、图序）标记邮票信息</p>
+					<el-image v-if="stampImg" :src="stampImg" fit="contain" style="width: 120px;height: 120px;"></el-image>
+				</el-form-item>
+				<el-form-item label="单位：">
+					<el-select v-model="formAlert.b" placeholder="请选择单位" class="w328">
+						<el-option v-for="(item,index) in CompanyList" :key="index" :label="item.name"
+							:value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="采集数量：" v-if="formAlert.b != 2">
+					<el-input v-model="formAlert.a" class="w328"></el-input>
+				</el-form-item>
+				<el-form-item label=" " v-if="formAlert.b == 2">
+					<el-checkbox-group v-model="formAlert.c">
+						<el-checkbox v-for="(item,index) in childStamp" :label="item.value" :key="index">{{item.name}}</el-checkbox>
+					</el-checkbox-group>
+				</el-form-item>
+				<el-form-item label="服务类型：">
+					<el-select v-model="formAlert.a" placeholder="请选择服务类型" class="w328">
+						<el-option v-for="(item,index) in serviceTypeList" :key="index" :label="item.name"
+							:value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+			</el-form>
+			<div slot="footer">
+				<el-button @click="cancel" size="small">取消</el-button>
+				<el-button @click="addConfirm" size="small" type="primary">确定</el-button>
+			</div>
+		</el-dialog>
 	</div>
 </template>
 <script>
@@ -102,11 +141,36 @@
 					areaId: '',
 					address: ''
 				},
+				formAlert: {
+					a:'',
+					b:0,
+					c:''
+				},
 				show: true,
 				codeTime: 60,
 				timer: false,
 				options: [],
-				tableData:[{date:1}]
+				tableData:[{date:1}],
+				addAlert: true,
+				serviceTypeList:[
+					{name: '采集+鉴别',value: 0},
+					{name: '采集+评级',value: 1},
+					{name: '采集+鉴别+封装',value: 2},
+					{name: '采集+评级+封装',value: 3}
+				],
+				CompanyList: [
+					{name: '枚',value: 0},
+					{name: '版',value: 1},
+					{name: '套',value: 2}
+				],
+				// 子票列表
+				childStamp:[
+					{name: 'J.119 戈壁绿洲',value: 0},
+					{name: 'J.119 油田、天池',value: 1},
+					{name: 'J.119 天山牧场',value: 2},
+					{name: 'J.119 天山',value: 3}
+				],
+				stampImg:''
 			}
 		},
 		// 模板渲染前钩子函数
@@ -129,7 +193,41 @@
 			},
 			delete(val){
 				
-			}
+			},
+			clearAlert(){
+				
+			},
+			addConfirm(){
+				
+			},
+			cancel(){
+				
+			},
+			querySearch(queryString, cb) {
+			  let list = [{}];
+			  let params = {
+			    signalNo: queryString
+			  }
+			  //调用的后台接口
+			  // findFullName(params).then(res => {
+			  //   if (res.appraisalResultState.code == '10000') {
+			  //     list = res.data.findFullNameList;
+			  //     cb(list);
+			  //   } else {
+			  //     this.$message.warning(res.appraisalResultState.codeName);
+			  //   }
+			  // });
+			},
+			handleSelect(item) {
+			  // this.stampImg = item.imgUrl;
+				// this.stampId = item.stampId;
+			},
+			handleChange() {
+			  // if (!this.formAlert.signalNo) {
+			  //   this.stampImg = '';
+			  //   this.stampId = '';
+			  // }
+			},
 		},
 	}
 </script>
@@ -201,5 +299,25 @@
 		background-color: #FFFFFF;
 		padding: 10px 20px;
 		text-align: right;
+	}
+	.addDialog{
+		>>>.el-dialog__body{
+			padding: 10px 20px;
+		}
+		>>>.el-form-item {
+			margin-bottom: 10px;
+		}
+		
+		>>>.el-form-item__label {
+			color: rgba(0, 0, 0, 0.85);
+		}
+		
+		>>>.el-input__inner {
+			height: 32px;
+			line-height: 32px;
+		}
+	}
+	.w328{
+		width: 328px;
 	}
 </style>

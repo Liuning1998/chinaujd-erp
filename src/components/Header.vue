@@ -4,7 +4,7 @@
       <el-row type="flex" align="middle">
         <el-col :span="12" class="left">
           <p @click="goHomePage">
-            <span>数字化集邮服务管理系统</span>
+            <span>数字化集邮服务平台</span>
           </p>
         </el-col>
         <el-col :span="12" class="right">

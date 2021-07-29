@@ -309,7 +309,7 @@ let router = new Router({
 						component: () => import("@/views/management/rolemanagement/add"),
 						meta: {
 							value: '/management/rolemanagement',
-							title: '新增角色'
+							title: '新增'
 						},
 						name: 'roleAdd'
 					}, {
@@ -317,7 +317,7 @@ let router = new Router({
 						component: () => import("@/views/management/rolemanagement/edit"),
 						meta: {
 							value: '/management/rolemanagement',
-							title: '编辑角色'
+							title: '编辑'
 						},
 						name: 'roleEdit'
 					}]
@@ -377,7 +377,7 @@ let router = new Router({
 						component: () => import("@/views/management/menumanagement/edit"),
 						meta: {
 							value: '/management/menumanagement',
-							title: '编辑菜单'
+							title: '编辑'
 						},
 						name: 'menuEdit'
 					}]

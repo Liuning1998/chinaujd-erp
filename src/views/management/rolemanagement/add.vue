@@ -35,6 +35,11 @@
 	</div>
 </template>
 <script>
+import {
+	POST_USERCENTER_QUERY_ALL_AUTHORITIES,
+	POST_USERCENTER_ADD_ROLE
+} from '@/api/request';
+
 import Breadcrumb from "@/components/Breadcrumb";
 export default {
 	name: "",
@@ -67,6 +72,12 @@ export default {
 		 * 获取权限列表
 		 */
 		getData() {
+			// let params = {
+			// 	regSys: "APPRAISAL_BOSS"
+			// };
+			// POST_USERCENTER_QUERY_ALL_AUTHORITIES(params).then(res => {
+			// 	this.dataQList = res.data;
+			// });
 			let data = [
 			{
 			authorityId: 1,
@@ -141,8 +152,16 @@ export default {
 		handleSave() {
 			this.$refs['form'].validate((valid) => {
 				if (valid) {
-					this.$message.success('新增成功');
-					this.$router.push("/management/rolemanagement/index");
+					let params = {
+						regSys: 'APPRAISAL_BOSS',
+						roleList: this.form.authList,
+						roleName: this.form.roleName,
+						description: this.form.roleDescription
+					};
+					// POST_USERCENTER_ADD_ROLE(params).then(res => {
+					// 	this.$message.success('新增成功');
+					// 	this.$router.push("/management/rolemanagement/index");
+					// });
 				} else {
 					return;
 				}

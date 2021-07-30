@@ -13,19 +13,19 @@
 			class="table"
 			:data="tableData">
 			<el-table-column
-				prop="prop1"
+				prop="roleName"
 				label="角色名称">
 			</el-table-column>
 			<el-table-column
-				prop="prop2"
+				prop="gmtModified"
 				label="创建时间">
 			</el-table-column>
 			<el-table-column
 				label="操作">
 				<template slot-scope="scope">
-					<el-button type="text" @click="handleEdit(scope.row.prop1)">编辑</el-button>
+					<el-button type="text" @click="handleEdit(scope.row.roleId)">编辑</el-button>
 					<el-divider direction="vertical"></el-divider>
-					<el-button type="text" @click="handleDelete(scope.row.prop1)">删除</el-button>
+					<el-button type="text" @click="handleDelete(scope.row.roleId)">删除</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -43,6 +43,10 @@
 	</div>
 </template>
 <script>
+	import {
+		POST_USERCENTER_QUERY_ROLE_PAGE,
+		GET_USERCENTER_DELETE_ROLE
+	} from '@/api/request';
 	import Breadcrumb from '@/components/Breadcrumb';
   	export default {
     	name: '',
@@ -53,7 +57,7 @@
 			return {
 				keyword: '',
 				tableData: [],
-				total: 100,
+				total: 0,
 				currentPage: 0,
 				pageSize: 15,
 			}
@@ -68,18 +72,31 @@
 			 * @function getData
 			 */
 			getData() {
+				// let params = {
+				// 	regSys: 'APPRAISAL_BOSS',
+				// 	roleName: this.keyword,
+				// 	currentPage: this.currentPage,
+				// 	pageSize: this.pageSize
+				// };
+				// POST_USERCENTER_QUERY_ROLE_PAGE(params).then(res => {
+				// 	this.tableData = res.data.rows;
+				// 	this.total = res.data.total;
+				// });
 				let data = [
 					{
-					prop1: '北京邮来邮网网络科技有限公司',
-					prop2: '2020.08.21 12:24:35'
+						roleId: 1,
+						roleName: '北京邮来邮网网络科技有限公司',
+						gmtModified: '2020.08.21 12:24:35'
 					},
 					{
-					prop1: '北京邮来邮网网络科技有限公司',
-					prop2: '2020.08.21 12:24:35'
+						roleId: 2,
+						roleName: '北京邮来邮网网络科技有限公司',
+						gmtModified: '2020.08.21 12:24:35'
 					},
 					{
-					prop1: '北京邮来邮网网络科技有限公司',
-					prop2: '2020.08.21 12:24:35'
+						roleId: 3,
+						roleName: '北京邮来邮网网络科技有限公司',
+						gmtModified: '2020.08.21 12:24:35'
 					},
 				];
 				this.tableData = data;
@@ -102,24 +119,30 @@
 			 * 编辑角色
 			 * @function handleEdit
 			 */
-			handleEdit(data) {
-				this.$router.push('/management/rolemanagement/edit');
+			handleEdit(id) {
+				this.$router.push({
+					path: '/management/rolemanagement/edit',
+					query: {
+						roleId: id
+					}
+				});
 			},
 			/**
 			 * 删除角色
 			 * @function handleDelete
 			 */
-			handleDelete(data) {
+			handleDelete(id) {
 				this.$confirm('你确认要删除该角色吗？', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 				}).then(() => {
-					if (true) {
-						this.$message.warning('该角色下有账号，暂不可删除');
-						return;
-					}
-					this.$message.success('删除成功');
-					this.getData();
+					// let params = {
+					// 	roleId: id
+					// };
+					// GET_USERCENTER_DELETE_ROLE(params).then(res => {
+					// 	this.$message.success('删除成功');
+					// 	this.getData();
+					// });
 				}).catch(() => {});
 			},
 			/**

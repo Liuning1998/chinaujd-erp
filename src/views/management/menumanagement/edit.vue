@@ -3,10 +3,10 @@
 		<Breadcrumb></Breadcrumb>
 		<el-form ref="form" :rules="rules" :model="form" label-width="100px">
 			<el-form-item label="菜单名称：">
-				<span>{{ form.name }}</span>
+				<span>{{ form.menuName }}</span>
 			</el-form-item>
-			<el-form-item label="链接地址：" prop="url">
-				<el-input v-model="form.url" placeholder="请输入"></el-input>
+			<el-form-item label="链接地址：" prop="menuUrl">
+				<el-input v-model="form.menuUrl" placeholder="请输入"></el-input>
 			</el-form-item>
 		</el-form>
 		<div class="btns">
@@ -16,6 +16,11 @@
 	</div>
 </template>
 <script>
+import {
+	GET_USERCENTER_MENU_VIEW,
+	POST_USERCENTER_UPDATE_MENU,
+} from '@/api/request';
+
 import Breadcrumb from '@/components/Breadcrumb';
 export default {
 	name: '',
@@ -25,11 +30,11 @@ export default {
 	data() {
 		return {
 			form: {
-				name: '',
-				url: ''
+				menuName: '',
+				menuUrl: ''
 			},
 			rules: {
-				url: [{required: true, message: '请输入链接地址', trigger: ['blur', 'change']}]
+				menuUrl: [{required: true, message: '请输入链接地址', trigger: ['blur', 'change']}]
 			},
 		}
 	},
@@ -43,9 +48,16 @@ export default {
 		 * @function getData
 		 */
 		getData() {
+			// let params = {
+			// 	menuId: this.$route.query.menuId
+			// };
+			// GET_USERCENTER_MENU_VIEW(params).then(res => {
+			// 	this.form = res.data;
+			// 	Object.assign(this.form, res.data);
+			// });
 			let obj = {
-				name: '邮票业务中心',
-				url: '/agent/index'
+				menuName: '邮票业务中心',
+				menuUrl: '/agent/index'
 			};
 			Object.assign(this.form, obj);
 		},
@@ -63,8 +75,15 @@ export default {
 		handleSubmit() {
 			this.$refs['form'].validate((valid) => {
 				if (valid) {
-					this.$message.success('编辑成功');
-					this.$router.push("/management/menumanagement/index");
+					// let params = {
+					// 	menuId: this.$route.query.menuId,
+					// 	menuUrl: this.form.menuUrl,
+					// 	regSys: 'APPRAISAL_BOSS'
+					// }
+					// POST_USERCENTER_UPDATE_MENU(params).then(res => {
+					// 	this.$message.success('编辑成功');
+					// 	this.$router.push("/management/menumanagement/index");
+					// });
 				} else {
 					return;
 				}

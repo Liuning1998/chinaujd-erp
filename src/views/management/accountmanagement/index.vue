@@ -8,7 +8,7 @@
 			</div>
 			<div class="search-item">
 				<span>手机号：</span>
-				<el-input v-model="form.name" placeholder="请输入"></el-input>
+				<el-input v-model="form.mobile" placeholder="请输入"></el-input>
 			</div>
 			<div class="search-item">
 				<span>状态：</span>
@@ -16,7 +16,7 @@
 					<el-option label="全部" value=""></el-option>
 					<el-option
 						v-for="(item,index) in accountStatus" :key="index"
-						:label="item.name"
+						:label="item.label"
 						:value="item.value"></el-option>
 				</el-select>
 			</div>
@@ -29,23 +29,25 @@
 			<el-table
 				:data="tableData">
 				<el-table-column
-					prop="prop"
+					prop="name"
 					label="账号名称">
 				</el-table-column>
 				<el-table-column
-					prop="prop"
+					prop="mobile"
 					label="手机号">
 				</el-table-column>
 				<el-table-column
-					prop="prop"
+					prop="roleName"
 					label="角色">
 				</el-table-column>
 				<el-table-column
-					prop="prop"
 					label="状态">
+					<template slot-scope="scope">
+						<span>{{ JSON.parse(scope.row.status).desc }}</span>
+					</template>
 				</el-table-column>
 				<el-table-column
-					prop="prop"
+					prop="gmtCreate"
 					label="创建时间">
 				</el-table-column>
 				<el-table-column
@@ -53,9 +55,8 @@
 					<template slot-scope="scope">
 						<el-button type="text" @click="handleEdit(scope.row)">编辑</el-button>
 						<el-divider direction="vertical"></el-divider>
-						<el-button type="text" @click="handleDisable(scope.row)">禁用</el-button>
-						<el-divider direction="vertical"></el-divider>
-						<el-button type="text" @click="handleRecover(scope.row)">恢复</el-button>
+						<el-button v-if="scope.row.status === 1" type="text" @click="handleDisable(scope.row)">禁用</el-button>
+						<el-button v-if="scope.row.status === 0" type="text" @click="handleRecover(scope.row)">恢复</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -75,6 +76,10 @@
 </template>
 
 <script>
+import {
+	POST_USERCENTER_BASE_ADMIN_LIST,
+} from '@/api/request';
+
 import Breadcrumb from '@/components/Breadcrumb';
 
 export default {
@@ -86,12 +91,12 @@ export default {
 		return {
 			form: {
 				name: '',
-				phone: '',
+				mobile: '',
 				status: '',
 			},
 			accountStatus: [
-				{label: '禁用', value: 1},
-				{label: '正常', value: 2},
+				{label: '禁用', value: 0},
+				{label: '正常', value: 1},
 			],
 			tableData: [],
 			total: 0,
@@ -108,12 +113,49 @@ export default {
 		 * @function getData
 		 */
 		getData() {
+			// let params = {
+			// 	currentPage: this.currentPage,
+			// 	pageSize: this.pageSize,
+			// 	name: this.form.name,
+			// 	mobile: this.form.mobile,
+			// 	status: this.form.status
+			// };
+			// POST_USERCENTER_BASE_ADMIN_LIST(params).then(res => {
+			// 	res.data.rows.forEach(item => {
+			// 		item.status = JSON.parse(item.status).value;
+			// 	});
+			// 	this.tableData = res.data.rows;
+			// 	this.total = res.data.total;
+			// });
 			let data = [
-				{prop: 1},
-				{prop: 1},
-				{prop: 1},
-				{prop: 1},
+				{
+					adminId: "865598078277648385",
+					gmtCreate: "2021-07-16 14:17:44",
+					mobile: "13709831929",
+					name: "13709831929",
+					roleName: "资金角色",
+					status: "{\"name\":\"NORMAL\",\"value\":1,\"desc\":\"正常\"}"
+				},
+				{
+					adminId: "865598078277648385",
+					gmtCreate: "2021-07-16 14:17:44",
+					mobile: "13709831929",
+					name: "13709831929",
+					roleName: "资金角色",
+					status: "{\"name\":\"NORMAL\",\"value\":0,\"desc\":\"禁用\"}"
+				},
+				{
+					adminId: "865598078277648385",
+					gmtCreate: "2021-07-16 14:17:44",
+					mobile: "13709831929",
+					name: "13709831929",
+					roleName: "资金角色",
+					status: "{\"name\":\"NORMAL\",\"value\":1,\"desc\":\"正常\"}"
+				},
 			];
+			data.forEach(item => {
+					item.status = JSON.parse(item.status).value;
+				});
 			this.tableData = data;
 		},
 		/**

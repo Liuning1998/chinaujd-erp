@@ -35,6 +35,12 @@
 	</div>
 </template>
 <script>
+import {
+	POST_USERCENTER_QUERY_ALL_AUTHORITIES,
+	GET_USERCENTER_ROLE_VIEW,
+	POST_USERCENTER_EDIT_ROLE,
+} from '@/api/request';
+
 import Breadcrumb from "@/components/Breadcrumb";
 export default {
 	name: "",
@@ -68,6 +74,12 @@ export default {
 		 * 获取权限列表
 		 */
 		getData() {
+			// let params = {
+			// 	regSys: "APPRAISAL_BOSS"
+			// };
+			// POST_USERCENTER_QUERY_ALL_AUTHORITIES(params).then(res => {
+			// 	this.dataQList = res.data;
+			// });
 			let data = [
 			{
 			authorityId: 1,
@@ -124,6 +136,12 @@ export default {
 		 * @function creatData
 		 */
 		creatData() {
+			// let params = {
+			// 	roleId: this.$route.query.roleId
+			// };
+			// GET_USERCENTER_ROLE_VIEW(params).then(res => {
+			// 	Object.assign(this.form, res.data);
+			// });
 			let obj = {
 				roleName: "1",
 				roleDescription: "2",
@@ -153,8 +171,16 @@ export default {
 		handleSave() {
 			this.$refs['form'].validate((valid) => {
 				if (valid) {
-					this.$message.success('编辑成功');
-					this.$router.push("/management/rolemanagement/index");
+					let params = {
+						regSys: 'APPRAISAL_BOSS',
+						roleList: this.form.authList,
+						roleName: this.form.roleName,
+						description: this.form.roleDescription
+					};
+					POST_USERCENTER_EDIT_ROLE(params).then(res => {
+						this.$message.success('编辑成功');
+						this.$router.push("/management/rolemanagement/index");
+					});
 				} else {
 					return;
 				}

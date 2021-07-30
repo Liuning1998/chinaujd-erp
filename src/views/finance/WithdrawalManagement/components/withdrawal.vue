@@ -16,21 +16,12 @@
                     <el-button @click="handleWithdrawalAll">全部提现</el-button>
                 </el-form-item>
                 <el-form-item label="到账银行卡：">
-                    <el-select
-                        v-model="withdrawalForm.bankcard" clearable placeholder="请选择银行卡"
-                        @change="handleChangeBankCard">
-                        <el-option
-                            v-if="!bankCardOptions.length"
-                            label="添加银行卡"
-                            value="">
-                        </el-option>
-                        <el-option
-                            v-for="item in bankCardOptions"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                        </el-option>
-                    </el-select>
+                    <el-input
+                        v-model.trim="withdrawalForm.bankcard" type="number"
+                        placeholder="请添加银行卡">
+                    </el-input>
+                    <el-button class="add-bankcard-btn" type="primary" @click="handleChangeBankCard"><i class="el-icon-plus"></i>添加银行卡</el-button>
+                    <el-button type="primary" @click="handleUnbound">解绑</el-button>
                 </el-form-item>
                 <el-form-item label="提现手续费：">
                     <span>¥0.00</span>
@@ -75,7 +66,6 @@ export default {
                 {content: '平台提现手续费为2%'},
                 {content: '鉴定师提现，由中国集邮有限公司代缴个人所得税'}
             ],
-            bankCardOptions: [],
             dialogVisible: false
         }
     },
@@ -153,11 +143,8 @@ export default {
          * 选择银行卡
          * @Function handleChangeBankCard
          */
-        handleChangeBankCard(value) {
-            if (!value) {
-                // TODO: 显示添加银行卡弹窗
-                this.dialogVisible = true;
-            }
+        handleChangeBankCard() {
+            this.dialogVisible = true;
         },
         /**
          * 添加银行卡弹窗的确认
@@ -175,7 +162,19 @@ export default {
         handleClose(val) {
             this.dialogVisible = val;
             this.withdrawalForm.bankcard = null;
-        }
+        },
+        /**
+         * 银行卡解除绑定
+         * @function handleUnbound
+         */
+        handleUnbound() {
+            this.$confirm('确认解除银行卡绑定?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            }).then(() => {
+
+            }).catch(() => {});
+        },
     }
 }
 </script>
@@ -243,6 +242,9 @@ export default {
                         margin-left: 16px;
                         padding: 0;
                         background: #FFF;
+                    }
+                    .add-bankcard-btn {
+                        width: 114px;
                     }
                 }
             }

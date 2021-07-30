@@ -262,7 +262,17 @@ export default {
          * @Params {Object} params 查询条件
          */
         getData() {
-
+            // let params = {
+            //     currentPage: this.currentPage,
+            //     pageSize: this.pageSize,
+            //     startTime: this.form.time,
+            //     orderStatus: this.form.orderStatus,
+            //     status: this.form.recordStatus
+            // }
+            // POST_FINANCE_SLIP_LIST(params).then(res => {
+            //     this.tableData = res.data.rows;
+            //     this.total = res.data.total;
+            // });
         },
         /**
          * 查询

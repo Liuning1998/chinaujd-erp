@@ -43,7 +43,7 @@
                 </el-select>
             </div>
             <div class="search-item text-align-center">
-                <span>退款状态：</span>
+                <span>支付状态：</span>
                 <el-select v-model="form.paymentStatus" placeholder="">
                     <el-option label="全部" :value="0"></el-option>
                     <el-option
@@ -209,8 +209,7 @@ export default {
             ],
             orderStatus: [],
             paymentStatus: [
-                {label: '待支付', value: 1},
-                {label: '已支付', value: 2},
+                {label: '已支付', value: 1},
             ],
             evaluateType: [
                 {label: '远程鉴评', value: 1},

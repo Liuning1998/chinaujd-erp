@@ -7,7 +7,7 @@
                 label="结算订单统计">
                 <el-table-column
                     prop="prop1"
-                    width="100"
+                    width="120"
                     label="结算订单编号">
                 </el-table-column>
                 <el-table-column
@@ -16,30 +16,21 @@
                     label="结算时间段">
                 </el-table-column>
                 <el-table-column
-                    label="收入笔数">
-                    <template slot-scope="scope">
-                        <span>{{ scope.row.prop3 }}笔</span>
-                    </template>
-                </el-table-column>
-                <el-table-column
+                    width="80"
                     label="收入金额">
                     <template slot-scope="scope">
                         <span>¥{{ scope.row.prop4 }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
-                    label="支出笔数">
-                    <template slot-scope="scope">
-                        <span>{{ scope.row.prop5 }}笔</span>
-                    </template>
-                </el-table-column>
-                <el-table-column
+                    width="80"
                     label="支出金额">
                     <template slot-scope="scope">
                         <span>¥{{ scope.row.prop6 }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
+                    width="80"
                     label="结算金额">
                     <template slot-scope="scope">
                         <span>¥{{ scope.row.prop7 }}</span>
@@ -50,12 +41,14 @@
                 align="center"
                 label="结算收入分配">
                 <el-table-column
+                    width="140"
                     label="中国集邮有限公司">
                     <template slot-scope="scope">
                         <span>¥{{ scope.row.prop8 }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
+                    width="80"
                     label="邮来邮网">
                     <template slot-scope="scope">
                         <span>¥{{ scope.row.prop9 }}</span>
@@ -68,6 +61,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column
+                    width="80"
                     label="鉴评师">
                     <template slot-scope="scope">
                         <span>¥{{ scope.row.prop11 }}</span>
@@ -78,25 +72,22 @@
                 align="center"
                 label="结算申请信息">
                 <el-table-column
+                    width="80"
                     prop="prop12"
                     label="审核状态">
                 </el-table-column>
                 <el-table-column
-                    prop="prop13"
-                    label="申请人">
-                </el-table-column>
-                <el-table-column
-                    prop="prop14"
-                    width="100"
-                    label="申请时间">
-                </el-table-column>
-                <el-table-column
-                    width="120"
+                    width="200"
                     label="操作">
                     <template slot-scope="scope">
+                         <!--  状态： 待结算：下载/支付/查看  审核历史：查看  待审核：审核/查看 -->
                         <el-button type="text" @click="handleExamine(scope.row)">审核</el-button>
                         <el-divider direction="vertical"></el-divider>
                         <el-button type="text" @click="handleScan(scope.row)">查看</el-button>
+                        <el-divider direction="vertical"></el-divider>
+                        <el-button type="text" @click="handleDownload(scope.row)">下载</el-button>
+                        <el-divider direction="vertical"></el-divider>
+                        <el-button type="text" @click="handlePayment(scope.row)">支付</el-button>
                     </template>
                 </el-table-column>
             </el-table-column>

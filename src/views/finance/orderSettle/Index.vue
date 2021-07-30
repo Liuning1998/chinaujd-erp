@@ -61,33 +61,19 @@
             </div>
         </div>
         <div class="order-detail">
-            <el-tabs v-model="activeName">
-                <el-tab-pane label="待审核" name="unreview">
-                    <unreview></unreview>
-                </el-tab-pane>
-                <el-tab-pane label="待结算" name="unsettle">
-                    <unsettle></unsettle>
-                </el-tab-pane>
-                <el-tab-pane label="审核历史" name="reviewed">
-                    <reviewed></reviewed>
-                </el-tab-pane>
-            </el-tabs>
+            <search-table></search-table>
         </div>
     </div>
 </template>
 
 <script>
 import Breadcrumb from '@/components/Breadcrumb';
-import Unreview from '@/views/finance/orderSettle/components/Unreview';
-import Unsettle from '@/views/finance/orderSettle/components/Unsettle';
-import Reviewed from '@/views/finance/orderSettle/components/Reviewed';
+import SearchTable from '@/views/finance/orderSettle/components/SearchTable';
 
 export default {
     components: {
         Breadcrumb,
-        Unreview,
-        Unsettle,
-        Reviewed
+        SearchTable
     },
     data() {
         return {

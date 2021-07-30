@@ -26,7 +26,10 @@ export function getImageCode() {};
 /**
  * 财务中心 Start
  * */
-
+// 对账单列表
+export function POST_FINANCE_SLIP_LIST(params) {
+  return post(baseURL + '/reconciation/silp/pageList', params);
+}
 /**
  * 财务中心 End
  * */

@@ -31,6 +31,24 @@ export function POST_FINANCE_SLIP_LIST(params) {
   return post(baseURL + '/reconciation/silp/pageList', params);
 }
 /**
+ * 业务中心 Start
+ */
+// 订单列表-列表页
+export function POST_BUSINESS_ORDER_LISTPAGE(params) {
+  return post(baseURL + '/philatelic/business/orderMain/listPage', params);
+}
+// 订单列表-导出
+export function POST_BUSINESS_ORDER_EXPORT(params) {
+  return postExport(baseURL + '/philatelic/business/orderMain/export', params);
+}
+// 订单列表-查看-详情
+export function GET_BUSINESS_ORDER_VIEW(params) {
+  return get(baseURL + '/philatelic/business/orderMain/view', params);
+}
+/**
+ * 业务中心 End
+ */
+/**
  * 财务中心 End
  * */
 /**

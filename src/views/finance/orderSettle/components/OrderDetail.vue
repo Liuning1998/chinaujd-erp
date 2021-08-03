@@ -90,7 +90,7 @@ export default {
     methods: {
         /**
          * 获取订单列表
-         * @Function getData
+         * @function getData
          * @Params {Object} params 查询条件
          */
         getData() {
@@ -98,7 +98,7 @@ export default {
         },
         /**
          * 查看订单
-         * @Function handleScan
+         * @function handleScan
          * @params {Object} data
          */
         handleScan(data) {
@@ -111,7 +111,7 @@ export default {
         },
         /**
          * 更改每页条数
-         * @Function handleSizeChange
+         * @function handleSizeChange
          * @params {Number} pageSize
          */
         handleSizeChange(pageSize) {
@@ -120,7 +120,7 @@ export default {
         },
         /**
          * 更改当前页
-         * @Function handleCurrentChange
+         * @function handleCurrentChange
          * @params {Number} currentPage
          */
         handleCurrentChange(currentPage) {

@@ -164,14 +164,14 @@ export default {
     methods: {
         /**
          * 获取待审核数据
-         * @Function getData
+         * @function getData
          */
         getData() {
 
         },
         /**
          * 审核
-         * @Function handleExamine
+         * @function handleExamine
          * @params {Object} data
          */
         handleExamine(data) {
@@ -179,7 +179,7 @@ export default {
         },
         /**
          * 查看
-         * @Function handleScan
+         * @function handleScan
          * @params {Object} data
          */
         handleScan(data) {
@@ -187,7 +187,7 @@ export default {
         },
         /**
          * 更改每页条数
-         * @Function handleSizeChange
+         * @function handleSizeChange
          * @params {Number} pageSize
          */
         handleSizeChange(pageSize) {
@@ -196,7 +196,7 @@ export default {
         },
         /**
          * 更改当前页
-         * @Function handleCurrentChange
+         * @function handleCurrentChange
          * @params {Number} currentPage
          */
         handleCurrentChange(currentPage) {
@@ -205,7 +205,7 @@ export default {
         },
         /**
          * 关闭结算审核弹窗
-         * @Function handleClose
+         * @function handleClose
          */
         handleClose() {
             this.dialogVisible = false;
@@ -217,7 +217,7 @@ export default {
         },
         /**
          * 审核结算
-         * @Function handleSubmit
+         * @function handleSubmit
          */
         handleSubmit() {
             if (!this.reviewForm.radio) {

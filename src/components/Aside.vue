@@ -24,7 +24,7 @@
 
 <script>
 import {
-    // POST_BASE_MENU_ROUTE_LIST
+    POST_BASE_MENU_ROUTE_LIST
 } from '@/api/request.js';
 
 export default {

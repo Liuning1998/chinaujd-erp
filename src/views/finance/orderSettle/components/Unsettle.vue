@@ -193,14 +193,14 @@ export default {
     methods: {
         /**
          * 获取待结算数据
-         * @Function getData
+         * @function getData
          */
         getData() {
 
         },
         /**
          * 下载
-         * @Function handleDownload
+         * @function handleDownload
          * @params {Object} data
          */
         handleDownload(data) {
@@ -222,7 +222,7 @@ export default {
         },
         /**
          * 支付
-         * @Function handlePayment
+         * @function handlePayment
          * @params {Object} data
          */
         handlePayment(data) {
@@ -230,7 +230,7 @@ export default {
         },
         /**
          * 查看
-         * @Function handleScan
+         * @function handleScan
          * @params {Object} data
          */
         handleScan(data) {
@@ -238,7 +238,7 @@ export default {
         },
         /**
          * 更改每页条数
-         * @Function handleSizeChange
+         * @function handleSizeChange
          * @params {Number} pageSize
          */
         handleSizeChange(pageSize) {
@@ -247,7 +247,7 @@ export default {
         },
         /**
          * 更改当前页
-         * @Function handleCurrentChange
+         * @function handleCurrentChange
          * @params {Number} currentPage
          */
         handleCurrentChange(currentPage) {
@@ -256,7 +256,7 @@ export default {
         },
         /**
          * 取消结算支付
-         * @Function handleClose
+         * @function handleClose
          */
         handleClose() {
             this.settleDialogVisible = false;
@@ -267,7 +267,7 @@ export default {
         },
         /**
          * 结算支付
-         * @Function handleSubmit
+         * @function handleSubmit
          */
         handleSubmit() {
             if (!this.settleForm.settle_type) {
@@ -284,7 +284,7 @@ export default {
         },
         /**
          * 选择结算方式
-         * @Function handleSelectSettleType
+         * @function handleSelectSettleType
          * @params {Number} index
          */
         handleSelectSettleType(index) {

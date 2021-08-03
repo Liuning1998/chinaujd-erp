@@ -137,12 +137,12 @@ export default {
     methods: {
         /**
          * 获取资金明细
-         * @Function getData
+         * @function getData
          */
         getData() {},
         /**
          * 查看提现详情
-         * @Function showMore
+         * @function showMore
          * @params {Number} index
          */
         showMore(index) {
@@ -150,7 +150,7 @@ export default {
         },
         /**
          * 更改每页条数
-         * @Function handleSizeChange
+         * @function handleSizeChange
          * @params {Number} pageSize
          */
         handleSizeChange(pageSize) {
@@ -159,7 +159,7 @@ export default {
         },
         /**
          * 更改当前页
-         * @Function handleCurrentChange
+         * @function handleCurrentChange
          * @params {Number} currentPage
          */
         handleCurrentChange(currentPage) {

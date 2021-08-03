@@ -113,50 +113,20 @@ export default {
 		 * @function getData
 		 */
 		getData() {
-			// let params = {
-			// 	currentPage: this.currentPage,
-			// 	pageSize: this.pageSize,
-			// 	name: this.form.name,
-			// 	mobile: this.form.mobile,
-			// 	status: this.form.status
-			// };
-			// POST_USERCENTER_BASE_ADMIN_LIST(params).then(res => {
-			// 	res.data.rows.forEach(item => {
-			// 		item.status = JSON.parse(item.status).value;
-			// 	});
-			// 	this.tableData = res.data.rows;
-			// 	this.total = res.data.total;
-			// });
-			let data = [
-				{
-					adminId: "865598078277648385",
-					gmtCreate: "2021-07-16 14:17:44",
-					mobile: "13709831929",
-					name: "13709831929",
-					roleName: "资金角色",
-					status: "{\"name\":\"NORMAL\",\"value\":1,\"desc\":\"正常\"}"
-				},
-				{
-					adminId: "865598078277648385",
-					gmtCreate: "2021-07-16 14:17:44",
-					mobile: "13709831929",
-					name: "13709831929",
-					roleName: "资金角色",
-					status: "{\"name\":\"NORMAL\",\"value\":0,\"desc\":\"禁用\"}"
-				},
-				{
-					adminId: "865598078277648385",
-					gmtCreate: "2021-07-16 14:17:44",
-					mobile: "13709831929",
-					name: "13709831929",
-					roleName: "资金角色",
-					status: "{\"name\":\"NORMAL\",\"value\":1,\"desc\":\"正常\"}"
-				},
-			];
-			data.forEach(item => {
+			let params = {
+				currentPage: this.currentPage,
+				pageSize: this.pageSize,
+				name: this.form.name,
+				mobile: this.form.mobile,
+				status: this.form.status
+			};
+			POST_USERCENTER_BASE_ADMIN_LIST(params).then(res => {
+				res.data.rows.forEach(item => {
 					item.status = JSON.parse(item.status).value;
 				});
-			this.tableData = data;
+				this.tableData = res.data.rows;
+				this.total = res.data.total;
+			});
 		},
 		/**
 		 * 查新
@@ -207,7 +177,7 @@ export default {
 		},
 		/**
          * 更改每页条数
-         * @Function handleSizeChange
+         * @function handleSizeChange
          * @params {Number} pageSize
          */
         handleSizeChange(pageSize) {
@@ -216,7 +186,7 @@ export default {
         },
         /**
          * 更改当前页
-         * @Function handleCurrentChange
+         * @function handleCurrentChange
          * @params {Number} currentPage
          */
         handleCurrentChange(currentPage) {

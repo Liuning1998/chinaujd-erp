@@ -142,14 +142,14 @@ export default {
     methods: {
         /**
          * 获取审核历史数据
-         * @Function getData
+         * @function getData
          */
         getData() {
 
         },
         /**
          * 查看
-         * @Function handleScan
+         * @function handleScan
          * @params {Object} data
          */
         handleScan(data) {
@@ -157,7 +157,7 @@ export default {
         },
         /**
          * 更改每页条数
-         * @Function handleSizeChange
+         * @function handleSizeChange
          * @params {Number} pageSize
          */
         handleSizeChange(pageSize) {
@@ -166,7 +166,7 @@ export default {
         },
         /**
          * 更改当前页
-         * @Function handleCurrentChange
+         * @function handleCurrentChange
          * @params {Number} currentPage
          */
         handleCurrentChange(currentPage) {

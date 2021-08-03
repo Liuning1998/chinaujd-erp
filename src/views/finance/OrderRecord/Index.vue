@@ -5,7 +5,7 @@
             <div class="search-item text-align-left">
                 <span>订单状态：</span>
                 <el-select v-model="form.orderStatus" placeholder="">
-                    <el-option label="全部" :value="0"></el-option>
+                    <el-option label="全部" value=""></el-option>
                     <el-option
                         v-for="item in orderStatus"
                         :key="item.value"
@@ -16,10 +16,10 @@
             </div>
             <div class="search-item text-align-center">
                 <span>对账状态：</span>
-                <el-select v-model="form.recordStatus" placeholder="">
-                    <el-option label="全部" :value="0"></el-option>
+                <el-select v-model="form.status" placeholder="">
+                    <el-option label="全部" value=""></el-option>
                     <el-option
-                        v-for="item in recordStatus"
+                        v-for="item in status"
                         :key="item.value"
                         :label="item.label"
                         :value="item.value">
@@ -30,9 +30,12 @@
                 <span>对账时间：</span>
                 <el-date-picker
                     v-model="form.time"
-                    type="date"
+                    type="datetimerange"
                     :picker-options="pickerOptions"
-                    placeholder="选择日期">
+                    range-separator="至"
+                    start-placeholder="开始日期"
+                    end-placeholder="结束日期"
+                    :default-time="['00:00:00', '23:59:59']">
                 </el-date-picker>
             </div>
             <div class="btns">
@@ -46,67 +49,91 @@
                 :data="tableData"
                 style="width: 100%">
                 <el-table-column
-                    prop="prop1"
+                    prop="id"
                     width="170"
                     label="订单编号">
                 </el-table-column>
                 <el-table-column
-                    prop="prop2"
                     width="100"
                     label="账单时间段">
+                    <template slot-scope="scope">
+                        {{ scope.row.startTime }}~{{ scope.row.endTime }}
+                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="prop3"
                     width="80"
                     label="收入金额">
+                    <template slot-scope="scope">
+                        ¥{{ scope.row.incomeAmount }}
+                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="prop4"
                     width="80"
                     label="支出金额">
+                    <template slot-scope="scope">
+                        ¥{{ scope.row.expensesAmount }}
+                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="prop5"
                     width="80"
                     label="收支净额">
+                    <template slot-scope="scope">
+                        ¥{{ scope.row.incomeExpenditure }}
+                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="prop7"
                     width="80"
                     label="订单状态">
+                    <template slot-scope="scope">
+                        {{ orderStatus.find(item => item.value === scope.row.orderStatus).label }}
+                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="prop8"
                     width="80"
                     label="对账状态">
+                    <template slot-scope="scope">
+                        {{ orderStatus.find(item => item.value === scope.row.status).label }}
+                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="prop10"
                     width="120"
                     label="异常未处理金额">
+                    <template slot-scope="scope">
+                        ¥{{ scope.row.exceptionUnprocessedAmount }}
+                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="prop11"
                     width="110"
                     label="异常挂起金额">
+                    <template slot-scope="scope">
+                        ¥{{ scope.row.exceptionHangAmount }}
+                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="prop12"
                     width="240"
                     label="操作">
                     <template slot-scope="scope">
                         <el-button type="text" @click="handleScan(scope.row)">查看</el-button>
-                        <el-divider direction="vertical"></el-divider>
-                        <el-button type="text" @click="handleRefund(scope.row)">对账</el-button>
-                        <!-- orderStatus === '对账中' && recordStatus === '待平账' -->
-                        <el-divider direction="vertical"></el-divider>
-                        <el-button type="text" @click="handleDelete(scope.row)">删除</el-button>
-                        <!-- (orderStatus === '对账中' && recordStatus === '待平账') ||
-                             (['已拒绝', '已关闭', '待结算'].includes(orderStatus) && recordStatus === '已平账')
-                        -->
-                        <el-divider direction="vertical"></el-divider>
-                        <el-button type="text" @click="handleSettle(scope.row)">结算</el-button>
-                        <!-- ['已拒绝', '已关闭', '待结算'].includes(orderStatus) && recordStatus === '已平账' -->
+                        <el-divider
+                            v-if="Number(scope.row.orderStatus) === 0 && Number(scope.row.status) === 1"
+                            direction="vertical"></el-divider>
+                        <el-button
+                            v-if="Number(scope.row.orderStatus) === 0 && Number(scope.row.status) === 1"
+                            type="text" @click="handleRefund(scope.row)">对账</el-button>
+                        <el-divider
+                            v-if="Number(scope.row.orderStatus) === 0 && Number(scope.row.status) === 1 ||
+                            ([1, 5, 6].includes(Number(scope.row.orderStatus)) && Number(scope.row.status) === 2)"
+                            direction="vertical"></el-divider>
+                        <el-button
+                            v-if="Number(scope.row.orderStatus) === 0 && Number(scope.row.status) === 1 ||
+                            ([1, 5, 6].includes(Number(scope.row.orderStatus)) && Number(scope.row.status) === 2)"
+                            type="text" @click="handleDelete(scope.row)">删除</el-button>
+                        <el-divider
+                            v-if="[1, 5, 6].includes(Number(scope.row.orderStatus)) && Number(scope.row.status) === 2"
+                            direction="vertical"></el-divider>
+                        <el-button
+                            v-if="[1, 5, 6].includes(Number(scope.row.orderStatus)) && Number(scope.row.status) === 2"
+                            type="text" @click="handleSettle(scope.row)">结算</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -144,7 +171,7 @@
                 <span>对账方式：</span>
                 <div class="btns">
                     <span
-                        :class="addOrderForm.orderCycle === item.value ? 'select-btns' : null"
+                        :class="addOrderForm.type === item.value ? 'select-btns' : null"
                         v-for="(item, index) in orderCycle" :key="index"
                         @click="handleSelectOrderCycle(index)">
                         {{ item.label }}
@@ -172,28 +199,36 @@
                     </el-table-column>
                     <el-table-column
                         align="center"
-                        prop="prop1"
+                        prop="id"
                         label="订单编号">
                     </el-table-column>
                      <el-table-column
                         align="center"
-                        prop="prop2"
                         label="账单时间段">
+                        <template slot-scope="scope">
+                            {{ scope.row.startTime }}~{{ scope.row.endTime}}
+                        </template>
                     </el-table-column>
                      <el-table-column
                         align="center"
-                        prop="prop3"
                         label="收入金额">
+                        <template slot-scope="scope">
+                            ¥{{ scope.row.incomeAmount }}
+                        </template>
                     </el-table-column>
                      <el-table-column
                         align="center"
-                        prop="prop4"
                         label="支出金额">
+                        <template slot-scope="scope">
+                            ¥{{ scope.row.expensesAmount }}
+                        </template>
                     </el-table-column>
                      <el-table-column
                         align="center"
-                        prop="prop5"
                         label="收支净额">
+                        <template slot-scope="scope">
+                            ¥{{ scope.row.incomeExpenditure }}
+                        </template>
                     </el-table-column>
                 </el-table>
             </div>
@@ -206,6 +241,13 @@
 </template>
 
 <script>
+import {
+    POST_FINANCE_SLIP_ADD,
+    POST_FINANCE_SLIP_LIST,
+    POST_FINANCE_SLIP_DELETE,
+    POST_FINANCE_SLIP_SETTLEMENT_LIST,
+} from '@/api/request';
+
 import Breadcrumb from '@/components/Breadcrumb';
 
 export default {
@@ -220,19 +262,25 @@ export default {
                 }
             },
             form: {
-                orderStatus: 0,
-                recordStatus: 0,
-                time: '',
+                orderStatus: '',
+                status: '',
+                time: ['', ''],
             },
             addOrderForm: {
-                orderCycle: null,
-                time: [],
+                type: null,
+                time: ['', ''],
             },
             orderStatus: [
-                {label: '对账中', value: 1},
-                {label: '待结算', value: 2},
+                {label: '对账中', value: 0},
+                {label: '待结算', value: 1},
+                // {label: '待审核', value: 2},         需求文档上，筛选没有这些选项
+                // {label: '待付款', value: 3},
+                // {label: '已结算', value: 4},
+                // {label: '已拒绝', value: 5},
+                // {label: '已关闭', value: 6},
             ],
-            recordStatus: [
+            status: [
+                // {label: '待对账', value: 0},         需求文档上，筛选没有这些选项
                 {label: '未平账', value: 1},
                 {label: '已平账', value: 2},
             ],
@@ -250,6 +298,11 @@ export default {
                 {label: '月', value: 2},
                 {label: '年', value: 3},
             ],
+            settlementForm: {
+                id: null,
+                currentPage: 0,
+                pageSize: '',
+            }
         }
     },
     created() {
@@ -258,46 +311,55 @@ export default {
     methods: {
         /**
          * 获取订单列表
-         * @Function getData
+         * @function getData
          * @Params {Object} params 查询条件
          */
         getData() {
-            // let params = {
-            //     currentPage: this.currentPage,
-            //     pageSize: this.pageSize,
-            //     startTime: this.form.time,
-            //     orderStatus: this.form.orderStatus,
-            //     status: this.form.recordStatus
-            // }
-            // POST_FINANCE_SLIP_LIST(params).then(res => {
-            //     this.tableData = res.data.rows;
-            //     this.total = res.data.total;
-            // });
+            let params = {
+                currentPage: this.currentPage,
+                pageSize: this.pageSize,
+                startTime: this.form.time[0],
+                endTime: this.form.time[1],
+                orderStatus: this.form.orderStatus,
+                status: this.form.status
+            }
+            POST_FINANCE_SLIP_LIST(params).then(res => {
+                res.data.forEach(item => {
+                    item.orderStatus = JSON.parse(item.orderStatus).value;
+                    item.status = JSON.parse(item.status).value;
+                });
+                this.tableData = res.data.rows;
+                this.total = res.data.total;
+            });
         },
         /**
          * 查询
-         * @Function handleSearch
+         * @function handleSearch
          */
         handleSearch() {
             this.getData();
         },
         /**
          * 新增对账单
-         * @Function handleAddOrder
+         * @function handleAddOrder
          */
         handleAddOrder() {
             this.addOrderDialogVisible = true;
         },
         /**
          * 申请结算
-         * @Function handleAllSettle
+         * @function handleAllSettle
          */
         handleAllSettle() {
-            this.settleDialogVisible = true;
+            let params = this.settlementForm;
+            POST_FINANCE_SLIP_SETTLEMENT_LIST(params).then(() => {
+                this.settleDialogVisible = true;
+                this.settleTableData = res.data.rows;
+            });
         },
         /**
          * 查看订单
-         * @Function handleScan
+         * @function handleScan
          * @parsms {Object} data 订单详情
          */
         handleScan(data) {
@@ -306,15 +368,20 @@ export default {
         },
         /**
          * 订单退款
-         * @Function handleRefund
+         * @function handleRefund
          * @params {Object} data 订单详情
          */
         handleRefund(data) {
-            this.$router.push('/finance/record/detail');
+            this.$router.push({
+                path: '/finance/record/detail',
+                query: {
+                    id: data.id
+                }
+            });
         },
         /**
          * 删除订单
-         * @Function handleDelete
+         * @function handleDelete
          * @params {Object} data 订单详情
          */
         handleDelete(data) {
@@ -322,19 +389,17 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
             }).then(() => {
-                if (true) {
-                    // TODO: 对账中
-                    this.$message.success('已删除');
-                }
-                if (true) {
-                    // TODO: 待结算
+                let value = JSON.parse(data.orderStatus).value;
+                if ([2, 3, 4, 5, 6].includes(value)) {
                     this.$message.warning('该对账单已结算');
+                    return;
                 }
+                this.$message.success('已删除');
             }).catch(() => {});
         },
         /**
          * 订单结算
-         * @Function handleSettle
+         * @function handleSettle
          * @params {Object} data 订单详情
          */
         handleSettle(data) {
@@ -342,20 +407,17 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
             }).then(() => {
-                if (true) {
-                    // TODO: !待结算
+                let value = JSON.parse(data.orderStatus).value;
+                if ([0].includes(value)) {
                     this.$message.success('订单未对账，不可结算');
                     return;
                 }
-                if (true) {
-                    // TODO: 待结算
-                    this.$message.warning('已提交');
-                }
+                this.$message.warning('已提交');
             }).catch(() => {});
         },
         /**
          * 更改每页条数
-         * @Function handleSizeChange
+         * @function handleSizeChange
          * @params {Number} pageSize
          */
         handleSizeChange(pageSize) {
@@ -364,7 +426,7 @@ export default {
         },
         /**
          * 更改当前页
-         * @Function handleCurrentChange
+         * @function handleCurrentChange
          * @params {Number} currentPage
          */
         handleCurrentChange(currentPage) {
@@ -373,32 +435,50 @@ export default {
         },
         /**
          * 关闭新增对账单弹窗
-         * @Function addOrderDialogBeforeClose
+         * @function addOrderDialogBeforeClose
          */
         addOrderDialogBeforeClose() {
             this.addOrderDialogVisible = false;
             let obj = {
-                orderCycle: null,
-                time: [],
+                type: null,
+                time: ['', ''],
             };
             Object.assign(this.addOrderForm, obj);
         },
         /**
          * 生成对账单
-         * @Function handleAddOrderSubmit
+         * @function handleAddOrderSubmit
          */
         handleAddOrderSubmit() {
-            this.addOrderDialogVisible = false;
-            let obj = {
-                orderCycle: null,
-                time: [],
+            let {time: [startTime, endTime], type} = this.addOrderForm;
+
+            if (!startTime || !endTime) {
+                this.$message.warning('请选择对账时段');
+                return;
+            }
+            if (!type) {
+                this.$message.warning('请选择对账方式');
+                return;
+            }
+            let params = {
+                endTime,
+                startTime,
+                type
             };
-            Object.assign(this.addOrderForm, obj);
-            this.$message.success('已生成对账单');
+            POST_FINANCE_SLIP_ADD(params).then(() => {
+                this.$message.success('已生成对账单');
+                this.getData();
+                this.addOrderDialogVisible = false;
+                let obj = {
+                    type: null,
+                    time: ['', ''],
+                };
+                Object.assign(this.addOrderForm, obj);
+            });
         },
         /**
          * 关闭订单结算申请弹窗
-         * @Function settleDialogBeforeClose
+         * @function settleDialogBeforeClose
          */
         settleDialogBeforeClose() {
             this.settleDialogVisible = false;
@@ -407,7 +487,7 @@ export default {
         },
         /**
          * 申请结算
-         * @Function handleSettleSubmit
+         * @function handleSettleSubmit
          */
         handleSettleSubmit() {
             this.settleDialogVisible = false;
@@ -418,19 +498,19 @@ export default {
         },
         /**
          * 选择申请结算的订单
-         * @Function handleSelectionChange
+         * @function handleSelectionChange
          * @params {Array} val
          */
         handleSelectionChange(val) {
-            this.multipleSelection = val;
+            this.multipleSelection = val.map(item => item.id);
         },
         /**
          * 选择对账方式 周/月/年/自定义
-         * @Function handleSelectOrderCycle
+         * @function handleSelectOrderCycle
          * @params {Number} index 下标
          */
         handleSelectOrderCycle(index) {
-            this.addOrderForm.orderCycle = this.orderCycle[index].value;
+            this.addOrderForm.type = this.orderCycle[index].value;
         }
     }
 }
@@ -448,7 +528,7 @@ export default {
             flex-wrap: wrap;
             box-sizing: border-box;
             &-item {
-                width: 33.33%;
+                width: 30%;
                 height: 32px;
                 margin-bottom: 16px;
                 >>>.el-input {
@@ -466,6 +546,12 @@ export default {
                         line-height: 32px;
                     }
                 }
+                >>>.el-date-editor--datetimerange {
+                    width: 340px;
+                    height: 32px;
+                    padding: 0 2px;
+                    border-radius: 2px;
+                }
             }
             .text-align-left {
                 text-align: left;
@@ -474,6 +560,7 @@ export default {
                 text-align: center;
             }
             .text-align-end {
+                width: 40%;
                 text-align: end;
             }
             .btns {

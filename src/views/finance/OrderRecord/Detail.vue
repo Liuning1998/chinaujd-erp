@@ -8,58 +8,69 @@
         <div class="order-info">
             <div class="order-info-item">
                 <span class="label">对账订单编号：</span>
-                <span class="value">DZ2021070814161234</span>
+                <span class="value">{{ orderInfo.id }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">订单类型：</span>
-                <span class="value">对账订单</span>
+                <span class="value">{{ orderInfo.orderType }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">订单状态：</span>
-                <span class="value">待对账</span>
+                <span class="value">{{ orderInfo.orderStatus }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">对账状态：</span>
-                <span class="value">待对账</span>
+                <span class="value">{{ orderInfo.status }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">对账时间段：</span>
-                <span class="value">2021.06.01~2021.06.30</span>
+                <span class="value">{{ orderInfo.startTime }}~{{ orderInfo.endTime }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">创建时间：</span>
-                <span class="value">2021.06.01</span>
+                <span class="value">{{ orderInfo.gmtCreate }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">收入金额：</span>
-                <span class="value">￥100000</span>
+                <span class="value">￥{{ orderInfo.incomeAmount || '0.00' }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">支出金额：</span>
-                <span class="value">￥100000</span>
+                <span class="value">￥{{ orderInfo.expensesAmount || '0.00' }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">异常未处理金额：</span>
-                <span class="value">￥100000</span>
+                <span class="value">￥{{ orderInfo.exceptionUnprocessedAmount || '0.00' }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">异常挂起金额：</span>
-                <span class="value">￥100000</span>
+                <span class="value">￥{{ orderInfo.exceptionHangAmount || '0.00' }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">创建人：</span>
-                <span class="value">张三</span>
+                <span class="value">{{ orderInfo.createUser }}</span>
             </div>
         </div>
         <div class="order-detail">
-            <el-tabs v-model="activeName">
+            <el-tabs v-model="activeName" @tab-click="handleClick">
                 <el-tab-pane label="订单明细" name="order">
-                    <order-detail></order-detail>
+                    <order-detail :table-data="orderInfo.rconciliationOrderAssociateList"></order-detail>
                 </el-tab-pane>
                 <el-tab-pane label="对账明细" name="record">
-                    <record-detail></record-detail>
+                    <record-detail :table-data="orderInfo.rconciliationDetailList"></record-detail>
                 </el-tab-pane>
             </el-tabs>
+        </div>
+         <div class="pagination" v-if="total > pageSize">
+            <el-pagination
+                background
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-size="pageSize"
+                layout="prev, pager, next, sizes, jumper"
+                :total="total">
+            </el-pagination>
         </div>
     </div>
 </template>
@@ -68,6 +79,12 @@
 import Breadcrumb from '@/components/Breadcrumb';
 import OrderDetail from '@/views/finance/orderRecord/components/OrderDetail';
 import RecordDetail from '@/views/finance/orderRecord/components/RecordDetail';
+
+import {
+    POST_FINANCE_SLIP_RECONCATION_INFO,
+    POST_FINANCE_SLIP_INFO,
+    POST_EXPORT_FINANCE_SLIP_EXPORT,
+} from '@/api/request';
 
 export default {
     components: {
@@ -78,14 +95,92 @@ export default {
     data() {
         return {
             activeName: 'order',
+            currentPage: 0,
+            pageSize: 15,
+            total: 0,
+            orderInfo: {
+                rconciliationOrderAssociateList: [],
+                rconciliationDetailList: [],
+            }
         }
+    },
+    created() {
+        this.getData();
     },
     methods: {
         /**
-         * 导出对账数据
-         * @Function handleExport
+         * 获取对账单详情
+         * @function getData
+         * @params {Number} id
          */
-        handleExport() {},
+        getData() {
+            let params = {
+                id: this.$route.query.id,
+                currentPage: this.currentPage,
+                pageSize: this.pageSize
+            };
+            let post_interface = this.activeName === 'order' ? POST_FINANCE_SLIP_RECONCATION_INFO : POST_FINANCE_SLIP_INFO;
+            post_interface(params).then(res => {
+                console.log('success');
+                res.data.orderType = JSON.parse(res.data.orderType).desc;
+                res.data.orderStatus = JSON.parse(res.data.orderStatus).desc;
+                res.data.status = JSON.parse(res.data.status).desc;
+                Object.assign(this.orderInfo, res.data);
+                this.total = res.data.total;
+            });
+        },
+        /**
+         * 导出对账数据
+         * @function handleExport
+         */
+        handleExport() {
+            let params = {
+                id: this.$route.query.id
+            };
+            POST_EXPORT_FINANCE_SLIP_EXPORT(params).then(res => {
+                const blob = new Blob([res], {
+                    type: 'application/vnd.ms-excel;charset=utf-8'
+                });
+                let curDate = `${new Date().getFullYear()}年${(new Date().getMonth() + 1)}月${new Date().getDate()}日`
+                const file_name = `对账单${curDate}.xls`;
+                if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+                    window.navigator.msSaveOrOpenBlob(blob, file_name);
+                } else {
+                    const aLink = document.createElement('a');
+                    aLink.href = URL.createObjectURL(blob);
+                    aLink.setAttribute('download', file_name);
+                    aLink.click();
+                    window.URL.revokeObjectURL(blob);
+                }
+            })
+        },
+        /**
+         * 更改每页条数
+         * @function handleSizeChange
+         * @params {Number} pageSize
+         */
+        handleSizeChange(pageSize) {
+            this.pageSize = pageSize;
+            this.getData();
+        },
+        /**
+         * 更改当前页
+         * @function handleCurrentChange
+         * @params {Number} currentPage
+         */
+        handleCurrentChange(currentPage) {
+            this.currentPage = currentPage;
+            this.getData();
+        },
+        /**
+         * 切换标签
+         * @function handleClick
+         * @params {} tab
+         */
+        handleClick(tab) {
+            this.activeName = tab.name;
+            this.getData();
+        }
     }
 }
 </script>
@@ -166,6 +261,38 @@ export default {
                 }
                 .el-tabs__nav-wrap::after {
                     height: 1px;
+                }
+            }
+        }
+        .pagination {
+            width: 100%;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 24px;
+            background: #fff;
+            box-sizing: border-box;
+            >>>.el-pagination {
+                .btn-next,
+                .btn-prev,
+                .el-pager li {
+                    background: #FFF;
+                    border: 1px solid #D9D9D9;
+                    border-radius: 2px;
+                }
+                .el-pager li {
+                    font-family: HelveticaNeue;
+                    font-size: 14px;
+                    font-weight: 100;
+                    color: rgba(0,0,0,0.65);
+                }
+                .el-pager li:not(.disabled).active {
+                    background-color: #409EFF;
+                    color: #FFF;
+                }
+                .el-pagination__jump {
+                    margin: 0;
                 }
             }
         }

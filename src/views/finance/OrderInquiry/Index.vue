@@ -8,7 +8,7 @@
             </div>
             <div class="search-item text-align-center">
                 <span>订单类型：</span>
-                <el-select v-model="form.orderType" @change="handleChangeOrderType">
+                <el-select v-model="form.orderMainType" @change="handleChangeOrderType">
                     <el-option label="全部" :value="0"></el-option>
                     <el-option
                         v-for="item in orderType"
@@ -32,7 +32,7 @@
             </div>
             <div class="search-item text-align-left">
                 <span>订单状态：</span>
-                <el-select v-model="form.orderStatus">
+                <el-select v-model="form.orderMainStatus">
                     <el-option label="全部" :value="0"></el-option>
                     <el-option
                         v-for="item in orderStatus"
@@ -56,7 +56,7 @@
             </div>
             <div class="search-item text-align-end">
                 <span>鉴评方式：</span>
-                <el-select v-model="form.evaluateType" placeholder="">
+                <el-select v-model="form.evalMethod" placeholder="">
                     <el-option label="全部" :value="0"></el-option>
                     <el-option
                         v-for="item in evaluateType"
@@ -104,27 +104,27 @@
                     label="序号">
                 </el-table-column>
                 <el-table-column
-                    prop="prop"
+                    prop="orderNumber"
                     width="150"
                     label="订单号">
                 </el-table-column>
                 <el-table-column
-                    prop="prop1"
+                    prop="bindingPhone"
                     width="120"
                     label="用户手机号">
                 </el-table-column>
                 <el-table-column
-                    prop="prop2"
+                    prop="serviceType"
                     width="130"
                     label="服务类型">
                 </el-table-column>
                 <el-table-column
-                    prop="prop3"
+                    prop="evalMethod"
                     width="100"
                     label="鉴评方式">
                 </el-table-column>
                 <el-table-column
-                    prop="prop4"
+                    prop="orderMainType"
                     width="100"
                     label="订单类型">
                 </el-table-column>
@@ -132,21 +132,21 @@
                     width="100"
                     label="订单金额">
                     <template slot-scope="scope">
-                        ¥{{ scope.row.prop5 }}
+                        ¥{{ scope.row.orderMainAmount }}
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="prop6"
+                    prop="orderMainStatus"
                     width="100"
                     label="订单状态">
                 </el-table-column>
                 <el-table-column
-                    prop="prop7"
+                    prop="paymentStatus"
                     width="100"
                     label="支付状态">
                 </el-table-column>
                 <el-table-column
-                    prop="prop8"
+                    prop="gmtCreate"
                     width="95"
                     label="创建时间">
                 </el-table-column>
@@ -177,6 +177,10 @@
 </template>
 
 <script>
+import {
+    POST_FINANCE_SLIP_PAGELIST
+} from '@/api/request';
+
 import Breadcrumb from '@/components/Breadcrumb';
 
 export default {
@@ -187,13 +191,13 @@ export default {
         return {
             form: {
                 orderNumber: '',
-                orderType: 0,
+                orderMainType: 0,
                 serviceType: 0,
-                orderStatus: 0,
-                paymentStatus: 0, // TODO: 支付状态还是退款状态需确定
-                evaluateType: 0,
-                createTime: [],
-                paymentTime: []
+                orderMainStatus: 0,
+                paymentStatus: 0,
+                evalMethod: 0,
+                createTime: ['', ''],
+                paymentTime: ['', '']
             },
             orderType: [
                 {label: '售后订单', value: 1},
@@ -219,19 +223,7 @@ export default {
             total: 0,
             currentPage: 0,
             pageSize: 15,
-            tableData: [
-                {
-                    prop: '443234444444345',
-                    prop1: 12345678901,
-                    prop2: '采集+鉴别+封装',
-                    prop3: '批量鉴评',
-                    prop4: '普通订单',
-                    prop5: '80.00',
-                    prop6: '待支付',
-                    prop7: '未支付',
-                    prop8: '2020.08.21 12:00:00'
-                }
-            ],
+            tableData: [],
         }
     },
     created() {
@@ -240,29 +232,53 @@ export default {
     methods: {
         /**
          * 获取订单列表
-         * @Function getData
+         * @function getData
          * @Params {Object} params 查询条件
          */
         getData() {
-
+            let params = {
+                currentPage: this.currentPage,
+                pageSize: this.pageSize,
+                orderNumber: this.form.orderNumber,
+                serviceType: this.form.serviceType,
+                evalMethod: this.form.evalMethod,
+                orderMainType: this.form.orderMainType,
+                orderMainStatus: this.form.orderMainStatus,
+                paymentStatus: this.form.paymentStatus,
+                gmtCreateStart: this.form.createTime[0],
+                gmtCreateEnd: this.form.createTime[1],
+                payTimeStart: this.form.paymentTime[0],
+                payTimeEnd: this.form.paymentTime[1]
+            };
+            POST_FINANCE_SLIP_PAGELIST(params).then(res => {
+                res.data.rows.forEach(item => {
+                    item.serviceType = JSON.parse(item.serviceType).desc;
+                    item.evalMethod = JSON.parse(item.evalMethod).desc;
+                    item.orderMainType = JSON.parse(item.orderMainType).desc;
+                    item.orderMainStatus = JSON.parse(item.orderMainStatus).desc;
+                    item.paymentStatus = JSON.parse(item.paymentStatus).desc;
+                });
+                this.tableData = res.data.rows;
+                this.total = res.data.total;
+            });
         },
         /**
          * 更改订单类型
-         * @Function handleChangeOrderType
+         * @function handleChangeOrderType
          */
         handleChangeOrderType(val) {
             if (val === 0) {
                 this.orderStatus = [];
             }
             if (val === 1) {
-                this.form.orderStatus = 0;
+                this.form.orderMainStatus = 0;
                 this.orderStatus = [
                     {label: '售后中', value: 11},
                     {label: '已关闭', value: 7},
                 ];
             }
             if (val === 2) {
-                this.form.orderStatus = 0;
+                this.form.orderMainStatus = 0;
                 this.orderStatus = [
                     {label: '对账中', value: 1},
                     {label: '待结算', value: 2},
@@ -274,7 +290,7 @@ export default {
                 ];
             }
             if (val === 3) {
-                this.form.orderStatus = 0;
+                this.form.orderMainStatus = 0;
                 this.orderStatus = [
                     {label: '已提交', value: 8},
                     {label: '处理中', value: 9},
@@ -286,32 +302,32 @@ export default {
         },
         /**
          * 查询
-         * @Function handleSearch
+         * @function handleSearch
          */
         handleSearch() {
             this.getData();
         },
         /**
          * 重置
-         * @Function handleReset
+         * @function handleReset
          */
         handleReset() {
             let form = {
                 orderNumber: '',
-                orderType: 0,
+                orderMainType: 0,
                 serviceType: 0,
-                orderStatus: 0,
+                orderMainStatus: 0,
                 paymentStatus: 0,
-                evaluateType: 0,
-                createTime: [],
-                paymentTime: []
+                evalMethod: 0,
+                createTime: ['', ''],
+                paymentTime: ['', '']
             };
             this.orderStatus = [];
             Object.assign(this.form, form);
         },
         /**
          * 导出
-         * @Function handleExport
+         * @function handleExport
          * @params {} res 接口返回
          */
         handleExport() {
@@ -319,7 +335,7 @@ export default {
                 type: 'application/vnd.ms-excel;charset=utf-8'
             });
             let curDate = `${new Date().getFullYear()}年${(new Date().getMonth() + 1)}月${new Date().getDate()}日`
-            const file_name = `订单明细${curDate}.xls`;
+            const file_name = `订单列表${curDate}.xls`;
             if (window.navigator && window.navigator.msSaveOrOpenBlob) {
                 window.navigator.msSaveOrOpenBlob(blob, file_name);
             } else {
@@ -332,7 +348,7 @@ export default {
         },
         /**
          * 查看订单
-         * @Function handleScan
+         * @function handleScan
          * @parsms {Object} data 订单详情
          */
         handleScan(data) {
@@ -340,7 +356,8 @@ export default {
         },
         /**
          * 订单退款
-         * @Function handleRefund
+         * TODO: 第一期暂不做
+         * @function handleRefund
          * @params {Object} data 订单详情
          */
         handleRefund(data) {
@@ -348,12 +365,12 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
             }).then(() => {
-                console.log('退款');
+                this.$message.success('退款成功');
             }).catch(() => {});
         },
         /**
          * 更改每页条数
-         * @Function handleSizeChange
+         * @function handleSizeChange
          * @params {Number} pageSize
          */
         handleSizeChange(pageSize) {
@@ -362,7 +379,7 @@ export default {
         },
         /**
          * 更改当前页
-         * @Function handleCurrentChange
+         * @function handleCurrentChange
          * @params {Number} currentPage
          */
         handleCurrentChange(currentPage) {

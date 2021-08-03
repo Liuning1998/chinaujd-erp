@@ -72,63 +72,12 @@ export default {
 		 * 获取权限列表
 		 */
 		getData() {
-			// let params = {
-			// 	regSys: "APPRAISAL_BOSS"
-			// };
-			// POST_USERCENTER_QUERY_ALL_AUTHORITIES(params).then(res => {
-			// 	this.dataQList = res.data;
-			// });
-			let data = [
-			{
-			authorityId: 1,
-			authorityName: "一级 1",
-			children: [
-				{
-				authorityId: 4,
-				authorityName: "二级 4",
-				children: [
-					{
-					authorityId: 9,
-					authorityName: "三级 9",
-					},
-					{
-					authorityId: 10,
-					authorityName: "三级 10",
-					},
-				],
-				},
-			],
-			},
-			{
-			authorityId: 2,
-			authorityName: "一级 2",
-			children: [
-				{
-				authorityId: 5,
-				authorityName: "二级 5",
-				},
-				{
-				authorityId: 6,
-				authorityName: "二级 6",
-				},
-			],
-			},
-			{
-			authorityId: 3,
-			authorityName: "一级 3",
-			children: [
-				{
-				authorityId: 7,
-				authorityName: "二级 7",
-				},
-				{
-				authorityId: 8,
-				authorityName: "二级 8",
-				},
-			],
-			},
-			];
-			this.dataQList = data;
+			let params = {
+				regSys: "APPRAISAL_BOSS"
+			};
+			POST_USERCENTER_QUERY_ALL_AUTHORITIES(params).then(res => {
+				this.dataQList = res.data;
+			});
 		},
 		/**
 		 * 获取选中节点的id
@@ -140,14 +89,14 @@ export default {
 		},
 		/**
 		 * 返回
-		 * @Function handleReturn
+		 * @function handleReturn
 		 */
 		handleReturn() {
 			this.$router.push("/management/rolemanagement/index");
 		},
 		/**
 		 * 保存
-		 * @Function handleSave
+		 * @function handleSave
 		 */
 		handleSave() {
 			this.$refs['form'].validate((valid) => {
@@ -158,10 +107,10 @@ export default {
 						roleName: this.form.roleName,
 						description: this.form.roleDescription
 					};
-					// POST_USERCENTER_ADD_ROLE(params).then(res => {
-					// 	this.$message.success('新增成功');
-					// 	this.$router.push("/management/rolemanagement/index");
-					// });
+					POST_USERCENTER_ADD_ROLE(params).then(res => {
+						this.$message.success('新增成功');
+						this.$router.push("/management/rolemanagement/index");
+					});
 				} else {
 					return;
 				}

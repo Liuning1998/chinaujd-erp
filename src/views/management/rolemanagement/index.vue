@@ -72,34 +72,16 @@
 			 * @function getData
 			 */
 			getData() {
-				// let params = {
-				// 	regSys: 'APPRAISAL_BOSS',
-				// 	roleName: this.keyword,
-				// 	currentPage: this.currentPage,
-				// 	pageSize: this.pageSize
-				// };
-				// POST_USERCENTER_QUERY_ROLE_PAGE(params).then(res => {
-				// 	this.tableData = res.data.rows;
-				// 	this.total = res.data.total;
-				// });
-				let data = [
-					{
-						roleId: 1,
-						roleName: '北京邮来邮网网络科技有限公司',
-						gmtModified: '2020.08.21 12:24:35'
-					},
-					{
-						roleId: 2,
-						roleName: '北京邮来邮网网络科技有限公司',
-						gmtModified: '2020.08.21 12:24:35'
-					},
-					{
-						roleId: 3,
-						roleName: '北京邮来邮网网络科技有限公司',
-						gmtModified: '2020.08.21 12:24:35'
-					},
-				];
-				this.tableData = data;
+				let params = {
+					regSys: 'APPRAISAL_BOSS',
+					roleName: this.keyword,
+					currentPage: this.currentPage,
+					pageSize: this.pageSize
+				};
+				POST_USERCENTER_QUERY_ROLE_PAGE(params).then(res => {
+					this.tableData = res.data.rows;
+					this.total = res.data.total;
+				});
 			},
 			/**
 			 * 查询
@@ -147,7 +129,7 @@
 			},
 			/**
 			 * 更改每页条数
-			 * @Function handleSizeChange
+			 * @function handleSizeChange
 			 * @params {Number} pageSize
 			 */
 			handleSizeChange(pageSize) {
@@ -156,7 +138,7 @@
 			},
 			/**
 			 * 更改当前页
-			 * @Function handleCurrentChange
+			 * @function handleCurrentChange
 			 * @params {Number} currentPage
 			 */
 			handleCurrentChange(currentPage) {

@@ -159,7 +159,7 @@
 <script>
 	import {
 		POST_BUSINESS_ORDER_LISTPAGE,
-		POST_BUSINESS_ORDER_EXPORT,
+		POST_EXPORT_BUSINESS_ORDER_EXPORT,
 	} from '@/api/request';
 
 	import Breadcrumb from '@/components/Breadcrumb';
@@ -303,10 +303,10 @@
 					}
 				];
 				this.tableData = table;
-				// POST_BUSINESS_ORDER_LISTPAGE(params).then(res => {
-				// 	this.tableData = res.data.rows;
-				// 	this.total = res.data.total;
-				// });
+				POST_BUSINESS_ORDER_LISTPAGE(params).then(res => {
+					this.tableData = res.data.rows;
+					this.total = res.data.total;
+				});
 			},
 			handleReset() {
 				let form = {
@@ -339,7 +339,7 @@
 					refundStatus: this.form.refundStatus,
 					serviceType: this.form.serviceType
 				};
-				POST_BUSINESS_ORDER_EXPORT(params).then(res => {
+				POST_EXPORT_BUSINESS_ORDER_EXPORT(params).then(res => {
 					const blob = new Blob([res], {
 						type: 'application/vnd.ms-excel;charset=utf-8'
 					});

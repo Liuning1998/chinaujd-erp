@@ -65,14 +65,14 @@ export default {
     methods: {
         /**
          * 关闭弹窗
-         * @Function handleClose
+         * @function handleClose
          */
         handleClose() {
             this.$emit('handleCloseDialog', false);
         },
         /**
          * 提交
-         * @Function handleSubmit
+         * @function handleSubmit
          */
         handleSubmit() {
             this.$emit('handleCloseDialog', false);

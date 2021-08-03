@@ -89,14 +89,14 @@ export default {
     methods: {
         /**
          * 全部提现
-         * @Function handleWithdrawal
+         * @function handleWithdrawal
          */
         handleWithdrawalAll() {
             this.withdrawalForm.balance = this.num;
         },
         /**
          * 提现
-         * @Function handleWithdrawal
+         * @function handleWithdrawal
          */
         handleWithdrawal() {
             if (!this.withdrawalForm.balance) {
@@ -110,6 +110,8 @@ export default {
         },
         /**
          * 提现金额禁止输入e-+
+         * @function channelInputLimit
+         * @params {Object} e 输入内容
          */
         channelInputLimit (e) {
             let key = e.key;
@@ -121,7 +123,7 @@ export default {
         },
         /**
          * 监听金额的输入
-         * @Function handleInput
+         * @function handleInput
          */
         handleInput(val) {
             // [整数, 小数]
@@ -141,14 +143,14 @@ export default {
         },
         /**
          * 选择银行卡
-         * @Function handleChangeBankCard
+         * @function handleChangeBankCard
          */
         handleChangeBankCard() {
             this.dialogVisible = true;
         },
         /**
          * 添加银行卡弹窗的确认
-         * @Function handleSubmit
+         * @function handleSubmit
          * @params {Boolean} val true || false
          */
         handleSubmit(val) {
@@ -156,7 +158,7 @@ export default {
         },
         /**
          * 添加银行卡弹窗的取消
-         * @Function handleClose
+         * @function handleClose
          * @params {Boolean} val true || false
          */
         handleClose(val) {

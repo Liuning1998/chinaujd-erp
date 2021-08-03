@@ -107,7 +107,7 @@ export default {
     methods: {
         /**
          * 获取订单列表
-         * @Function getData
+         * @function getData
          * @Params {Object} params 查询条件
          */
         getData() {
@@ -115,14 +115,14 @@ export default {
         },
         /**
          * 查询
-         * @Function handleSearch
+         * @function handleSearch
          */
         handleSearch() {
             this.getData();
         },
         /**
          * 重置
-         * @Function handleReset
+         * @function handleReset
          */
         handleReset() {
             let form = {
@@ -136,7 +136,7 @@ export default {
         },
         /**
          * 导出
-         * @Function handleExport
+         * @function handleExport
          * @params {} res 接口返回
          */
         handleExport() {

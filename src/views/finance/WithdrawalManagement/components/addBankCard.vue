@@ -85,7 +85,7 @@ export default {
     methods: {
         /**
          * 关闭弹窗
-         * @Function handleClose
+         * @function handleClose
          */
         handleClose() {
             let form = {

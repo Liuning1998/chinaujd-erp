@@ -91,7 +91,7 @@ export default {
     methods: {
         /**
          * 获取提现审核数据
-         * @Function getData
+         * @function getData
          */
         getData() {
             let data = [
@@ -120,7 +120,7 @@ export default {
         },
         /**
          * 查看
-         * @Function handleScan
+         * @function handleScan
          * @params {Object} data
          */
         handleScan(data) {
@@ -128,7 +128,7 @@ export default {
         },
         /**
          * 更改每页条数
-         * @Function handleSizeChange
+         * @function handleSizeChange
          * @params {Number} pageSize
          */
         handleSizeChange(pageSize) {
@@ -137,7 +137,7 @@ export default {
         },
         /**
          * 更改当前页
-         * @Function handleCurrentChange
+         * @function handleCurrentChange
          * @params {Number} currentPage
          */
         handleCurrentChange(currentPage) {
@@ -146,7 +146,7 @@ export default {
         },
         /**
          * 关闭查看提现详情弹窗
-         * @Function handleCloseDialog
+         * @function handleCloseDialog
          */
         handleCloseDialog(val) {
             this.detailDialogVisible = val;

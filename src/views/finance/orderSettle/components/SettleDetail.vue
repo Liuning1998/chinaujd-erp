@@ -120,7 +120,7 @@ export default {
     methods: {
         /**
          * 获取表格数据
-         * @Function getData
+         * @function getData
          */
         getData() {
             let data = [

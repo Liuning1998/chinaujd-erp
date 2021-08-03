@@ -14,7 +14,7 @@ import {
 let baseURL = '';
 
 if (process.env.NODE_ENV == 'development') { //开发环境
-	baseURL = 'http://172.18.3.11:8070';
+	baseURL = 'http://192.168.51.26:3000/mock/228';
 } else if (process.env.NODE_ENV == 'production') { //生产环境地址
   baseURL = 'http://zuul.5g.silkeroad.cn';
 } else if (process.env.NODE_ENV == 'testing') { //测试环境地址
@@ -24,13 +24,6 @@ if (process.env.NODE_ENV == 'development') { //开发环境
 export function login() {};
 export function getImageCode() {};
 /**
- * 财务中心 Start
- * */
-// 对账单列表
-export function POST_FINANCE_SLIP_LIST(params) {
-  return post(baseURL + '/reconciation/silp/pageList', params);
-}
-/**
  * 业务中心 Start
  */
 // 订单列表-列表页
@@ -38,7 +31,7 @@ export function POST_BUSINESS_ORDER_LISTPAGE(params) {
   return post(baseURL + '/philatelic/business/orderMain/listPage', params);
 }
 // 订单列表-导出
-export function POST_BUSINESS_ORDER_EXPORT(params) {
+export function POST_EXPORT_BUSINESS_ORDER_EXPORT(params) {
   return postExport(baseURL + '/philatelic/business/orderMain/export', params);
 }
 // 订单列表-查看-详情
@@ -48,6 +41,41 @@ export function GET_BUSINESS_ORDER_VIEW(params) {
 /**
  * 业务中心 End
  */
+/**
+ * 财务中心 Start
+ * */
+// 对账单列表
+export function POST_FINANCE_SLIP_LIST(params) {
+  return post(baseURL + '/reconciation/silp/pageList', params);
+}
+// 分页查询订单
+export function POST_FINANCE_SLIP_PAGELIST(params) {
+  return post(baseURL + '/financial/order/pageList', params);
+}
+// 新增对账单
+export function POST_FINANCE_SLIP_ADD(params) {
+  return post(baseURL + '/reconciation/silp/add', params);
+}
+// 删除对账单
+export function POST_FINANCE_SLIP_DELETE(params) {
+  return post(baseURL + '/reconciation/silp/delete', params);
+}
+// 订单结算列表
+export function POST_FINANCE_SLIP_SETTLEMENT_LIST(params) {
+  return post(baseURL +'/reconciation/silp/settlementList', params);
+}
+// 获取对账单对账内容详情
+export function POST_FINANCE_SLIP_RECONCATION_INFO(params) {
+  return post(baseURL + '/reconciation/silp/reconciationInfo', params);
+}
+// 获取对账单订单内容详情
+export function POST_FINANCE_SLIP_INFO(params) {
+  return post(baseURL + '/reconciation/silp/info', params);
+}
+// 对账单信息-导出
+export function POST_EXPORT_FINANCE_SLIP_EXPORT(params) {
+  return postExport(baseURL + '/reconciation/silp/export', params);
+}
 /**
  * 财务中心 End
  * */
@@ -97,5 +125,16 @@ export function POST_USERCENTER_UPDATE_MENU(params) {
 /**
  * 系统管理 End
  * */
+
+/**
+ * 其他 Start
+ */
+// 获取侧边栏
+export function POST_BASE_MENU_ROUTE_LIST(params) {
+  return post(baseURL + '', params);
+}
+/**
+ * 其他 End
+ */
 
 

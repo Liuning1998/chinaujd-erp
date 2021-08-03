@@ -75,15 +75,15 @@ export default {
 		handleSubmit() {
 			this.$refs['form'].validate((valid) => {
 				if (valid) {
-					// let params = {
-					// 	menuId: this.$route.query.menuId,
-					// 	menuUrl: this.form.menuUrl,
-					// 	regSys: 'APPRAISAL_BOSS'
-					// }
-					// POST_USERCENTER_UPDATE_MENU(params).then(res => {
-					// 	this.$message.success('编辑成功');
-					// 	this.$router.push("/management/menumanagement/index");
-					// });
+					let params = {
+						menuId: this.$route.query.menuId,
+						menuUrl: this.form.menuUrl,
+						regSys: 'APPRAISAL_BOSS'
+					}
+					POST_USERCENTER_UPDATE_MENU(params).then(res => {
+						this.$message.success('编辑成功');
+						this.$router.push("/management/menumanagement/index");
+					});
 				} else {
 					return;
 				}

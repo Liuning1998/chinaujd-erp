@@ -9,18 +9,18 @@
             </el-table-column>
             <el-table-column
                 prop="orderNumber"
-                label="订单号">
+                label="业务订单编号">
             </el-table-column>
             <el-table-column
                 prop="bindingPhone"
                 label="用户手机号">
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
                 label="服务类型">
                 <template slot-scope="scope">
                     {{ scope.row.serviceType ? JSON.parse(scope.row.serviceType).desc : ''}}
                 </template>
-            </el-table-column>
+            </el-table-column> -->
             <el-table-column
                 label="鉴评方式">
                 <template slot-scope="scope">

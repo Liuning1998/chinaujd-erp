@@ -62,12 +62,12 @@
                         ¥{{ scope.row.thirdPartTransactionAmount }}
                     </template>
                 </el-table-column>
-                <el-table-column
+                <!-- <el-table-column
                     label="业务类型">
                     <template slot-scope="scope">
                         {{ scope.row.thirdPartPaymentType ? JSON.parse(scope.row.thirdPartPaymentType).desc : '' }}
                     </template>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column
                     prop="thirdPartTransacionTime"
                     label="交易时间">
@@ -97,15 +97,15 @@
                         :data="abnormalTableData">
                         <el-table-column
                             prop="thirdPartNumber"
-                            label="订单号">
+                            label="订单编号">
+                        </el-table-column>
+                        <el-table-column
+                            prop="thirdPartTransactionSerialNumber"
+                            label="交易流水号">
                         </el-table-column>
                         <el-table-column
                             prop="thirdPartTransacionTime"
                             label="交易时间">
-                        </el-table-column>
-                        <el-table-column
-                            prop="platformOrderPaymentType"
-                            label="交易类型">
                         </el-table-column>
                         <el-table-column
                             label="交易金额">
@@ -117,7 +117,7 @@
                 </div>
             </div>
             <div slot="footer">
-                <el-button class="submit" @click="handleClose">确 定</el-button>
+                <el-button class="submit" @click="handleClose">知道了</el-button>
             </div>
         </el-dialog>
     </div>
@@ -133,7 +133,7 @@ export default {
         return {
             abnormalTableData: [],
             orderNumber: null,
-            dialogVisible: false,
+            dialogVisible: true,
         }
     },
     props: {

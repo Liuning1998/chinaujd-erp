@@ -4,9 +4,9 @@
         <div class="search">
             <div class="search-item text-align-left">
                 <span>订单编号：</span>
-                <el-input v-model="form.orderNumber"></el-input>
+                <el-input v-model="form.orderNumber" placeholder="请输入"></el-input>
             </div>
-            <div class="search-item text-align-center">
+            <div class="search-item text-align-end">
                 <span>订单类型：</span>
                 <el-select v-model="form.orderMainType" @change="handleChangeOrderType">
                     <el-option label="全部" :value="0"></el-option>
@@ -18,7 +18,7 @@
                     </el-option>
                 </el-select>
             </div>
-            <div class="search-item text-align-end">
+            <!-- <div class="search-item text-align-end">
                 <span>服务类型：</span>
                 <el-select v-model="form.serviceType">
                     <el-option label="全部" :value="0"></el-option>
@@ -29,8 +29,8 @@
                         :value="item.value">
                     </el-option>
                 </el-select>
-            </div>
-            <div class="search-item text-align-left">
+            </div> -->
+            <div class="search-item text-align-end">
                 <span>订单状态：</span>
                 <el-select v-model="form.orderMainStatus">
                     <el-option label="全部" :value="0"></el-option>
@@ -91,7 +91,7 @@
             <div class="search-item" style="width: 24%; text-align: end;">
                 <el-button class="search-btn" @click="handleSearch">查询</el-button>
                 <el-button class="reset-btn" @click="handleReset">重置</el-button>
-                <el-button class="export-btn" @click="handleExport">导出</el-button>
+                <!-- <el-button class="export-btn" @click="handleExport">导出</el-button> -->
             </div>
         </div>
         <div class="table">
@@ -105,31 +105,26 @@
                 </el-table-column>
                 <el-table-column
                     prop="orderNumber"
-                    width="150"
                     label="订单号">
                 </el-table-column>
                 <el-table-column
                     prop="bindingPhone"
-                    width="120"
                     label="用户手机号">
                 </el-table-column>
-                <el-table-column
+                <!-- <el-table-column
                     prop="serviceType"
                     width="130"
                     label="服务类型">
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column
                     prop="evalMethod"
-                    width="100"
                     label="鉴评方式">
                 </el-table-column>
                 <el-table-column
                     prop="orderMainType"
-                    width="100"
                     label="订单类型">
                 </el-table-column>
                 <el-table-column
-                    width="100"
                     label="订单金额">
                     <template slot-scope="scope">
                         ¥{{ scope.row.orderMainAmount }}
@@ -137,7 +132,6 @@
                 </el-table-column>
                 <el-table-column
                     prop="orderMainStatus"
-                    width="100"
                     label="订单状态">
                 </el-table-column>
                 <el-table-column
@@ -147,11 +141,9 @@
                 </el-table-column>
                 <el-table-column
                     prop="gmtCreate"
-                    width="95"
                     label="创建时间">
                 </el-table-column>
                 <el-table-column
-                    width="60"
                     label="操作">
                     <template slot-scope="scope">
                         <el-button type="text" @click="handleScan(scope.row)">查看</el-button>
@@ -192,7 +184,6 @@ export default {
             form: {
                 orderNumber: '',
                 orderMainType: 0,
-                serviceType: 0,
                 orderMainStatus: 0,
                 paymentStatus: 0,
                 evalMethod: 0,
@@ -240,7 +231,6 @@ export default {
                 currentPage: this.currentPage,
                 pageSize: this.pageSize,
                 orderNumber: this.form.orderNumber,
-                serviceType: this.form.serviceType,
                 evalMethod: this.form.evalMethod,
                 orderMainType: this.form.orderMainType,
                 orderMainStatus: this.form.orderMainStatus,
@@ -252,7 +242,6 @@ export default {
             };
             POST_FINANCE_SLIP_PAGELIST(params).then(res => {
                 res.data.rows.forEach(item => {
-                    item.serviceType = JSON.parse(item.serviceType).desc;
                     item.evalMethod = JSON.parse(item.evalMethod).desc;
                     item.orderMainType = JSON.parse(item.orderMainType).desc;
                     item.orderMainStatus = JSON.parse(item.orderMainStatus).desc;
@@ -315,7 +304,6 @@ export default {
             let form = {
                 orderNumber: '',
                 orderMainType: 0,
-                serviceType: 0,
                 orderMainStatus: 0,
                 paymentStatus: 0,
                 evalMethod: 0,
@@ -443,21 +431,21 @@ export default {
             }
             .text-align-end {
                 text-align: end;
-                .search-btn {
-                    background: #1890FF;
-                    border: 0;
-                    color: #fff;
-                }
-                .reset-btn {
-                    background: #fff;
-                    border: 1px solid #D9D9D9;
-                    color: #666666;
-                }
-                .export-btn {
-                    background: #fff;
-                    border: 1px solid #1890FF;
-                    color: #1890FF;
-                }
+            }
+            .search-btn {
+                background: #1890FF;
+                border: 0;
+                color: #fff;
+            }
+            .reset-btn {
+                background: #fff;
+                border: 1px solid #D9D9D9;
+                color: #666666;
+            }
+            .export-btn {
+                background: #fff;
+                border: 1px solid #1890FF;
+                color: #1890FF;
             }
         }
         .table {

@@ -121,7 +121,6 @@ export default {
             };
             let post_interface = this.activeName === 'order' ? POST_FINANCE_SLIP_RECONCATION_INFO : POST_FINANCE_SLIP_INFO;
             post_interface(params).then(res => {
-                console.log('success');
                 res.data.orderType = JSON.parse(res.data.orderType).desc;
                 res.data.orderStatus = JSON.parse(res.data.orderStatus).desc;
                 res.data.status = JSON.parse(res.data.status).desc;

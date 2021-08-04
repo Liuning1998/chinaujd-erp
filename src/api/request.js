@@ -60,7 +60,7 @@ export function POST_FINANCE_SLIP_ADD(params) {
 export function POST_FINANCE_SLIP_DELETE(params) {
   return post(baseURL + '/reconciation/silp/delete', params);
 }
-// 订单结算列表
+// 对账单-订单结算列表
 export function POST_FINANCE_SLIP_SETTLEMENT_LIST(params) {
   return post(baseURL +'/reconciation/silp/settlementList', params);
 }
@@ -75,6 +75,26 @@ export function POST_FINANCE_SLIP_INFO(params) {
 // 对账单信息-导出
 export function POST_EXPORT_FINANCE_SLIP_EXPORT(params) {
   return postExport(baseURL + '/reconciation/silp/export', params);
+}
+// 订单结算-订单结算列表
+export function POST_FINANCE_SLIP_SETTLEMENT_PAGELIST(params) {
+  return post(baseURL + '/philatelic/finance/settlement/slip/pageList', params);
+}
+// 订单结算-审核-通过
+export function POST_FINANCE_SLIP_SETTLEMENT_SUCCESS(params) {
+  return post(baseURL + '/philatelic/finance/settlement/slip/success', params);
+}
+// 订单结算-审核-驳回
+export function POST_FINANCE_SLIP_SETTLEMENT_REJECT(params) {
+  return post(baseURL + '/philatelic/finance/settlement/slip/reject', params);
+}
+// 订单结算-查看详情-结算明细
+export function POST_FINANCE_SLIP_SETTLEMENT_VIEW(params) {
+  return post(baseURL + '/philatelic/finance/settlement/slip/viewSettlement', params);
+}
+// 订单结算-查看明细-订单详情
+export function POST_FINANCE_SLIP_ORDER_VIEW(params) {
+  return post(baseURL + '/philatelic/finance/settlement/slip/viewOrder', params);
 }
 /**
  * 财务中心 End

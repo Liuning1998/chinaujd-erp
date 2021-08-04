@@ -4,24 +4,12 @@
         <div class="search">
             <div class="search-item search-item-left">
                 <span>结算订单编号：</span>
-                <el-input v-model="form.orderNumber"></el-input>
-            </div>
-            <div class="search-item search-item-center">
-                <span>订单类型：</span>
-                <el-select v-model="form.orderType" placeholder="">
-                    <el-option label="全部" :value="0"></el-option>
-                    <el-option
-                        v-for="item in orderType"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value">
-                    </el-option>
-                </el-select>
+                <el-input v-model="form.settlementId" placeholder="请输入"></el-input>
             </div>
             <div class="search-item search-item-end">
                 <span>审核状态：</span>
                 <el-select v-model="form.examineStatus" placeholder="">
-                    <el-option label="全部" :value="0"></el-option>
+                    <el-option label="全部" value=""></el-option>
                     <el-option
                         v-for="item in examineStatus"
                         :key="item.value"
@@ -55,18 +43,36 @@
                 </el-date-picker>
             </div>
             <div class="search-btns">
-                <el-button type="primary" @click="handleSearch">查询</el-button>
-                <el-button type="primary" @click="handleReset">重置</el-button>
-                <el-button type="primary" @click="handleExport">导出</el-button>
+                <el-button class="search-btn" @click="handleSearch">查询</el-button>
+                <el-button class="reset-btn" @click="handleReset">重置</el-button>
+                <!-- <el-button type="primary" @click="handleExport">导出</el-button> -->
             </div>
         </div>
         <div class="order-detail">
-            <search-table></search-table>
+            <search-table
+                :table-data="tableData"
+                @getData="getData">
+            </search-table>
+        </div>
+        <div class="pagination" v-if="total > pageSize">
+            <el-pagination
+                background
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-size="pageSize"
+                layout="prev, pager, next, sizes, jumper"
+                :total="total">
+            </el-pagination>
         </div>
     </div>
 </template>
 
 <script>
+import {
+    POST_FINANCE_SLIP_SETTLEMENT_PAGELIST,
+} from '@/api/request';
+
 import Breadcrumb from '@/components/Breadcrumb';
 import SearchTable from '@/views/finance/orderSettle/components/SearchTable';
 
@@ -83,25 +89,23 @@ export default {
                 }
             },
             form: {
-                orderNumber: '',
-                orderType: 0,
-                examineStatus: 0,
-                applyTime: [],
-                examineTime: []
+                settlementId: '',
+                examineStatus: '',
+                applyTime: ['', ''],
+                examineTime: ['', '']
             },
-            orderType: [
-                {label: '售后订单', value: 1},
-                {label: '结算订单', value: 2},
-                {label: '提现订单', value: 3},
-            ],
             examineStatus: [
-                {label: '待审核', value: 1},
-                {label: '待结算', value: 2},
-                {label: '已结算', value: 3},
-                {label: '已拒绝', value: 4},
-                {label: '已关闭', value: 5},
+                {label: '待审核', value: 0},
+                {label: '待结算', value: 1},
+                {label: '已结算', value: 2},
+                {label: '已拒绝', value: 3},
+                {label: '已关闭', value: 4},
             ],
             activeName: 'unreview',
+            total: 0,
+            currentPage: 0,
+            pageSize: 15,
+            tableData: [],
         }
     },
     methods: {
@@ -111,7 +115,23 @@ export default {
          * @Params {Object} params 查询条件
          */
         getData() {
-
+            let params = {
+                applyStart: this.form.applyTime[0],
+                applyEnd: this.form.applyTime[1],
+                currentPage: this.currentPage,
+                pageSize: this.pageSize,
+                examineStart: this.form.examineTime[0],
+                examineEnd: this.form.examineTime[1],
+                settlementId: this.form.settlementId,
+                examineStatus: this.form.examineStatus,
+            };
+            POST_FINANCE_SLIP_SETTLEMENT_PAGELIST(params).then(res => {
+                res.data.rows.forEach(item => {
+                    item.examineStatus = Number(JSON.parse(item.examineStatus).value);
+                })
+                this.tableData = res.data.rows;
+                this.total = total;
+            })
         },
         /**
          * 查询
@@ -126,11 +146,10 @@ export default {
          */
         handleReset() {
             let form = {
-                orderNumber: '',
-                orderType: 0,
-                examineStatus: 0,
-                applyTime: [],
-                examineTime: []
+                settlementId: '',
+                examineStatus: '',
+                applyTime: ['', ''],
+                examineTime: ['', '']
             };
             Object.assign(this.form, form);
         },
@@ -154,6 +173,24 @@ export default {
                 aLink.click();
                 window.URL.revokeObjectURL(blob);
             }
+        },
+        /**
+         * 更改每页条数
+         * @function handleSizeChange
+         * @params {Number} pageSize
+         */
+        handleSizeChange(pageSize) {
+            this.pageSize = pageSize;
+            this.getData();
+        },
+        /**
+         * 更改当前页
+         * @function handleCurrentChange
+         * @params {Number} currentPage
+         */
+        handleCurrentChange(currentPage) {
+            this.currentPage = currentPage;
+            this.getData();
         },
     }
 }
@@ -246,6 +283,16 @@ export default {
                     color: #FFFFFF;
                     padding: 5px 12px;
                 }
+                .search-btn {
+                    background: #1890FF;
+                    border: 0;
+                    color: #fff;
+                }
+                .reset-btn {
+                    background: #fff;
+                    border: 1px solid #D9D9D9;
+                    color: #666666;
+                }
             }
         }
         .order-detail {
@@ -273,6 +320,38 @@ export default {
                 }
                 .el-tabs__nav-wrap::after {
                     height: 1px;
+                }
+            }
+        }
+        .pagination {
+            width: 100%;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 24px;
+            background: #fff;
+            box-sizing: border-box;
+            >>>.el-pagination {
+                .btn-next,
+                .btn-prev,
+                .el-pager li {
+                    background: #FFF;
+                    border: 1px solid #D9D9D9;
+                    border-radius: 2px;
+                }
+                .el-pager li {
+                    font-family: HelveticaNeue;
+                    font-size: 14px;
+                    font-weight: 100;
+                    color: rgba(0,0,0,0.65);
+                }
+                .el-pager li:not(.disabled).active {
+                    background-color: #409EFF;
+                    color: #FFF;
+                }
+                .el-pagination__jump {
+                    margin: 0;
                 }
             }
         }

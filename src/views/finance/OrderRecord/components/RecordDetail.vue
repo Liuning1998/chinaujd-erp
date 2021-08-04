@@ -17,12 +17,6 @@
                     prop="platformOrderTransactionTime"
                     label="交易时间">
                 </el-table-column>
-                <!-- <el-table-column
-                    label="交易类型">
-                    <template slot-scope="scope">
-                        {{ scope.row.platformOrderPaymentType ? JSON.parse(scope.row.platformOrderPaymentType).desc : '' }}
-                    </template>
-                </el-table-column> -->
                 <el-table-column
                     label="交易金额">
                     <template slot-scope="scope">
@@ -42,12 +36,7 @@
                         <div v-if="Number(scope.row.status) === 2">
                             <i class="dot-error"></i>
                             <span>异常未处理</span>
-                            <el-button class="detail" type="text" @click="handleAbnormal(scope.row)">处理</el-button>
-                        </div>
-                        <div v-if="Number(scope.row.status) === 3">
-                            <i class="dot-warning"></i>
-                            <span>异常已挂起</span>
-                            <el-button class="detail" type="text" @click="handleAbnormal(scope.row)">处理</el-button>
+                            <el-button class="detail" type="text" @click="handleAbnormal(scope.row.orderNumber)">查看</el-button>
                         </div>
                     </template>
                 </el-table-column>
@@ -68,8 +57,10 @@
                     </div>
                 </template>
                 <el-table-column
-                    prop="thirdPartTransactionAmount"
                     label="交易金额">
+                    <template slot-scope="scope">
+                        ¥{{ scope.row.thirdPartTransactionAmount }}
+                    </template>
                 </el-table-column>
                 <el-table-column
                     label="业务类型">
@@ -92,125 +83,64 @@
             </el-table-column>
         </el-table>
         <el-dialog
-            title="异常处理"
+            title="异常详情"
             width="640px"
             class="abnormal-dialog"
-            :visible.sync="abnormalDialogVisible"
+            :visible.sync="dialogVisible"
             :before-close="handleClose">
             <div>
-                <div class="detail-type">
-                    <span>处理方式：</span>
-                    <div class="btns">
-                        <span
-                            :class="abnormalForm.type === item.value ? 'detail-type-select' : null"
-                            v-for="(item, index) in detailType" :key="index"
-                            @click="handleSelectDetailType(item.value)">
-                            {{ item.label }}
-                        </span>
-                    </div>
+                <div class="detail-order">
+                    <span>订单编号：{{ orderNumber }}</span>
                 </div>
-                <div class="detail-order" v-if="abnormalForm.type === 0">
-                    <!-- <span v-if="currentData.prop9 && !currentData.prop1">平台订单</span> -->
-                    <span>三方订单：</span>
-                    <el-input v-model="orderNumber"></el-input>
-                    <el-button type="primary" @click="handleSearch(handleSearch)">查询</el-button>
-                </div>
-                <div class="table" v-if="abnormalForm.type === 0">
+                <div class="table">
                     <el-table
-                        :data="abnormalTableData"
-                        @selection-change="handleSelectionChange">
+                        :data="abnormalTableData">
                         <el-table-column
-                            width="60"
-                            align="center"
-                            type="selection">
-                        </el-table-column>
-                        <el-table-column
-                            prop="prop1"
-                            width="150"
+                            prop="thirdPartNumber"
                             label="订单号">
                         </el-table-column>
                         <el-table-column
-                            prop="prop2"
-                            width="95"
+                            prop="thirdPartTransacionTime"
                             label="交易时间">
                         </el-table-column>
                         <el-table-column
-                            prop="prop3"
-                            width="90"
-                            label="支付类型">
+                            prop="platformOrderPaymentType"
+                            label="交易类型">
                         </el-table-column>
                         <el-table-column
-                            width="90"
                             label="交易金额">
                             <template slot-scope="scope">
-                                <span v-if="!scope.row.modify">{{ scope.row.prop4 }}</span>
-                                <el-input v-else v-model="scope.row.prop4" @blur="handleBlur(scope.row.prop1)"></el-input>
-                            </template>
-                        </el-table-column>
-                        <el-table-column
-                            label="操作">
-                            <template slot-scope="scope">
-                                <el-button type="text" @click="handleModify(scope.row.prop1)">修改</el-button>
-                                <el-divider direction="vertical"></el-divider>
-                                <el-button type="text" @click="handleDelete(scope.row.prop1)">删除</el-button>
+                                ¥{{ scope.row.thirdPartTransactionAmount }}
                             </template>
                         </el-table-column>
                     </el-table>
                 </div>
-                <div class="remarks">
-                    <span>备注：</span>
-                    <el-input type="textarea" v-model="abnormalForm.remarks" placeholder=""></el-input>
-                </div>
             </div>
             <div slot="footer">
-                <el-button class="cancel" @click="handleClose">取 消</el-button>
-                <el-button class="submit"
-                    :disabled="abnormalForm.type === 0 && !abnormalForm.order.length"
-                    @click="handleSubmit">
-                    确 定
-                </el-button>
+                <el-button class="submit" @click="handleClose">确 定</el-button>
             </div>
         </el-dialog>
     </div>
 </template>
 
 <script>
+import {
+
+} from '@/api/request';
+
 export default {
     data() {
         return {
-            detailType: [
-                {label: '异常处理', value: 0},
-                {label: '挂起异常', value: 1},
-            ],
             abnormalTableData: [],
-            currentData: {},
-            abnormalDialogVisible: false,
-            orderNumber: '',
-            abnormalForm: {
-                type: 0,
-                order: [],
-                remarks: '',
-            }
+            orderNumber: null,
+            dialogVisible: false,
         }
     },
     props: {
         tableData: {
             type: Array,
             default: () => {
-                return [
-                    {
-                        prop1: 1,
-                        prop2: 2,
-                        prop3: 3,
-                        prop4: 4,
-                        prop5: 2,
-                        prop6: 6,
-                        prop7: 7,
-                        prop8: 8,
-                        prop9: 9,
-                        prop10: 10,
-                    }
-                ];
+                return [];
             }
         }
     },
@@ -219,97 +149,19 @@ export default {
          * 处理异常弹窗
          * @function handleAbnormal
          */
-        handleAbnormal(data) {
-            this.currentData = data;
-            this.abnormalDialogVisible = true;
+        handleAbnormal(orderNumber) {
+            this.orderNumber = orderNumber;
+            this.dialogVisible = true;
+            // TODO: 获取三方异常数据列表  platformOrderPaymentType 需JSON.parse处理
+            // this.abnormalTableData = res.data.rows;
         },
         /**
          * 关闭异常处理弹窗
          * @function handleClose
          */
         handleClose() {
-            this.abnormalDialogVisible = false;
-            this.abnormalForm.order = [];
+            this.dialogVisible = false;
         },
-        /**
-         * 提交异常处理结果
-         * @function handleSubmit
-         */
-        handleSubmit() {
-            this.$message.success('已确认关联，系统开始再次对账');
-            this.abnormalDialogVisible = false;
-            this.abnormalForm.order = [];
-        },
-        /**
-         * 选择异常处理方式
-         * @function handleSelectDetailType
-         * @params {String} value
-         */
-        handleSelectDetailType(value) {
-            this.abnormalForm.type = value;
-        },
-        /**
-         * 搜索异常数据
-         * @function handleSearch
-         * @parans {String} keyword 订单号
-         */
-        handleSearch(keyword) {
-            let data = [
-                {
-                    prop1: '443234444444345',
-                    prop2: '2020.08.21 12:00:00',
-                    prop3: '付款',
-                    prop4: 40000,
-                },
-                {
-                    prop1: '443234444444346',
-                    prop2: '2020.08.21 12:00:00',
-                    prop3: '付款',
-                    prop4: 10000,
-                }
-            ];
-            data.forEach(item => {
-                item.modify = false;
-            });
-            this.abnormalTableData = data;
-        },
-        /**
-         * 选择异常的订单号
-         * @function handleSelectionChange
-         * @params {Array} val
-         */
-        handleSelectionChange(val) {
-            this.abnormalForm.order = val.map(item => item.prop1);
-        },
-        /**
-         * 输入框失去焦点修改金额
-         * @function handleBlur
-         */
-        handleBlur(data) {
-            this.abnormalTableData.forEach(item => {
-                if (item.prop1 === data) {
-                    item.modify = false;
-                }
-            });
-        },
-        /**
-         * 修改异常订单
-         * @function handleModify
-         * @params {Object} data
-         */
-        handleModify(data) {
-            this.abnormalTableData.forEach(item => {
-                if (item.prop1 === data) {
-                    item.modify = true;
-                }
-            });
-        },
-        /**
-         * 删除异常订单
-         * @function handleDelete
-         * @params {Object} data
-         */
-        handleDelete(data) {},
     }
 }
 </script>
@@ -384,14 +236,6 @@ export default {
                 display: inline-block;
                 border-radius: 50%;
             }
-            .dot-warning {
-                width: 6px;
-                height: 6px;
-                background: #FAAD14;
-                margin: 0 8px 0 6px;
-                display: inline-block;
-                border-radius: 50%;
-            }
             .detail {
                 margin-left: 16px;
             }
@@ -406,34 +250,6 @@ export default {
                 }
                 .el-dialog__body {
                     padding: 8px 24px 0;
-                    .detail-type {
-                        display: flex;
-                        span {
-                            width: 70px;
-                            height: 22px;
-                            line-height: 22px;
-                            font-family: PingFangSC-Regular;
-                            font-size: 14px;
-                        }
-                        .btns {
-                            span {
-                                width: 88px;
-                                height: 22px;
-                                background: #F5F5F5;
-                                border: 1px solid #D9D9D9;
-                                border-radius: 2px;
-                                display: inline-block;
-                                text-align: center;
-                                margin-right: 24px;
-                                cursor: pointer;
-                            }
-                        }
-                        &-select {
-                            background: #FFFFFF!important;
-                            border: 1px solid #1890FF!important;
-                            color: #1890FF;
-                        }
-                    }
                     .detail-order {
                         margin-top: 24px;
                         display: flex;
@@ -500,22 +316,6 @@ export default {
                                     border-radius: 2px;
                                 }
                             }
-                        }
-                    }
-                    .remarks {
-                        margin-top: 24px;
-                        display: flex;
-                        span {
-                            width: 70px;
-                            height: 22px;
-                            line-height: 22px;
-                            font-family: PingFangSC-Regular;
-                            font-size: 14px;
-                            text-align: right;
-                        }
-                        .el-textarea__inner {
-                            width: 328px;
-                            height: 80px;
                         }
                     }
                 }

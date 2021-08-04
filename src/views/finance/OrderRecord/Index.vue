@@ -27,7 +27,7 @@
                 </el-select>
             </div>
             <div class="search-item text-align-end">
-                <span>对账时间：</span>
+                <span>对账时间段：</span>
                 <el-date-picker
                     v-model="form.time"
                     type="datetimerange"

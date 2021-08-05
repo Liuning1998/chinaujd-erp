@@ -1,107 +1,34 @@
 <template>
     <div class="container">
         <el-table
-            class=""
-            :data="tableData">
-            <el-table-column>
-                <el-table-column
-                    prop="prop1"
-                    width="150"
-                    label="服务项单价">
-                </el-table-column>
-                <el-table-column
-                    prop="prop2"
-                    label="收费标准">
-                </el-table-column>
-            </el-table-column>
-            <el-table-column
-                width="180"
-                label="中国集邮有限公司">
-                <el-table-column
-                    prop="prop3"
-                    label="分润占比">
-                </el-table-column>
-                <el-table-column
-                    prop="prop4"
-                    label="分润收入">
-                </el-table-column>
-            </el-table-column>
-            <el-table-column
-                label="邮来邮网">
-                <el-table-column
-                    prop="prop5"
-                    label="分润占比">
-                </el-table-column>
-                <el-table-column
-                    prop="prop6"
-                    label="分润收入">
-                </el-table-column>
-            </el-table-column>
-            <el-table-column
-                label="代理商(门店)">
-                <el-table-column
-                    prop="prop7"
-                    label="分润占比">
-                </el-table-column>
-                <el-table-column
-                    prop="prop8"
-                    label="分润收入">
-                </el-table-column>
-            </el-table-column>
-            <el-table-column
-                label="鉴评师">
-                <el-table-column
-                    prop="prop9"
-                    label="分润占比">
-                </el-table-column>
-                <el-table-column
-                    prop="prop10"
-                    label="分润收入">
-                </el-table-column>
-            </el-table-column>
-        </el-table>
-        <el-table
             :data="tableData">
             <el-table-column
                 prop="prop11"
-                width="150"
-                label="产品服务组合项组合">
+                label="系统角色">
             </el-table-column>
             <el-table-column
                 prop="prop12"
-                label="">
+                label="结算主体">
             </el-table-column>
             <el-table-column
                 prop="prop13"
-                label="">
+                label="结算金额">
             </el-table-column>
             <el-table-column
                 prop="prop14"
-                label="">
+                label="备注">
+                <template slot-scope="scope">
+                    <span>{{ scope.row.prop || '-' }}</span>
+                </template>
             </el-table-column>
             <el-table-column
                 prop="prop15"
-                label="">
-            </el-table-column>
-            <el-table-column
-                prop="prop16"
-                label="">
-            </el-table-column>
-            <el-table-column
-                prop="prop17"
-                label="">
-            </el-table-column>
-            <el-table-column
-                prop="prop18"
-                label="">
-            </el-table-column>
-            <el-table-column
-                prop="prop19"
-                label="">
-            </el-table-column>
-            <el-table-column
-                prop="prop20"
-                label="">
+                label="操作">
+                <template slot-scope="scope">
+                    <el-button type="text" @click="handleScan(scope.row)">查看</el-button>
+                    <el-divider direction="vertical"></el-divider>
+                    <el-button type="text" @click="handleRefund(scope.row)">备注</el-button>
+                </template>
             </el-table-column>
         </el-table>
     </div>

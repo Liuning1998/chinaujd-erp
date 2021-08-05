@@ -68,7 +68,7 @@
                 <el-tab-pane label="订单明细" name="order">
                     <order-detail :table-data="orderInfo.rows"></order-detail>
                 </el-tab-pane>
-                <el-tab-pane label="结算明细" name="settle">
+                <el-tab-pane label="利润分配" name="profit">
                     <settle-detail :table-data="orderInfo.rows"></settle-detail>
                 </el-tab-pane>
             </el-tabs>
@@ -114,7 +114,17 @@ export default {
             }
         }
     },
+    created() {
+        this.getData();
+    },
     methods: {
+        /**
+         * @function getData
+         */
+        getData() {
+            this.activeName === 'order' && this.getOrderData();
+            this.activeName === 'profit' && this.getProfitData();
+        },
         /**
          * 获取对账单详情
          * @function getData
@@ -143,7 +153,7 @@ export default {
          * 获取对账单详情
          * @function getData
          */
-        getSettleData() {
+        getProfitData() {
             let params = {
                 currentPage: this.currentPage,
                 pageSize: this.pageSize,
@@ -192,8 +202,7 @@ export default {
          */
         handleClick(tab) {
             this.activeName = tab.name;
-            this.activeName === 'order' && this.getOrderData();
-            this.activeName === 'settle' && this.getSettleData();
+            this.getData();
         }
     }
 }

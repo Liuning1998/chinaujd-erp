@@ -450,7 +450,7 @@ export default {
          * @function handleAddOrderSubmit
          */
         handleAddOrderSubmit() {
-            let {time: [startTime, endTime], type} = this.addOrderForm;
+            let {time: [startTime = '', endTime = ''], type = ''} = this.addOrderForm;
 
             if (!startTime || !endTime) {
                 this.$message.warning('请选择对账时段');

@@ -29,7 +29,7 @@ export default {
       flex-direction: column;
       width: 100%;
       background: #fff;
-      height: 626px;
+      height: calc(100vh - 100px);
       border-radius: 2px;
       &-image {
         width: 390px;

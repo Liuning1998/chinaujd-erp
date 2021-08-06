@@ -73,7 +73,7 @@
 			 */
 			getData() {
 				let params = {
-					regSys: 'APPRAISAL_BOSS',
+					regSys: this.$store.state.regSys,
 					roleName: this.keyword,
 					currentPage: this.currentPage,
 					pageSize: this.pageSize

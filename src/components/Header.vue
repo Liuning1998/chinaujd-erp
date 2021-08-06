@@ -60,6 +60,7 @@ export default {
           this.$store.commit('del_token');
           this.$store.commit('del_name');
           this.$store.commit('del_userId');
+          this.$store.commit('del_regSys');
           this.$router.push('/login');
         });
       }).catch(() => {});

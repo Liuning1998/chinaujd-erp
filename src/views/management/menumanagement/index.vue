@@ -6,7 +6,7 @@
 				<el-table-column prop="menuName" label="名称" align="center"></el-table-column>
 				<el-table-column label="操作" align="center">
 					<template slot-scope="scope">
-						<el-button type="text" @click="handleEdit(scope.row)">编辑</el-button>
+						<el-button type="text" @click="handleEdit(scope.row.menuId)">编辑</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -53,11 +53,11 @@ export default {
 		 * @function handleEdit
 		 * @params {Object} 菜单项
 		 */
-		handleEdit(row){
+		handleEdit(id){
 			this.$router.push({
 				path: '/management/menumanagement/edit',
 				query: {
-					menuId: row.menuId,
+					menuId: id,
 				}
 			});
 		}

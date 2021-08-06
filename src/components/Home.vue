@@ -4,7 +4,7 @@
             <el-header>
                 <Header></Header>
             </el-header>
-            <el-container>
+            <el-container style="height: calc(100vh - 48px);">
                 <el-aside width="240px">
                     <Aside></Aside>
                 </el-aside>

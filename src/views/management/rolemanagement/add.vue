@@ -73,7 +73,7 @@ export default {
 		 */
 		getData() {
 			let params = {
-				regSys: "APPRAISAL_BOSS"
+				regSys: this.$store.state.regSys
 			};
 			POST_USERCENTER_QUERY_ALL_AUTHORITIES(params).then(res => {
 				this.dataQList = res.data;
@@ -102,14 +102,14 @@ export default {
 			this.$refs['form'].validate((valid) => {
 				if (valid) {
 					let params = {
-						regSys: 'APPRAISAL_BOSS',
+						regSys: this.$store.state.regSys,
 						roleList: this.form.authList,
 						roleName: this.form.roleName,
-						description: this.form.roleDescription
+						description: this.form.roleDescription,
 					};
-					POST_USERCENTER_ADD_ROLE(params).then(res => {
+					POST_USERCENTER_ADD_ROLE(params).then(() => {
 						this.$message.success('新增成功');
-						this.$router.push("/management/rolemanagement/index");
+						this.handleReturn();
 					});
 				} else {
 					return;

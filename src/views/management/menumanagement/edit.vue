@@ -48,18 +48,13 @@ export default {
 		 * @function getData
 		 */
 		getData() {
-			// let params = {
-			// 	menuId: this.$route.query.menuId
-			// };
-			// GET_USERCENTER_MENU_VIEW(params).then(res => {
-			// 	this.form = res.data;
-			// 	Object.assign(this.form, res.data);
-			// });
-			let obj = {
-				menuName: '邮票业务中心',
-				menuUrl: '/agent/index'
+			let params = {
+				menuId: this.$route.query.menuId
 			};
-			Object.assign(this.form, obj);
+			GET_USERCENTER_MENU_VIEW(params).then(res => {
+				this.form = res.data;
+				Object.assign(this.form, res.data);
+			});
 		},
 		/**
 		 * 返回上一级
@@ -78,11 +73,11 @@ export default {
 					let params = {
 						menuId: this.$route.query.menuId,
 						menuUrl: this.form.menuUrl,
-						regSys: 'APPRAISAL_BOSS'
+						regSys: this.$store.state.regSys
 					}
 					POST_USERCENTER_UPDATE_MENU(params).then(res => {
 						this.$message.success('编辑成功');
-						this.$router.push("/management/menumanagement/index");
+						this.handleReturn();
 					});
 				} else {
 					return;

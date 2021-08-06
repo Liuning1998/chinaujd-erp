@@ -5,8 +5,8 @@
 			<el-form-item label="密码：" prop="password">
 				<el-input type="password"  maxlength="20" v-model="form.password" placeholder="请输入"></el-input>
 			</el-form-item>
-			<el-form-item label="新密码：" prop="newpassword">
-				<el-input type="password"  maxlength="20" v-model="form.newpassword" placeholder="请输入"></el-input>
+			<el-form-item label="新密码：" prop="passwordNew">
+				<el-input type="password"  maxlength="20" v-model="form.passwordNew" placeholder="请输入"></el-input>
 			</el-form-item>
 			<el-form-item label="确认密码：" prop="surepassword">
 				<el-input type="password"  maxlength="20" v-model="form.surepassword" placeholder="请输入"></el-input>
@@ -20,6 +20,10 @@
 </template>
 
 <script>
+import {
+	POST_USERCENTER_ADMIN_UPDATE_PASSWORD,
+} from '@/api/request';
+
 import Breadcrumb from '@/components/Breadcrumb';
 
 export default {
@@ -31,30 +35,50 @@ export default {
 		return {
 			form: {
 				password: '',
-				newpassword: '',
+				passwordNew: '',
 				surepassword: ''
 			},
 			rules: {
-				password: [{required: true, message: '', trigger: ["change", "blur"]}],
-				newpassword: [{required: true, message: '', trigger: ["change", "blur"]}],
-				surepassword: [{required: true, message: '', trigger: ["change", "blur"]}],
+				password: [{required: true, message: '请输入', trigger: ["change", "blur"]}],
+				passwordNew: [{required: true, message: '请输入', trigger: ["change", "blur"]}],
+				surepassword: [
+					{required: true, message: '请输入', trigger: ["change", "blur"]},
+					{validator: this.validatePass, trigger: ["change", "blur"]}
+				],
 			},
 		}
 	},
     created() {},
-	methods: {
+	methods: {、
 		/**
 		 * 修改密码
 		 * @function handleSave
 		 */
 		handleSave() {
-			let {password = '', newpassword = '', surepassword = ''} = this.form;
-			this.$message.error('原密码不正确');
-			if (newpassword !== surepassword) {
-				this.$message.error('新密码与确认密码不一致');
-				return;
+			let {password = '', passwordNew = ''} = this.form;
+			let params = {
+				password,
+				passwordNew
 			}
-			this.$message.success('修改密码成功');
+			POST_USERCENTER_ADMIN_UPDATE_PASSWORD(params).then(() => {
+				this.$message.success('修改密码成功');
+			});
+		},
+		/**
+		 * 验证新密码 和 确认密码
+		 * @function validatePass
+		 * @params {Object} rule 验证规则
+		 * @params {String} value 确认密码
+		 * @params {Function} callback 回调函数
+		 */
+		validatePass(rule, value, callback) {
+			if (!value) {
+				callback(new Error('请输入'));
+			} else if (value !== this.form.passwordNew) {
+				callback(new Error('新密码与确认密码不一致'));
+			} else {
+				callback();
+			}
 		},
 	}
 }

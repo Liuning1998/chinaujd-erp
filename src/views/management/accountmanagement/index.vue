@@ -53,10 +53,10 @@
 				<el-table-column
 					label="操作">
 					<template slot-scope="scope">
-						<el-button type="text" @click="handleEdit(scope.row)">编辑</el-button>
+						<el-button type="text" @click="handleEdit(scope.row.adminId)">编辑</el-button>
 						<el-divider direction="vertical"></el-divider>
-						<el-button v-if="scope.row.status === 1" type="text" @click="handleDisable(scope.row)">禁用</el-button>
-						<el-button v-if="scope.row.status === 0" type="text" @click="handleRecover(scope.row)">恢复</el-button>
+						<el-button v-if="scope.row.status === 1" type="text" @click="handleDisable(scope.row.adminId)">禁用</el-button>
+						<el-button v-if="scope.row.status === 0" type="text" @click="handleRecover(scope.row.adminId)">恢复</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -78,6 +78,8 @@
 <script>
 import {
 	POST_USERCENTER_BASE_ADMIN_LIST,
+	POST_USERCENTER_BASE_ADMIN_DEAL_DISABLE,
+	POST_USERCENTER_BASE_ADMIN_DEAL_ENABLE,
 } from '@/api/request';
 
 import Breadcrumb from '@/components/Breadcrumb';
@@ -146,33 +148,50 @@ export default {
 		 * 编辑
 		 * @function handleEdit
 		 */
-		handleEdit(data) {
-			this.$router.push('/management/accountmanagement/edit');
+		handleEdit(id) {
+			this.$router.push({
+				path: '/management/accountmanagement/edit',
+				query: {
+					adminId: id
+				}
+			});
 		},
 		/**
 		 * 禁用
 		 * @function handleDisable
 		 */
-		handleDisable(data) {
+		handleDisable(id) {
 			this.$confirm('你确认要禁用该用户吗？', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
 			}).then(() => {
-				this.$message.success('禁用成功');
-				this.getData();
+				let params = {
+					adminId: id,
+					status: 0
+				};
+				POST_USERCENTER_BASE_ADMIN_DEAL_DISABLE(params).then(() => {
+					this.$message.success('禁用成功');
+					this.getData();
+				});
 			}).catch(() => {});
 		},
 		/**
 		 * 恢复
 		 * @function handleRecover
 		 */
-		handleRecover(data) {
+		handleRecover(id) {
 			this.$confirm('你确认要恢复该用户吗？', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
 			}).then(() => {
-				this.$message.success('恢复成功');
-				this.getData();
+				let params = {
+					adminId: id,
+					status: 1
+				};
+				POST_USERCENTER_BASE_ADMIN_DEAL_ENABLE(params).then(() => {
+					this.$message.success('恢复成功');
+					this.getData();
+				});
 			}).catch(() => {});
 		},
 		/**
@@ -218,6 +237,9 @@ export default {
 						line-height: 32px;
 						border-radius: 2px;
 					}
+				}
+				>>>.el-select__caret {
+					line-height: 32px;
 				}
 			}
 			.btns {

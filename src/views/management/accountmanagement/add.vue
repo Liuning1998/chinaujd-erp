@@ -5,18 +5,18 @@
 			<el-form-item label="账号名称：" prop="name">
 				<el-input v-model="form.name" placeholder="请输入" maxlength="20"></el-input>
 			</el-form-item>
-			<el-form-item label="手机号：" prop="phone">
-				<el-input v-model="form.phone" placeholder="请输入" maxlength="20"></el-input>
+			<el-form-item label="手机号：" prop="mobile">
+				<el-input v-model="form.mobile" placeholder="请输入" maxlength="20"></el-input>
 			</el-form-item>
 			<el-form-item label="密码：" prop="password">
 				<el-input v-model="form.password" placeholder="请输入" maxlength="20"></el-input>
 			</el-form-item>
-			<el-form-item label="权限：" prop="jurisdiction">
-				<el-radio-group v-model="form.jurisdiction">
-					<el-radio label="1">超级管理员</el-radio>
-					<el-radio label="2">财务</el-radio>
-					<el-radio label="3">运营</el-radio>
-					<el-radio label="4">客服</el-radio>
+			<el-form-item label="权限：" prop="roleId">
+				<el-radio-group v-model="form.roleId">
+					<el-radio :label="1">超级管理员</el-radio>
+					<el-radio :label="2">财务</el-radio>
+					<el-radio :label="3">运营</el-radio>
+					<el-radio :label="4">客服</el-radio>
 				</el-radio-group>
 			</el-form-item>
 		</el-form>
@@ -28,6 +28,10 @@
 </template>
 
 <script>
+import {
+	POST_USERCENTER_BASE_ADMIN_ADD,
+} from '@/api/request';
+
 import Breadcrumb from '@/components/Breadcrumb';
 
 export default {
@@ -39,15 +43,15 @@ export default {
 		return {
 			form: {
 				name: '',
-				phone: '',
+				mobile: '',
 				password: '',
-				jurisdiction: ''
+				roleId: ''
 			},
 			rules: {
 				name: [{required: true, message: '请输入账号名称', trigger: ['blur', 'change']}],
-				phone: [{required: true, message: '请输入手机号', trigger: ['blur', 'change']}],
+				mobile: [{required: true, message: '请输入手机号', trigger: ['blur', 'change']}],
 				password: [{required: true, message: '请输入密码', trigger: ['blur', 'change']}],
-				jurisdiction: [{required: true, message: '请选择权限', trigger: ['blur', 'change']}],
+				roleId: [{required: true, message: '请选择权限', trigger: ['blur', 'change']}],
 			}
 		}
 	},
@@ -58,6 +62,13 @@ export default {
 		 * @function handleReturn
 		 */
 		handleReturn() {
+			let form = {
+				name: '',
+				mobile: '',
+				password: '',
+				roleId: ''
+			};
+			Object.assign(this.form, form);
 			this.$router.push('/management/accountmanagement/index');
 		},
 		/**
@@ -67,8 +78,11 @@ export default {
 		handleSave() {
 			this.$refs['form'].validate((valid) => {
 				if (valid) {
-					this.$message.success('新增成功');
-					this.$router.push('/management/accountmanagement/index');
+					let params = this.form;
+					POST_USERCENTER_BASE_ADMIN_ADD(params).then(() => {
+						this.$message.success('新增成功');
+						this.handleReturn();
+					});
 				} else {
 					return;
 				}

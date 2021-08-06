@@ -26,11 +26,19 @@
                     <el-input v-model="form.imageCode" placeholder="请输入图形验证码" maxlength="20">
                         <template slot="append">
                             <el-image
-                                :src="imgcode" @click="updataCode"
+                                :src="imgCode" @click="updataCode"
                                 style="width: 88px;height: 40px;cursor: pointer;" fit="fill">
                             </el-image>
                         </template>
                     </el-input>
+                </el-form-item>
+                <el-form-item label="">
+                    <el-select v-model="form.regSys" placeholder="请选择角色">
+                        <el-option
+                            v-for="(item, index) in regSys" :key="index"
+                            :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
             </el-form>
             <el-button class="login-btn" type="primary" @click="submit('form')">登 录</el-button>
@@ -50,10 +58,15 @@ export default{
             form: {
                 username: '',
                 password: '',
-                imageCode: ''
+                imageCode: '',
+                regSys: ''
             },
-            imgcode: '',
+            imgCode: '',
             uuid: '',
+            regSys: [
+                {label: '供应链', value: 6},
+                {label: '服务商', value: 3},
+            ],
             rules: {
                 username: [
                     {required: true, message: '请输入登录手机号', trigger: ['blur', 'change']},
@@ -85,7 +98,7 @@ export default{
          // 获取图形验证码
         getImgCode() {
             getImageCode().then(res => {
-                this.imgcode = res.imageCode;
+                this.imgCode = res.imageCode;
                 this.uuid = res.uuid;
             });
         },
@@ -98,13 +111,14 @@ export default{
                         password: this.form.password,
                         imageCode: this.form.imageCode,
                         uuid: this.uuid,
-                        regSys: 1
+                        regSys: this.$store.state.regSys
                     };
                     login(params).then(res => {
                         this.$message.success('登录成功');
                         this.$store.commit('set_token', res.token);
                         this.$store.commit('set_name', res.username);
                         this.$store.commit('set_userId', res.userId);
+                        this.$store.commit('set_regSys', res.regSys);
                         this.$router.push('/index');
                     }).catch(() => {
                         this.$message.warning('登录失败');
@@ -177,7 +191,6 @@ export default{
             }
             &-form {
                 margin-top: 48px;
-                height: 265px;
                 >>>.el-form-item {
                     margin-bottom: 0;
                     .el-form-item__label {
@@ -222,6 +235,9 @@ export default{
                             border: 0 solid transparent;
                             border-bottom: 1px solid #979797;
                         }
+                    }
+                    .el-select {
+                        width: 100%;
                     }
                     .el-input input[type="number"] {
                         -webkit-appearance:textfield;

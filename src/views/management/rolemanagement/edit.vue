@@ -75,7 +75,7 @@ export default {
 		 */
 		getData() {
 			let params = {
-				regSys: "APPRAISAL_BOSS"
+				regSys: this.$store.state.regSys
 			};
 			POST_USERCENTER_QUERY_ALL_AUTHORITIES(params).then(res => {
 				this.dataQList = res.data;
@@ -85,18 +85,12 @@ export default {
 		 * @function creatData
 		 */
 		creatData() {
-			// let params = {
-			// 	roleId: this.$route.query.roleId
-			// };
-			// GET_USERCENTER_ROLE_VIEW(params).then(res => {
-			// 	Object.assign(this.form, res.data);
-			// });
-			let obj = {
-				roleName: "1",
-				roleDescription: "2",
-				authList: [4, 6],
-			}
-			Object.assign(this.form, obj);
+			let params = {
+				roleId: this.$route.query.roleId
+			};
+			GET_USERCENTER_ROLE_VIEW(params).then(res => {
+				Object.assign(this.form, res.data);
+			});
 		},
 		/**
 		 * 获取选中节点的id
@@ -121,14 +115,15 @@ export default {
 			this.$refs['form'].validate((valid) => {
 				if (valid) {
 					let params = {
-						regSys: 'APPRAISAL_BOSS',
+						regSys: this.$store.state.regSys,
 						roleList: this.form.authList,
 						roleName: this.form.roleName,
-						description: this.form.roleDescription
+						description: this.form.roleDescription,
+						roleId: this.$route.query.roleId
 					};
 					POST_USERCENTER_EDIT_ROLE(params).then(res => {
 						this.$message.success('编辑成功');
-						this.$router.push("/management/rolemanagement/index");
+						this.handleReturn();
 					});
 				} else {
 					return;

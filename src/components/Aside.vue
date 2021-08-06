@@ -89,9 +89,10 @@ export default {
     methods: {
         getUserMenu() {
             POST_BASE_MENU_ROUTE_LIST({
-                regSys: 1
+                regSys: this.$store.state.regSys,
+                currentRegSys: 6
             }).then(res =>{
-                this.menu = res;
+                this.menu = res.data.rows;
             });
         },
         getCurrentUrl() {

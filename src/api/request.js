@@ -21,7 +21,12 @@ if (process.env.NODE_ENV == 'development') { //开发环境
   baseURL = 'http://msg5gtest.zuul.srpqa.top';
 }
 
-export function login() {};
+export function login() {
+  return post(baseURL + '/userCenter/login/username', params);
+}
+export function logout() {
+  return post(baseURL + '/userCenter/logout', params);
+}
 export function getImageCode() {};
 /**
  * 业务中心 Start
@@ -126,9 +131,29 @@ export function GET_USERCENTER_ROLE_VIEW(params) {
 export function POST_USERCENTER_EDIT_ROLE(params) {
   return post(baseURL + '/userCenter/role/edit', params);
 }
-// 账号列表
+// 管理员账号列表
 export function POST_USERCENTER_BASE_ADMIN_LIST(params) {
   return post(baseURL + '/base/admin/list', params);
+}
+// 新增管理员
+export function POST_USERCENTER_BASE_ADMIN_ADD(params) {
+  return post(baseURL + '/base/admin/add', params);
+}
+// 编辑管理员
+export function POST_USERCENTER_BASE_ADMIN_EDIT(params) {
+  return post(baseURL + '/base/admin/edit', params);
+}
+// 禁用管理员
+export function POST_USERCENTER_BASE_ADMIN_DEAL_DISABLE(params) {
+  return post(baseURL + '/base/admin/dealDisable', params);
+}
+// 恢复管理员
+export function POST_USERCENTER_BASE_ADMIN_DEAL_ENABLE(params) {
+  return post(baseURL + '/base/admin/dealEnable', params);
+}
+// 查看管理员详情
+export function POST_USERCENTER_BASE_ADMIN_VIEW(params) {
+  return post(baseURL + '/base/admin/view', params);
 }
 // 获取所有菜单
 export function POST_USERCENTER_QUERY_ALL_MENU(params) {
@@ -142,6 +167,10 @@ export function GET_USERCENTER_MENU_VIEW(params) {
 export function POST_USERCENTER_UPDATE_MENU(params) {
   return post(baseURL + '/userCenter/menu/update', params);
 }
+// 修改密码
+export function POST_USERCENTER_ADMIN_UPDATE_PASSWORD(params) {
+  return post(baseURL + '/philatelic/base/admin/editPassword', params);
+}
 /**
  * 系统管理 End
  * */
@@ -151,7 +180,7 @@ export function POST_USERCENTER_UPDATE_MENU(params) {
  */
 // 获取侧边栏
 export function POST_BASE_MENU_ROUTE_LIST(params) {
-  return post(baseURL + '', params);
+  return post(baseURL + '/userCenter/menuRoute/query', params);
 }
 /**
  * 其他 End

@@ -1,25 +1,23 @@
 <template>
     <div class="container">
-        <el-radio-group v-model="radio">
-            <el-radio-button :label="0">待审核</el-radio-button>
-            <el-radio-button :label="1">待支付</el-radio-button>
-            <el-radio-button :label="2">审核历史</el-radio-button>
-        </el-radio-group>
-        <Unreview
-            v-if="radio === 0"
-            :table-data="tableData"
-            @getData="getData">
-        </Unreview>
-        <Unpay
-            v-if="radio === 1"
-            :table-data="tableData"
-            @getData="getData">
-        </Unpay>
-        <Reviewed
-            v-if="radio === 2"
-            :table-data="tableData"
-            @getData="getData">
-        </Reviewed>
+        <Breadcrumb></Breadcrumb>
+        <div class="table">
+            <el-table
+                :data="tableData">
+                <el-table-column
+                    prop="name"
+                    label="账户名称">
+                </el-table-column>
+                <el-table-column
+                    prop="mobile"
+                    label="手机号">
+                </el-table-column>
+                <el-table-column
+                    prop="gmtCreate"
+                    label="创建时间">
+                </el-table-column>
+            </el-table>
+        </div>
         <div class="pagination" v-if="total > pageSize">
             <el-pagination
                 background
@@ -36,25 +34,20 @@
 
 <script>
 import {
-    POST_FINANCE_SLIP_CASHOUT_LIST,
+    POST_USERCENTER_SERVER_PAGELIST,
 } from '@/api/request';
 
-import Unreview from '@/views/finance/withdrawalManagement/components/Unreview';
-import Unpay from '@/views/finance/withdrawalManagement/components/Unpay';
-import Reviewed from '@/views/finance/withdrawalManagement/components/Reviewed';
+import Breadcrumb from '@/components/Breadcrumb';
 
 export default {
     name: '',
     components: {
-        Unreview,
-        Unpay,
-        Reviewed
+        Breadcrumb
     },
     data() {
         return {
-            radio: 1,
             tableData: [],
-            total: 110,
+            total: 0,
             currentPage: 0,
             pageSize: 15,
         }
@@ -64,14 +57,17 @@ export default {
     },
     methods: {
         /**
-         * 获取列表数据
-         * @function getData
+         * 获取服务商列表
          */
         getData() {
-            POST_FINANCE_SLIP_CASHOUT_LIST(params).then(res => {
+            let params = {
+                currentPage: this.currentPage,
+                pageSize: this.pageSize
+            };
+            POST_USERCENTER_SERVER_PAGELIST(params).then(res => {
                 this.tableData = res.data.rows;
                 this.total = Number(res.data.total);
-            });
+            })
         },
         /**
          * 更改每页条数
@@ -97,39 +93,43 @@ export default {
 
 <style lang="scss" scoped>
     .container {
-        margin-top: 16px;
-        background: #FFF;
-        >>>.el-radio-group {
-            padding: 16px 24px;
-            .el-radio-button {
-                width: 74px;
-                .el-radio-button__inner {
-                    width: 74px;
-                    height: 32px;
-                    line-height: 32px;
-                    padding: 0;
+        .table {
+            margin-top: 16px;
+            padding: 16px 24px 0 24px;
+            border-radius: 2px;
+            background: #fff;
+            >>>.el-table {
+                thead {
+                    tr>th {
+                        height: 54px;
+                        font-family: PingFangSC-Medium;
+                        font-size: 14px;
+                        color: rgba(0,0,0,0.85);
+                        background: #FAFAFA;
+                        border-radius: 4px 4px 0 0;
+                    }
                 }
-            }
-            .el-radio-button:first-child {
-                .el-radio-button__inner {
-                    border-radius: 2px 0 0 2px;
-                }
-            }
-            .el-radio-button:last-child {
-                .el-radio-button__inner {
-                    border-radius: 0 2px 2px 0;
-                }
-            }
-            .is-active {
-                .el-radio-button__inner {
-                    background: #FFF;
-                    color: #1890FF;
+                tbody {
+                    tr>td {
+                        font-family: PingFangSC-Regular;
+                        font-size: 14px;
+                        color: #666;
+                        height: 54px;
+                        padding: 0;
+                        .el-button--text {
+                            color:#1890FF;
+                        }
+                        .el-divider--vertical {
+                            margin: 0 4px;
+                            background: #E9E9E9;
+                        }
+                    }
                 }
             }
         }
         .pagination {
             width: 100%;
-            padding-bottom: 16px;
+            height: 64px;
             display: flex;
             align-items: center;
             justify-content: flex-end;

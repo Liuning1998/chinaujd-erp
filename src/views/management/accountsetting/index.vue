@@ -49,7 +49,7 @@ export default {
 		}
 	},
     created() {},
-	methods: {、
+	methods: {
 		/**
 		 * 修改密码
 		 * @function handleSave

@@ -6,11 +6,11 @@
 				<span>账号名称：</span>
 				<el-input v-model="form.name" placeholder="请输入"></el-input>
 			</div>
-			<div class="search-item">
+			<div class="search-item flex-center">
 				<span>手机号：</span>
 				<el-input v-model="form.mobile" placeholder="请输入"></el-input>
 			</div>
-			<div class="search-item">
+			<div class="search-item flex-end">
 				<span>状态：</span>
 				<el-select v-model="form.status" placeholder="请选择">
 					<el-option label="全部" value=""></el-option>
@@ -23,6 +23,7 @@
 			<div class="btns">
 				<el-button @click="handleSearch">查 询</el-button>
 				<el-button @click="handleAdd">新 增</el-button>
+				<el-button @click="handleGoServerList">服务商列表</el-button>
 			</div>
 		</div>
 		<div class="table">
@@ -157,6 +158,13 @@ export default {
 			});
 		},
 		/**
+		 * 服务商列表
+		 * @function handleGoServerList
+		 */
+		handleGoServerList() {
+			this.$router.push('/management/accountmanagement/list');
+		},
+		/**
 		 * 禁用
 		 * @function handleDisable
 		 */
@@ -242,17 +250,26 @@ export default {
 					line-height: 32px;
 				}
 			}
+			.flex-end {
+				justify-content: flex-end;
+			}
+			.flex-center {
+				justify-content: center;
+			}
 			.btns {
 				margin-top: 16px;
 				padding-left: 70px;
+				width: 100%;
+				display: flex;
+				justify-content: flex-end;
+				box-sizing: border-box;
 				>>>.el-button {
-					width: 65px;
+					padding: 0 15px;
 					height: 32px;
 					background: #1890FF;
 					border-radius: 2px;
 					color: #FFF;
 					border: 0;
-					padding: 0;
 				}
 			}
 		}

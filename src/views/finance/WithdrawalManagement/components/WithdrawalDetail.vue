@@ -7,38 +7,38 @@
             :before-close="handleClose">
             <el-form ref="form" :model="form" label-width="90px">
                 <el-form-item label="提现金额：">
-                    <span>{{ form.prop1 }}</span>
+                    <span>{{ form.cashoutAmount }}</span>
                 </el-form-item>
                 <el-form-item label="服务费：">
-                    <span>{{ form.prop1 }}</span>
+                    <span>{{ form.procedureAmount }}</span>
                 </el-form-item>
                 <el-form-item label="应缴税：">
-                    <span>{{ form.prop1 }}</span>
+                    <span>{{ form.personalTax }}</span>
                 </el-form-item>
                 <el-form-item label="提现状态：">
-                    <span>{{ form.prop1 }}</span>
+                    <span>{{ form.settlementStatus }}</span>
                 </el-form-item>
                 <el-form-item label="申请时间：">
-                    <span>{{ form.prop1 }}</span>
+                    <span>{{ form.gmtCreate }}</span>
                 </el-form-item>
                 <el-form-item label="到账时间：">
-                    <span>{{ form.prop1 }}</span>
+                    <span>{{ form.auditTime }}</span>
                 </el-form-item>
                 <el-form-item label="到账账户：">
-                    <span>{{ form.prop1 }}</span>
+                    <span>{{ form.bankName }}（{{ form.cardNumber ? (form.cardNumber).substring(form.cardNumber.length - 4) : ''}}）</span>
                 </el-form-item>
                 <el-divider></el-divider>
                 <el-form-item label="订单编号：">
-                    <span>{{ form.prop1 }}</span>
+                    <span>{{ form.cashoutRecId }}</span>
                 </el-form-item>
                 <el-form-item label="用户类型：">
-                    <span>{{ form.prop1 }}</span>
+                    <span>{{ form.userType }}</span>
                 </el-form-item>
                 <el-form-item label="提现用户：">
-                    <span>{{ form.prop1 }}</span>
+                    <span>{{ form.mobile }}</span>
                 </el-form-item>
                 <el-form-item label="注册手机：">
-                    <span>{{ form.prop1 }}</span>
+                    <span>{{ form.mobile }}</span>
                 </el-form-item>
             </el-form>
         </el-dialog>
@@ -46,23 +46,42 @@
 </template>
 
 <script>
+import {
+    POST_FINANCE_SLIP_CASHOUT_INFO,
+} from '@/api/request';
+
 export default {
     name: '',
     data() {
         return {
-            form: {
-                prop1: 1,
-            }
+            form: {}
         }
     },
     props: {
         dialogVisible: {
             type: Boolean,
             default: false
+        },
+        cashoutRecId: {
+            type: String,
+            default: ''
         }
     },
-    created() {},
+    created() {
+        this.getData();
+    },
     methods: {
+        /**
+         * 获取提现详情
+         */
+        getData() {
+            let params = {
+                cashoutRecId: this.cashoutRecId
+            };
+            POST_FINANCE_SLIP_CASHOUT_INFO(params).then(res => {
+                Object.assign(this.form, res.data);
+            });
+        },
         /**
          * 关闭弹窗
          * @function handleClose

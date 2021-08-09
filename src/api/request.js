@@ -101,6 +101,50 @@ export function POST_FINANCE_SLIP_SETTLEMENT_VIEW(params) {
 export function POST_FINANCE_SLIP_ORDER_VIEW(params) {
   return post(baseURL + '/philatelic/finance/settlement/slip/viewOrder', params);
 }
+// 提现管理-查询账户信息
+export function POST_FINANCE_SLIP_ACCOUNT_MESSAGE(params) {
+  return post(baseURL + '/philatelic/finance/account/accountMessage', params);
+}
+// 提现管理-提现
+export function POST_FINANCE_SLIP_CARRY_CASH(params) {
+  return post(baseURL + '/philatelic/finance/cashout/carryCash', params);
+}
+// 提现管理-添加银行卡
+export function POST_FINANCE_SLIP_ADD_BANKCARD(params) {
+  return post(baseURL + '/philatelic/finance/base/cardBagAdd', params);
+}
+// 提现管理-删除银行卡
+export function POST_FINANCE_SLIP_DELETE_BANKCARD(params) {
+  return post(baseURL + '/financeCenter/cardBag/cardBagDelete', params);
+}
+// 查询省市集合
+export function POST_BASE_QUERY_PROVINCE_CITY_LIST() {
+  return post(baseURL + '/financeCenter/bank/queryProvinceCityList');
+}
+// 查询开户行集合
+export function POST_FINANCE_SLIP_OPENBANK_LIST(params) {
+  return post(baseURL + '/financeCenter/bank/queryOpenBankList', params);
+}
+// 查询资金明细
+export function POST_FINANCE_SLIP_QUERY_ACCOUNT_HISTORY(params) {
+  return post(baseURL + '/philatelic/finance/history/queryAccountHistory', params);
+}
+// 提现管理-提现审核
+export function POST_FINANCE_SLIP_CASHOUT_LIST(params) {
+  return post(baseURL + '/philatelic/finance/cashout/queryCashOutList', params);
+}
+// 提现管理-提现详情
+export function POST_FINANCE_SLIP_CASHOUT_INFO(params) {
+  return post(baseURL + '/philatelic/finance/cashout/queryCashOutInfo', params);
+}
+// 提现管理-提现结算
+export function POST_FINANCE_SLIP_SETTLE_CASHOUT(params) {
+  return post(baseURL + '/philatelic/finance/cashout/settleCashOut', params);
+}
+// 提现管理-提现审核
+export function POST_FINANCE_SLIP_AUDIT_CASHOUT(params) {
+  return post(baseURL + '/philatelic/finance/cashout/auditCashOut', params);
+}
 /**
  * 财务中心 End
  * */
@@ -170,6 +214,10 @@ export function POST_USERCENTER_UPDATE_MENU(params) {
 // 修改密码
 export function POST_USERCENTER_ADMIN_UPDATE_PASSWORD(params) {
   return post(baseURL + '/philatelic/base/admin/editPassword', params);
+}
+// 账号管理-服务商列表
+export function POST_USERCENTER_SERVER_PAGELIST(params) {
+  return post(baseURL + '/philatelic/base/admin/serverPageList', params);
 }
 /**
  * 系统管理 End

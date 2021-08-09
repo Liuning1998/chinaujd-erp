@@ -7,52 +7,43 @@
                 type="index">
             </el-table-column>
             <el-table-column
-                prop="prop1"
+                prop="cashoutRecId"
                 width="160"
                 label="订单号">
             </el-table-column>
             <el-table-column
-                prop="prop2"
+                prop="userType"
                 width="80"
                 label="用户类型">
             </el-table-column>
             <el-table-column
-                prop="prop3"
+                prop="mobile"
                 width="140"
                 label="申请人">
             </el-table-column>
             <el-table-column
-                prop="prop4"
+                prop="cashoutAmount"
                 label="提现金额">
             </el-table-column>
             <el-table-column
-                prop="prop5"
                 width="200"
                 label="提现账户">
+                <template slot-scope="scope">
+                    <span>{{ scope.row.bankName }}（{{ scope.row.cardNumber ? (scope.row.cardNumber).substring(scope.row.cardNumber.length - 4) : '' }}）</span>
+                </template>
             </el-table-column>
             <el-table-column
-                prop="prop6"
+                prop="gmtCreate"
                 label="申请日期">
             </el-table-column>
             <el-table-column prop="date" label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="handleScan(scope.row)">查看</el-button>
+                    <el-button type="text" @click="handleScan(scope.row.cashoutRecId)">查看</el-button>
                     <el-divider direction="vertical"></el-divider>
-                    <el-button type="text" @click="handleReview(scope.row)">审核</el-button>
+                    <el-button type="text" @click="handleReview(scope.row.cashoutRecId)">审核</el-button>
                 </template>
             </el-table-column>
         </el-table>
-        <div class="pagination" v-if="total > pageSize">
-            <el-pagination
-                background
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="currentPage"
-                :page-size="pageSize"
-                layout="prev, pager, next, sizes, jumper"
-                :total="total">
-            </el-pagination>
-        </div>
         <el-dialog
             class="withdrawalDialog"
             title="提现审核"
@@ -66,7 +57,7 @@
                 </div>
                 <div class="reject" v-if="reviewForm.radio === 2">
                     <span>驳回原因：</span>
-                    <el-input type="textarea" v-model="reviewForm.rejectReason"></el-input>
+                    <el-input type="textarea" v-model="reviewForm.remark"></el-input>
                 </div>
             </div>
             <div slot="footer">
@@ -75,6 +66,7 @@
             </div>
         </el-dialog>
         <withdrawal-detail
+            :cashout-rec-id="cashoutRecId"
             :dialog-visible="detailDialogVisible"
             @handleCloseDialog="handleCloseDialog">
         </withdrawal-detail>
@@ -82,6 +74,10 @@
 </template>
 
 <script>
+import {
+    POST_FINANCE_SLIP_AUDIT_CASHOUT,
+} from '@/api/request';
+
 import WithdrawalDetail from '@/views/finance/withdrawalManagement/components/WithdrawalDetail';
 
 export default {
@@ -91,53 +87,32 @@ export default {
     },
     data() {
         return {
-            tableData: [],
-            total: 0,
-            currentPage: 0,
-            pageSize: 15,
+            cashoutRecId: '',
             dialogVisible: false,
             detailDialogVisible: false,
             reviewForm: {
                 radio: null,
-                rejectReason: ''
+                remark: ''
             },
         }
     },
-    created() {
-        this.getData();
+    props: {
+        tableData: {
+            type: Array,
+            default: () => {
+                return [];
+            }
+        }
     },
+    created() {},
     methods: {
-        /**
-         * 获取提现审核数据
-         * @function getData
-         */
-        getData() {
-            let data = [
-                {
-                    prop1: '443234444444345',
-                    prop2: '鉴评师',
-                    prop3: 12345678901,
-                    prop4: 1000000.00,
-                    prop5: 1234567890987654321,
-                    prop6: '2020.2.24'
-                },
-                {
-                    prop1: '443234444444345',
-                    prop2: '鉴评师',
-                    prop3: 12345678901,
-                    prop4: 1000000.00,
-                    prop5: 1234567890987654321,
-                    prop6: '2020.2.24'
-                },
-            ];
-            this.tableData = data;
-        },
         /**
          * 查看
          * @function handleScan
          * @params {Object} data
          */
-        handleScan(data) {
+        handleScan(id) {
+            this.cashoutRecId = id;
             this.detailDialogVisible = true;
         },
         /**
@@ -145,26 +120,9 @@ export default {
          * @function handleReview
          * @params {Object} data
          */
-        handleReview(data) {
+        handleReview(id) {
+            this.cashoutRecId = id;
             this.dialogVisible = true;
-        },
-        /**
-         * 更改每页条数
-         * @function handleSizeChange
-         * @params {Number} pageSize
-         */
-        handleSizeChange(pageSize) {
-            this.pageSize = pageSize;
-            this.getData();
-        },
-        /**
-         * 更改当前页
-         * @function handleCurrentChange
-         * @params {Number} currentPage
-         */
-        handleCurrentChange(currentPage) {
-            this.currentPage = currentPage;
-            this.getData();
         },
         /**
          * 关闭提现审核弹窗
@@ -174,7 +132,7 @@ export default {
             this.dialogVisible = false;
             let obj = {
                 radio: null,
-                rejectReason: ''
+                remark: ''
             };
             Object.assign(this.reviewForm, obj);
         },
@@ -187,18 +145,24 @@ export default {
                 this.$message.warning('请选择审核意见');
                 return;
             }
-            if (this.reviewForm.radio === 2 && !this.reviewForm.rejectReason) {
+            if (this.reviewForm.radio === 2 && !this.reviewForm.remark) {
                 this.$message.warning('请输入拒绝原因');
                 return;
             }
+            let params = {
+                auditStatus: this.reviewForm.radio,
+                cashoutRecId: this.cashoutRecId,
+                remark: this.reviewForm.remark
+            }
+            POST_FINANCE_SLIP_AUDIT_CASHOUT()
             this.$message.success('审核完成');
             this.dialogVisible = false;
             let obj = {
                 radio: null,
-                rejectReason: ''
+                remark: ''
             };
             Object.assign(this.reviewForm, obj);
-            this.getData();
+            this.$emit('getData');
         },
         /**
          * 关闭查看提现详情弹窗
@@ -286,38 +250,6 @@ export default {
                     background: #FFFFFF;
                     border: 1px solid #D9D9D9;
                     color: #666;
-                }
-            }
-        }
-        .pagination {
-            width: 100%;
-            padding-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 24px;
-            background: #fff;
-            box-sizing: border-box;
-            >>>.el-pagination {
-                .btn-next,
-                .btn-prev,
-                .el-pager li {
-                    background: #FFF;
-                    border: 1px solid #D9D9D9;
-                    border-radius: 2px;
-                }
-                .el-pager li {
-                    font-family: HelveticaNeue;
-                    font-size: 14px;
-                    font-weight: 100;
-                    color: rgba(0,0,0,0.65);
-                }
-                .el-pager li:not(.disabled).active {
-                    background-color: #409EFF;
-                    color: #FFF;
-                }
-                .el-pagination__jump {
-                    margin: 0;
                 }
             }
         }

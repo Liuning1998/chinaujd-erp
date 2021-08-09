@@ -7,38 +7,40 @@
                 type="index">
             </el-table-column>
             <el-table-column
-                prop="prop1"
+                prop="cashoutRecId"
                 width="160"
                 label="订单号">
             </el-table-column>
             <el-table-column
-                prop="prop2"
+                prop="userType"
                 width="80"
                 label="用户类型">
             </el-table-column>
             <el-table-column
-                prop="prop3"
+                prop="mobile"
                 width="140"
                 label="申请人">
             </el-table-column>
             <el-table-column
-                prop="prop4"
+                prop="cashoutAmount"
                 label="提现金额">
             </el-table-column>
             <el-table-column
-                prop="prop5"
                 width="200"
                 label="提现账户">
+                <template slot-scope="scope">
+                    <span>{{ scope.row.bankName }}（{{ scope.row.cardNumber ? (scope.row.cardNumber).substring(scope.row.cardNumber.length - 4) : '' }}）</span>
+                </template>
             </el-table-column>
             <el-table-column
-                prop="prop6"
+                prop="gmtCreate"
                 label="申请日期">
             </el-table-column>
             <el-table-column prop="date" label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="handleScan(scope.row)">查看</el-button>
+                    <el-button type="text" @click="handleScan(scope.row.cashoutRecId)">查看</el-button>
                     <el-divider direction="vertical"></el-divider>
-                    <el-button type="text" @click="handlePay(scope.row)">支付</el-button>
+                    <el-button type="text" @click="handlePay(scope.row.cashoutRecId)">支付</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -88,6 +90,7 @@
             </div>
         </el-dialog>
         <withdrawal-detail
+            :cashout-rec-id="cashoutRecId"
             :dialog-visible="detailDialogVisible"
             @handleCloseDialog="handleCloseDialog">
         </withdrawal-detail>
@@ -104,15 +107,12 @@ export default {
     },
     data() {
         return {
-            tableData: [],
-            total: 0,
-            currentPage: 0,
-            pageSize: 15,
+            cashoutRecId: '',
             dialogVisible: false,
             detailDialogVisible: false,
             payType: [
-                {label: '线上支付', value: 1},
-                {label: '线下支付', value: 2}
+                {label: '线上支付', value: 0},
+                {label: '线下支付', value: 1}
             ],
             payForm: {
                 pay_type: null,
@@ -120,68 +120,32 @@ export default {
             }
         }
     },
-    created() {
-        this.getData();
+    props: {
+        tableData: {
+            type: Array,
+            default: () => {
+                return [];
+            }
+        }
     },
+    created() {},
     methods: {
-        /**
-         * 获取提现审核数据
-         * @function getData
-         */
-        getData() {
-            let data = [
-                {
-                    prop1: '443234444444345',
-                    prop2: '鉴评师',
-                    prop3: 12345678901,
-                    prop4: 1000000.00,
-                    prop5: 1234567890987654321,
-                    prop6: '2020.2.24'
-                },
-                {
-                    prop1: '443234444444345',
-                    prop2: '鉴评师',
-                    prop3: 12345678901,
-                    prop4: 1000000.00,
-                    prop5: 1234567890987654321,
-                    prop6: '2020.2.24'
-                },
-            ];
-            this.tableData = data;
-        },
         /**
          * 查看
          * @function handleScan
          * @params {Object} data
          */
-        handleScan(data) {
+        handleScan(id) {
+            this.cashoutRecId = id;
             this.detailDialogVisible = true;
         },
         /**
-         * 审核
+         * 提现结算
          * @function handlePay
          * @params {Object} data
          */
         handlePay(data) {
             this.dialogVisible = true;
-        },
-        /**
-         * 更改每页条数
-         * @function handleSizeChange
-         * @params {Number} pageSize
-         */
-        handleSizeChange(pageSize) {
-            this.pageSize = pageSize;
-            this.getData();
-        },
-        /**
-         * 更改当前页
-         * @function handleCurrentChange
-         * @params {Number} currentPage
-         */
-        handleCurrentChange(currentPage) {
-            this.currentPage = currentPage;
-            this.getData();
         },
         /**
          * 取消提现支付
@@ -204,14 +168,20 @@ export default {
                 this.$message.warning('请选择结算方式');
                 return;
             }
-            let obj = {
-                pay_type: null,
-                fileList: []
-            };
-            this.$message.success('已完成结算');
-            Object.assign(this.payForm, obj);
-            this.dialogVisible = false;
-            this.getData();
+            let params = {
+                cashoutRecId: this.cashoutRecId,
+                setSettlementMode: this.payForm.pay_type,
+                setSettlementProof: this.payForm.fileList
+            }
+            POST_FINANCE_SLIP_SETTLE_CASHOUT(params).then(() => {
+                let obj = {
+                    pay_type: null,
+                    fileList: []
+                };
+                Object.assign(this.payForm, obj);
+                this.dialogVisible = false;
+                this.$emit('getData');
+            });
         },
         /**
          * 选择结算方式
@@ -338,38 +308,6 @@ export default {
                     background: #FFFFFF;
                     border: 1px solid #D9D9D9;
                     color: #666;
-                }
-            }
-        }
-        .pagination {
-            width: 100%;
-            padding-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 24px;
-            background: #fff;
-            box-sizing: border-box;
-            >>>.el-pagination {
-                .btn-next,
-                .btn-prev,
-                .el-pager li {
-                    background: #FFF;
-                    border: 1px solid #D9D9D9;
-                    border-radius: 2px;
-                }
-                .el-pager li {
-                    font-family: HelveticaNeue;
-                    font-size: 14px;
-                    font-weight: 100;
-                    color: rgba(0,0,0,0.65);
-                }
-                .el-pager li:not(.disabled).active {
-                    background-color: #409EFF;
-                    color: #FFF;
-                }
-                .el-pagination__jump {
-                    margin: 0;
                 }
             }
         }

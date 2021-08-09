@@ -6,23 +6,27 @@
             width="480px"
             :before-close="handleClose">
             <el-form ref="form" :model="form" :rules="rules" label-width="150px">
-                <el-form-item label="姓名：" prop="prop1">
-                    <el-input v-model="form.prop1" placeholder="请输入姓名"></el-input>
+                <el-form-item label="姓名：" prop="cardholderName">
+                    <el-input v-model="form.cardholderName" placeholder="请输入姓名"></el-input>
                 </el-form-item>
-                <el-form-item label="身份证号码：" prop="prop2">
-                    <el-input v-model="form.prop2" placeholder="请输入姓名"></el-input>
+                <el-form-item label="身份证号码：" prop="idCard">
+                    <el-input v-model="form.idCard" placeholder="请输入身份证号码"></el-input>
                 </el-form-item>
-                <el-form-item label="银行名称：" prop="prop3">
-                    <el-input v-model="form.prop3" placeholder="请输入姓名"></el-input>
+                <el-form-item label="银行名称：" prop="bankName">
+                    <el-input v-model="form.bankName" placeholder="请输入银行名称"></el-input>
                 </el-form-item>
-                <el-form-item label="银行卡号：" prop="prop4">
-                    <el-input v-model="form.prop4" placeholder="请输入姓名"></el-input>
+                <el-form-item label="银行卡号：" prop="cardNumber">
+                    <el-input v-model="form.cardNumber" placeholder="请输入银行卡号"></el-input>
                 </el-form-item>
-                <el-form-item label="银行卡预留手机号：" prop="prop5">
-                    <el-input v-model="form.prop5" placeholder="请输入姓名"></el-input>
+                <el-form-item label="银行卡预留手机号：" prop="cardMobile">
+                    <el-input v-model="form.cardMobile" placeholder="请输入银行卡预留手机号"></el-input>
                 </el-form-item>
-                <el-form-item label="开户行：" prop="prop6">
-                    <el-input v-model="form.prop6" placeholder="请输入姓名"></el-input>
+                <el-form-item label="开户行：" prop="openingBank">
+                    <el-cascader
+                        v-model="form.openingBank"
+                        :options="options"
+                        @expand-change="handleChange">
+                    </el-cascader>
                 </el-form-item>
             </el-form>
             <div slot="footer">
@@ -36,11 +40,11 @@
             width="480px"
             :before-close="handleCloseBankInfo">
             <el-form ref="form" :model="form" label-width="100px">
-                <el-form-item label="银行卡号：" prop="prop4" style="margin-bottom: 16px;">
-                    <span>{{ form.prop4 }}</span>
+                <el-form-item label="银行卡号：" style="margin-bottom: 16px;">
+                    <span>{{ form.cardNumber }}</span>
                 </el-form-item>
-                <el-form-item label="开户行：" prop="prop6">
-                    <span>{{ form.prop6 }}</span>
+                <el-form-item label="开户行：">
+                    <span>{{ form.openingBank.length === 3 ? form.openingBank[2] : '' }}</span>
                 </el-form-item>
             </el-form>
             <div slot="footer">
@@ -52,49 +56,81 @@
 </template>
 
 <script>
+import {
+    POST_BASE_QUERY_PROVINCE_CITY_LIST,
+    POST_FINANCE_SLIP_OPENBANK_LIST,
+    POST_FINANCE_SLIP_ADD_BANKCARD,
+} from '@/api/request';
+
 export default {
     name: '',
     data() {
         return {
             form: {
-                prop1: '',
-                prop2: '',
-                prop3: '',
-                prop4: '',
-                prop5: '',
-                prop6: '',
+                cardholderName: '',
+                idCard: '',
+                bankName: '',
+                cardNumber: '',
+                cardMobile: '',
+                openingBank: '',
             },
             rules: {
-                prop1: [{required: true, message: '请输入姓名', trigger: ['change', 'blur']}],
-                prop2: [{required: true, message: '请输入身份证号码', trigger: ['change', 'blur']}],
-                prop3: [{required: true, message: '请输入银行名称', trigger: ['change', 'blur']}],
-                prop4: [{required: true, message: '请输入银行卡号', trigger: ['change', 'blur']}],
-                prop5: [{required: true, message: '请输入银行卡预留手机号', trigger: ['change', 'blur']}],
-                prop6: [{required: true, message: '请输入开户行', trigger: ['change', 'blur']}],
+                cardholderName: [{required: true, message: '请输入姓名', trigger: ['change', 'blur']}],
+                idCard: [{required: true, message: '请输入身份证号码', trigger: ['change', 'blur']}],
+                bankName: [{required: true, message: '请输入银行名称', trigger: ['change', 'blur']}],
+                cardNumber: [{required: true, message: '请输入银行卡号', trigger: ['change', 'blur']}],
+                cardMobile: [{required: true, message: '请输入银行卡预留手机号', trigger: ['change', 'blur']}],
+                openingBank: [{required: true, message: '请输入开户行', trigger: ['change', 'blur']}],
             },
             bankCardDisalogVisible: false,
+            options: [],
         }
     },
     props: {
         dialogVisible: {
             type: Boolean,
             default: false
+        },
+        userId: {
+            type: String,
+            default: ''
         }
     },
-    created() {},
+    created() {
+        this.getData();
+    },
     methods: {
+        /**
+         * 查询省市集合
+         * @function getData
+         */
+        getData() {
+            POST_BASE_QUERY_PROVINCE_CITY_LIST().then(res => {
+                res.data.forEach(item => {
+                    item.cityList.forEach(city => {
+                        city.value = city.cityName;
+                        city.label = city.cityName;
+                        city.children = [];
+                    });
+                    item.children = item.cityList;
+                    item.value = item.provinceName;
+                    item.label = item.provinceName;
+                });
+                this.options = res.data;
+            });
+        },
         /**
          * 关闭弹窗
          * @function handleClose
          */
         handleClose() {
             let form = {
-                prop1: '',
-                prop2: '',
-                prop3: '',
-                prop4: '',
-                prop5: '',
-                prop6: '',
+                cardholderName: '',
+                idCard: '',
+                bankName: '',
+                cardNumber: '',
+                cardMobile: '',
+                openingBank: '',
             };
             Object.assign(this.form, form);
             this.$emit('handleClose', false);
@@ -106,11 +142,39 @@ export default {
         handleSubmit() {
             this.$refs['form'].validate((valid) => {
 				if (valid) {
+                    console.log(this.form.openingBank);
                     this.bankCardDisalogVisible = true;
 				} else {
 					return;
 				}
 			});
+        },
+        /**
+         * 选择开户行
+         */
+        handleChange(val) {
+            let [provinceName = '', cityName = ''] = val;
+            let {bankName = ''} = this.form;
+            let params = {
+                provinceName,
+                cityName,
+                bankName
+            };
+            POST_FINANCE_SLIP_OPENBANK_LIST(params).then(res => {
+                res.data.forEach(item => {
+                    item.value = item.openingBank;
+                    item.label = item.openingBank;
+                });
+                this.options.forEach(item => {
+                    if (item.value === provinceName) {
+                        item.children.forEach(city => {
+                            if(city.value === cityName) {
+                                city.children = res.data;
+                            }
+                        });
+                    }
+                });
+            });
         },
         /**
          * 关闭银行卡信息确认弹窗
@@ -124,7 +188,24 @@ export default {
          */
         handleSubmitBankInfo() {
             this.bankCardDisalogVisible = false;
-            this.$emit('handleSubmit', false);
+            let [provinceName = '', cityName = '', openingBank = ''] = this.form.openingBank;
+            let params = {
+                bankName: this.form.bankName,
+                cardMobile: this.form.cardMobile,
+                cardNumber: this.form.cardNumber,
+                cardholderName: this.form.cardholderName,
+                cityName,
+                idCard: this.form.idCard,
+                openingBank,
+                projectCategory: 'NUMBER_TRADE',
+                provinceName,
+                type: 1,
+                userId: this.userId
+            };
+            POST_FINANCE_SLIP_ADD_BANKCARD(params).then(() => {
+                this.$message.success('添加成功');
+                this.$emit('handleSubmit', false);
+            });
         }
     }
 }

@@ -17,7 +17,7 @@
 
 <script>
 import Breadcrumb from '@/components/Breadcrumb';
-import Withdrawal from '@/views/finance/withdrawalManagement/components/Withdrawal.vue';
+import Withdrawal from '@/views/finance/withdrawalManagement/components/Withdrawal';
 import Capital from '@/views/finance/withdrawalManagement/components/Capital';
 import Review from '@/views/finance/withdrawalManagement/components/Review';
 

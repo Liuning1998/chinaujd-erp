@@ -2,9 +2,10 @@
     <div class="container">
         <div class="capital-type">
             <span>资金类型：</span>
-            <el-select v-model="capital_type" placeholder="">
+            <el-select v-model="flagType" placeholder="">
+                <el-option label="全部" :value="2"></el-option>
                 <el-option
-                    v-for="item in capitalType"
+                    v-for="item in flagTypeOptions"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value">
@@ -12,85 +13,60 @@
             </el-select>
         </div>
         <div class="capital-info">
-            <div class="capital-info-item">
-                <img src="~@/assets/images/finance/icon_appraisal_income.png" alt="鉴定收益">
+            <div class="capital-info-item" v-for="item in tableData" :key="item.historyId">
+                <img v-if="item.flag === 1" src="~@/assets/images/finance/icon_appraisal_income.png" alt="鉴定收益">
+                <img v-else src="~@/assets/images/finance/icon_cash_out.png" alt="提现">
                 <div class="detail">
-                    <span class="top">鉴定收益</span>
+                    <span class="top">{{ item.flag === 1 ? '鉴定收益' : '提现' }}</span>
                     <div class="bottom">
-                        <span class="left">5/5</span>
-                        <span class="right">16:30</span>
+                        <span class="right">{{ item.showTime }}</span>
                     </div>
                 </div>
                 <div class="profit">
-                    <span class="top">+1000</span>
-                    <span class="bottom">已到账<i class="received"></i></span>
+                    <span class="top">{{ item.flag === 1 ? '+' : '-' }}{{ item.trxAmount }}</span>
+                    <span class="bottom">{{ item.showStatus }}<i class="received"></i></span>
                 </div>
-            </div>
-            <div class="capital-info-item">
-                <img src="~@/assets/images/finance/icon_cash_out.png" alt="提现">
-                <div class="detail">
-                    <span class="top">提现</span>
-                    <div class="bottom">
-                        <span class="left">5/5</span>
-                        <span class="right">16:30</span>
-                    </div>
+                <div class="more" v-if="item.flag === 0">
+                    <el-button type="text" @click="showMore">查看详情<i :class="item.showMoreIcon"></i></el-button>
                 </div>
-                <div class="profit">
-                    <span class="top">+1000</span>
-                    <span class="bottom">入账中<i class="account"></i></span>
-                </div>
-                <div class="more">
-                    <el-button type="text" @click="showMore">查看详情<i class="down"></i></el-button>
-                </div>
-                <div class="more-info">
+                <div class="more-info" v-if="item.flag === 0" :class="item.showMoreIcon === 'down' ? 'show' : 'hidden'">
                     <el-row>
                         <el-col :span="8">
                             <span class="label">提现金额：</span>
-                            <span>¥10，000，0</span>
+                            <span>¥ {{ item.form.cashoutAmount }}</span>
                         </el-col>
                         <el-col :span="8">
                             <span class="label">服务费：</span>
-                            <span>¥10，000，0</span>
+                            <span>¥ {{ item.form.procedureAmount }}</span>
                         </el-col>
                         <el-col :span="8">
                             <span class="label">应交税：</span>
-                            <span>¥10，000，0</span>
+                            <span>¥ {{ item.form.personalTax }}</span>
                         </el-col>
                     </el-row>
                     <el-row>
                         <el-col :span="8">
                             <span class="label">提现状态：</span>
-                            <span>已成功</span>
+                            <span>{{ item.status }}</span>
                         </el-col>
                         <el-col :span="8">
                             <span class="label">申请时间：</span>
-                            <span>¥10，000，0</span>
+                            <span>{{ item.form.gmtCreate }}</span>
                         </el-col>
                         <el-col :span="8">
                             <span class="label">到账时间：</span>
-                            <span>¥10，000，0</span>
+                            <span>{{ item.form.auditTime }}</span>
                         </el-col>
                     </el-row>
                     <el-row>
                         <el-col :span="8">
                             <span class="label">到账账户：</span>
-                            <span>已成功</span>
+                            <span>{{ item.form.bankName }}（{{ item.form.cardNumber ?
+                                (item.form.cardNumber).substring(item.form.cardNumber.length - 4) :
+                                '' }}）
+                            </span>
                         </el-col>
                     </el-row>
-                </div>
-            </div>
-            <div class="capital-info-item">
-                <img src="~@/assets/images/finance/icon_appraisal_income.png" alt="鉴定收益">
-                <div class="detail">
-                    <span class="top">鉴定收益</span>
-                    <div class="bottom">
-                        <span class="left">5/5</span>
-                        <span class="right">16:30</span>
-                    </div>
-                </div>
-                <div class="profit">
-                    <span class="top">+1000</span>
-                    <span class="bottom">已到账</span>
                 </div>
             </div>
         </div>
@@ -109,23 +85,21 @@
 </template>
 
 <script>
+import {
+    POST_FINANCE_SLIP_QUERY_ACCOUNT_HISTORY,
+    POST_FINANCE_SLIP_CASHOUT_INFO,
+} from '@/api/request';
+
 export default {
     name: '',
     data() {
         return {
-            capital_type: '',
-            capitalType: [
-                {label: '提现', value: 1},
-                {label: '支付', value: 2},
+            tableData: [],
+            flagType: 2,
+            flagTypeOptions: [
+                {label: '收入', value: 1},
+                {label: '支出', value: 0},
             ],
-            capitalInfoImage: {
-                'appraisal': {
-                    'image': require('../../../../assets/images/finance/icon_appraisal_income.png')
-                },
-                'cash': {
-                    'image': require('../../../../assets/images/finance/icon_cash_out.png')
-                }
-            },
             total: 0,
             currentPage: 0,
             pageSize: 15,
@@ -139,14 +113,41 @@ export default {
          * 获取资金明细
          * @function getData
          */
-        getData() {},
+        getData() {
+            let params = {
+                currentPage: this.currentPage,
+                pageSize: this.pageSize,
+                flagType: this.flagType
+            };
+            POST_FINANCE_SLIP_QUERY_ACCOUNT_HISTORY(params).then(res => {
+                res.data.historyList.forEach(item => {
+                    item.flag = JSON.parse(item.flag).value;
+                    if (!item.flag) {
+                        item.showMoreIcon = 'down';
+                        item.form = {};
+                    }
+                })
+                this.tableData = res.data.historyList;
+                this.total = Number(res.data.total);
+            });
+        },
         /**
          * 查看提现详情
          * @function showMore
          * @params {Number} index
          */
         showMore(index) {
-            // icon 更换class up
+            if (this.tableData[index].showMoreIcon === 'down') {
+                this.tableData[index].showMoreIcon = 'up';
+            } else {
+                this.tableData[index].showMoreIcon = 'down';
+            }
+            let params = {
+                cashoutRecId: this.tableData[index].historyId
+            }
+            POST_FINANCE_SLIP_CASHOUT_INFO(params).then(res => {
+                Object.assign(this.tableData[index].form, res.data);
+            })
         },
         /**
          * 更改每页条数
@@ -286,6 +287,12 @@ export default {
                             text-align: end;
                         }
                     }
+                }
+                .show {
+                    display: blick;
+                }
+                .hidden {
+                    display: none;
                 }
             }
             &-item:not(:last-child) {

@@ -354,6 +354,14 @@ let router = new Router({
 							title: '编辑账号'
 						},
 						name: 'accountEdit'
+					}, {
+						path: '/management/accountmanagement/list',
+						component: () => import("@/views/management/accountmanagement/list"),
+						meta: {
+							value: '/management/accountmanagement',
+							title: '服务商列表'
+						},
+						name: 'serverList'
 					}]
 				},
 				{

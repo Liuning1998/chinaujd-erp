@@ -66,10 +66,10 @@
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="服务商名称:">
-							<el-select v-model="form.a" placeholder="请选择" class="w240">
+							<el-select v-model="form.agentName" placeholder="请选择" class="w240">
 								<el-option label="全部" value=""></el-option>
-								<el-option v-for="(item,index) in logisticsStatus" :key="index" :label="item.name"
-									:value="item.value"></el-option>
+								<el-option v-for="(item,index) in agentName" :key="index" :label="item.name"
+									:value="item.name"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
@@ -103,10 +103,10 @@
 					</el-col>
 					<el-col :span="16">
 						<div style="padding-left: 20px;">
-							<el-button type="primary" size="small" @click="query">查询</el-button>
+							<el-button type="primary" size="small" @click="handleQuery">查询</el-button>
 							<el-button size="small" @click="handleReset">重置</el-button>
 							<el-button type="primary" size="small" @click="addOrder">新增业务单</el-button>
-							<el-button @click="orderExport" size="small">导出</el-button>
+							<!-- <el-button @click="orderExport" size="small">导出</el-button> -->
 						</div>
 					</el-col>
 				</el-row>
@@ -114,9 +114,9 @@
 		</div>
 		<div class="table_box bgfff">
 			<el-table :data="tableData" :header-cell-style="{'background':'#fafafa','font-size':'14px','color':'#333333'}" style="width: 100%">
-			  <el-table-column prop="orderMainCode" label="业务订单编号"></el-table-column>
+			  <el-table-column prop="orderMainCode" label="业务订单编号" width="120"></el-table-column>
 			  <el-table-column prop="phone" label="手机号"></el-table-column>
-			  <el-table-column prop="a" label="服务商名称"></el-table-column>
+			  <el-table-column prop="agentName" label="服务商名称"></el-table-column>
 				<el-table-column prop="number" label="邮票数量"></el-table-column>
 				<el-table-column label="订单金额">
 					<template slot-scope="scope">
@@ -146,13 +146,17 @@
 			    </template>
 			  </el-table-column>
 			</el-table>
-			<div class="page_box pagination" v-if="total > pageSize">
-			  <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-			  	:current-page="currentPage-0" background
-			  	:page-size="pageSize-0" layout="prev, pager, next, sizes, jumper"
-			  	:total="total-0">
-			  </el-pagination>
-			</div>
+		</div>
+		<div class="pagination" v-if="total > pageSize">
+			<el-pagination
+				background
+				@size-change="handleSizeChange"
+				@current-change="handleCurrentChange"
+				:current-page="currentPage"
+				:page-size="pageSize"
+				layout="prev, pager, next, sizes, jumper"
+				:total="total">
+			</el-pagination>
 		</div>
 	</div>
 </template>
@@ -160,6 +164,7 @@
 	import {
 		POST_BUSINESS_ORDER_LISTPAGE,
 		POST_EXPORT_BUSINESS_ORDER_EXPORT,
+		POST_USERCENTER_SERVER_PAGELIST,
 	} from '@/api/request';
 
 	import Breadcrumb from '@/components/Breadcrumb';
@@ -184,22 +189,16 @@
 					payment_time: ['', ''],
 					phone: null,
 					refundStatus: null,
-					serviceType: null
+					serviceType: null,
+					agentName: null,
+					paymentStatus: null
 				},
 				tableData:[],
-				total: 0,
-				currentPage:1,
+				total: 110,
+				currentPage:0,
 				pageSize:15,
-				// 物流状态
-				logisticsStatus:[
-					{name: '服务商未发货',value:0},
-					{name: '服务商已发货',value:1},
-					{name: '鉴评点未发货',value:2},
-					{name: '鉴评点已发货',value:3},
-					{name: '鉴评点已退货',value:4},
-					{name: '封装厂未发货',value:5},
-					{name: '封装厂已发货',value:6}
-				],
+				// 服务商名称
+				agentName:[],
 				// 服务类型
 				serviceType:[
 					{name: '采集+鉴别',value:0},
@@ -238,6 +237,7 @@
 		},
 		// 模板渲染前钩子函数
 		created() {
+			this.getAgent();
 			this.getList();
 		},
 		// 模板渲染后钩子函数
@@ -245,6 +245,15 @@
 
 		},
 		methods: {
+			getAgent() {
+				let params = {
+					currentPage: 0,
+					pageSize: 1000
+				}
+				POST_USERCENTER_SERVER_PAGELIST(params).then(res => {
+					this.agentName = res.data.rows;
+				});
+			},
 			detail(val){
 				this.$router.push({
 				  path: '/business/orderList/details',
@@ -259,7 +268,7 @@
 				});
 			},
 			// 查询
-			query(){
+			handleQuery(){
 			  this.currentPage=1;
 			  this.getList();
 			},
@@ -304,6 +313,11 @@
 				];
 				this.tableData = table;
 				POST_BUSINESS_ORDER_LISTPAGE(params).then(res => {
+					res.data.rows.forEach(item => {
+						item.evalmethod = JSON.parse(item.evalmethod).value;
+						item.orderMainStatus = JSON.parse(item.orderMainStatus).value;
+						item.paymentStatus = JSON.parse(item.paymentStatus).value;
+					});
 					this.tableData = res.data.rows;
 					this.total = res.data.total;
 				});
@@ -318,7 +332,9 @@
 					payment_time: ['', ''],
 					phone: null,
 					refundStatus: null,
-					serviceType: null
+					serviceType: null,
+					agentName: null,
+					paymentStatus: null
 				};
 				Object.assign(this.form, form);
 			},
@@ -367,10 +383,6 @@
 		padding: 20px;
 		margin-top: 16px;
 	}
-	.page_box{
-	  text-align: center;
-	  margin:20px 0 0;
-	}
 	.bgfff{
 		background: #FFFFFF;
 		padding: 24px;
@@ -387,35 +399,35 @@
 		}
 	}
 	.pagination {
-	    width: 100%;
-	    height: 64px;
-	    display: flex;
-	    align-items: center;
-	    justify-content: flex-end;
-	    padding-right: 24px;
-	    background: #fff;
-	    box-sizing: border-box;
-	    >>>.el-pagination {
-	        .btn-next,
-	        .btn-prev,
-	        .el-pager li {
-	            background: #FFF;
-	            border: 1px solid #D9D9D9;
-	            border-radius: 2px;
-	        }
-	        .el-pager li {
-	            font-family: HelveticaNeue;
-	            font-size: 14px;
-	            font-weight: 100;
-	            color: rgba(0,0,0,0.65);
-	        }
-	        .el-pager li:not(.disabled).active {
-	            background-color: #409EFF;
-	            color: #FFF;
-	        }
-	        .el-pagination__jump {
-	            margin: 0;
-	        }
-	    }
+		width: 100%;
+		height: 64px;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		padding-right: 24px;
+		background: #fff;
+		box-sizing: border-box;
+		>>>.el-pagination {
+			.btn-next,
+			.btn-prev,
+			.el-pager li {
+				background: #FFF;
+				border: 1px solid #D9D9D9;
+				border-radius: 2px;
+			}
+			.el-pager li {
+				font-family: HelveticaNeue;
+				font-size: 14px;
+				font-weight: 100;
+				color: rgba(0,0,0,0.65);
+			}
+			.el-pager li:not(.disabled).active {
+				background-color: #409EFF;
+				color: #FFF;
+			}
+			.el-pagination__jump {
+				margin: 0;
+			}
+		}
 	}
 </style>

@@ -40,8 +40,28 @@ export function POST_EXPORT_BUSINESS_ORDER_EXPORT(params) {
   return postExport(baseURL + '/philatelic/business/orderMain/export', params);
 }
 // 订单列表-查看-详情
-export function GET_BUSINESS_ORDER_VIEW(params) {
+export function GET_BUSINESS_ORDERMAIN_VIEW(params) {
   return get(baseURL + '/philatelic/business/orderMain/view', params);
+}
+// 子订单详情
+export function GET_BUSINESS_ORDER_VIEW(params) {
+  return get(baseURL + '/philatelic/business/order/view', params);
+}
+// 解除绑定
+export function POST_BUSINESS_ORDER_UBIND(params) {
+  return post(baseURL + '/philatelic/business/order/ubind', params);
+}
+// 取消订单
+export function POST_BUSINESS_ORDERMAIN_CANCEL(params) {
+  return post(baseURL + '/philatelic/business/orderMain/cancel'. params);
+}
+// 审核订单
+export function POST_BUSINESS_ORDERMAIN_AUDIT(params) {
+  return post(baseURL + '/philatelic/business/orderMain/audit', params);
+}
+// 打印订单
+export function GET_BUSINESS_ORDERMAIN_PRINT(params) {
+  return get(baseURL + '/philatelic/business/orderMain/print', params);
 }
 /**
  * 业务中心 End

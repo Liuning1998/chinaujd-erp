@@ -61,7 +61,7 @@
                 </el-tab-pane>
             </el-tabs>
         </div>
-         <div class="pagination" v-if="total > pageSize">
+        <div class="pagination" v-if="total > pageSize">
             <el-pagination
                 background
                 @size-change="handleSizeChange"

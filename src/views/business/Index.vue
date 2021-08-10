@@ -119,6 +119,7 @@
 	}
 	.floor{
 		h3 {
+			width: 100%;
 			font-size: 14px;
 			color: #333333;
 			margin: 10px 0;

@@ -6,21 +6,21 @@
 				<div class="floor">
 					<h3>选择鉴评方式</h3>
 					<el-row type="flex">
-						<el-radio-group v-model="form.serviceType" class="selectRadio">
+						<el-radio-group v-model="form.evalmethod" class="selectRadio" @change="handleChangeRadio">
 							<el-col :span="8">
-								<el-radio :label="3">
+								<el-radio :label="3" :value="0">
 									<span class="selectName">远程鉴评</span>
 									<p class="title">远程鉴评无需留下实物邮票</p>
 								</el-radio>
 							</el-col>
 							<el-col :span="8">
-								<el-radio :label="6">
+								<el-radio :label="6" :value="1">
 									<span class="selectName">批量鉴评</span>
 									<p class="title">批量鉴评需留下实物邮票</p>
 								</el-radio>
 							</el-col>
 							<el-col :span="8">
-								<el-radio :label="9">
+								<el-radio :label="9" :value="2">
 									<span class="selectName">核验</span>
 									<p class="title">核验邮票信息</p>
 								</el-radio>
@@ -31,10 +31,10 @@
 				<div class="floor">
 					<h3>用户基本信息</h3>
 					<el-form-item label="手机号">
-						<el-input v-model="form.phone" type="text" class="w350"></el-input>
+						<el-input v-model="form.orderAddUserInfoDto.userPhone" type="text" class="w350"></el-input>
 					</el-form-item>
 					<el-form-item label="验证码">
-						<el-input v-model="form.phone" type="text" class="w200"></el-input>
+						<el-input v-model="form.orderAddUserInfoDto.phoneCode" type="text" class="w200"></el-input>
 						<el-button @click="getCode" v-if="show" style="width: 138px;" size="small" class="getcode">获取验证码</el-button>
 						<el-button v-if="!show" style="width: 138px;" size="small">{{codeTime}}S</el-button>
 					</el-form-item>
@@ -42,34 +42,40 @@
 				<div class="floor">
 					<h3>服务商基本信息</h3>
 					<el-form-item label="收货地址:" prop="areaId">
-						<el-cascader v-model="form.areaId" :options="options"
+						<el-cascader v-model="form.orderAddInfoServicesDto.areaId" :options="options"
 							:props="{value:'id',label:'name',children:'childrens'}" @change="addressChange"
 							class="w350"></el-cascader>
 					</el-form-item>
 					<el-form-item label="" prop="address">
-						<el-input v-model="form.address" type="textarea" :rows="2" resize="none" placeholder="详细地址"
+						<el-input v-model="form.orderAddInfoServicesDto.address" type="textarea" :rows="2" resize="none" placeholder="详细地址"
 							class="w350"></el-input>
 					</el-form-item>
 					<el-form-item label="收货人">
-						<el-input v-model="form.phone" type="text" class="w350"></el-input>
+						<el-input v-model="form.orderAddInfoServicesDto.consignee" type="text" class="w350"></el-input>
 					</el-form-item>
 					<el-form-item label="收货手机号">
-						<el-input v-model="form.phone" type="text" class="w350"></el-input>
+						<el-input v-model="form.orderAddInfoServicesDto.phone" type="text" class="w350"></el-input>
 					</el-form-item>
 				</div>
 				<div class="floor">
 					<h3>
 						<span>邮票列表</span>
-						<el-button class="addBtn" type="primary" size="small">新增</el-button>
+						<div style="float: right">
+							<span style="color: #1890FF; font-size: 14px;">订单金额：¥100.00</span>
+							<el-divider direction="vertical"></el-divider>
+							<el-button class="addBtn" type="primary" size="small" icon="el-icon-plus">新增</el-button>
+						</div>
 					</h3>
 					<div class="tableList">
-						<el-table :data="tableData" :header-cell-style="{'background':'#fafafa','font-size':'14px','color':'#333333'}">
-							<el-table-column prop="date" label="序号"></el-table-column>
-							<el-table-column prop="date" label="邮票名称"></el-table-column>
-							<el-table-column prop="date" label="单位"></el-table-column>
-							<el-table-column prop="date" label="采集数量"></el-table-column>
-							<el-table-column prop="date" label="服务类型"></el-table-column>
-							<el-table-column prop="date" label="操作">
+						<el-table :data="form.orders" :header-cell-style="{'background':'#fafafa','font-size':'14px','color':'#333333'}">
+							<el-table-column label="序号" type="index"></el-table-column>
+							<el-table-column prop="fullName" label="邮票名称"></el-table-column>
+							<el-table-column prop="unit" label="单位"></el-table-column>
+							<el-table-column prop="expectedQuantity" label="采集数量"></el-table-column>
+							<el-table-column prop="serviceType" label="服务类型"></el-table-column>
+							<!-- <el-table-column prop="evalmethod" label="鉴评方式"></el-table-column>
+							<el-table-column prop="date" label="服务费用"></el-table-column> -->
+							<el-table-column label="操作">
 								<template slot-scope="scope">
 									<el-link type="primary" :underline="false" @click="modify(scope.row)">修改</el-link>
 									<el-divider direction="vertical"></el-divider>
@@ -136,22 +142,31 @@
 		data() {
 			return {
 				form: {
-					serviceType: '',
-					phone: '',
-					areaId: '',
-					address: ''
+					orderAddUserInfoDto: {
+						userPhone: null,
+						phoneCode: null
+					},
+					orderAddInfoServicesDto: {
+						address: null,
+						areaId: null,
+						areaName: null,
+						consignee: null,
+						phone: null,
+					},
+					orders: [],
+					evalmethod: '',
 				},
 				formAlert: {
 					a:'',
 					b:0,
 					c:''
 				},
+				serviceTypeClicked: false,
 				show: true,
 				codeTime: 60,
 				timer: false,
 				options: [],
-				tableData:[{date:1}],
-				addAlert: true,
+				addAlert: false,
 				serviceTypeList:[
 					{name: '采集+鉴别',value: 0},
 					{name: '采集+评级',value: 1},
@@ -192,7 +207,12 @@
 				
 			},
 			delete(val){
-				
+				this.$confirm('您确认要删除该记录吗？', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+				}).then(() => {
+
+				});
 			},
 			clearAlert(){
 				
@@ -227,6 +247,34 @@
 			  //   this.stampImg = '';
 			  //   this.stampId = '';
 			  // }
+			},
+			handleChangeRadio() {
+				console.log(1111);
+				if (this.serviceTypeClicked) {
+					this.$confirm('更换鉴评方式，将清空现有数据，是否更换？', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+					}).then(() => {
+						let form = {
+							orderAddUserInfoDto: {
+								userPhone: null,
+								phoneCode: null
+							},
+							orderAddInfoServicesDto: {
+								address: null,
+								areaId: null,
+								areaName: null,
+								consignee: null,
+								phone: null,
+							},
+							orders: [],
+						};
+						Object.assign(this.form, form);
+					});
+				} else {
+					this.serviceTypeClicked = true;
+					return;
+				}
 			},
 		},
 	}
@@ -266,6 +314,7 @@
 			padding: 0 20px 10px;
 		}
 		h3 {
+			width: 100%;
 			font-size: 16px;
 			color: #333333;
 			line-height: 24px;
@@ -273,6 +322,7 @@
 			padding: 15px;
 			margin-bottom: 24px;
 			overflow: hidden;
+			box-sizing: border-box;
 
 			span {
 				display: inline-block;

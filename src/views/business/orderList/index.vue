@@ -270,7 +270,7 @@ export default {
 				{name: '已关闭', value: 7},
 				{name: '待核验', value: 5}
 			],
-			sendDialigVisible: true,
+			sendDialigVisible: false,
 			logisticsForm: {
 				orderMainId: null,
 				ruleLogisticsId: null,
@@ -447,6 +447,7 @@ export default {
 		 */
 		showSendBtn(val) {
 			let regSys = sessionStorage.getItem('regSys');
+			// TODO: 判断条件需完善 物流状态 鉴评状态 1-1 1-2 2-1
 			if ([3].includes(regSys) && [0].includes(val.evalmethod) && [4].includes(val.orderMainStatus)) {
 				return true;
 			} else if ([3].includes(regSys) && [1].includes(val.evalmethod)) {
@@ -466,19 +467,24 @@ export default {
 		handleSubmit() {
 			this.$refs.form.validate((valid) => {
 			if (valid) {
-				let params = this.logisticsForm;
-				POST_BUSINESS_DELIVERGOODS(params).then(() => {
-					this.$message.sueecss('发货成功');
-					this.getList();
-					let form = {
-						orderMainId: null,
-						ruleLogisticsId: null,
-						logisticsOrderNo: null,
-						shipmentType: null,
-					};
-					Object.assign(this.logisticsForm, form);
-					this.sendDialigVisible = false;
-				})
+				this.$confirm('您确认要发货吗?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+				}).then(() => {
+					let params = this.logisticsForm;
+					POST_BUSINESS_DELIVERGOODS(params).then(() => {
+						this.$message.sueecss('发货成功');
+						this.getList();
+						let form = {
+							orderMainId: null,
+							ruleLogisticsId: null,
+							logisticsOrderNo: null,
+							shipmentType: null,
+						};
+						Object.assign(this.logisticsForm, form);
+						this.sendDialigVisible = false;
+					});
+				});
 			} else {
 				return;
 			}

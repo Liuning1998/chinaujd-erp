@@ -63,6 +63,14 @@ export function POST_BUSINESS_ORDERMAIN_AUDIT(params) {
 export function GET_BUSINESS_ORDERMAIN_PRINT(params) {
   return get(baseURL + '/philatelic/business/orderMain/print', params);
 }
+// 物流渠道
+export function POST_BUSINESS_LOGISTISCS_CHANNEL() {
+  return post(baseURL + '/philatelic/business/applet/appraisalOrder/LogisticsChannel');
+}
+// 发货
+export function POST_BUSINESS_DELIVERGOODS(params) {
+  return post(baseURL + '/philatelic/business/applet/appraisalOrder/deliverGoods', params);
+}
 /**
  * 业务中心 End
  */

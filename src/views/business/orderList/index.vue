@@ -114,13 +114,13 @@
 		</div>
 		<div class="table_box bgfff">
 			<el-table :data="tableData" :header-cell-style="{'background':'#fafafa','font-size':'14px','color':'#333333'}" style="width: 100%">
-			  <el-table-column prop="orderMainCode" label="业务订单编号" width="120"></el-table-column>
-			  <el-table-column prop="phone" label="手机号"></el-table-column>
-			  <el-table-column prop="agentName" label="服务商名称"></el-table-column>
+				<el-table-column prop="orderMainCode" label="业务订单编号" width="120"></el-table-column>
+				<el-table-column prop="phone" label="手机号"></el-table-column>
+				<el-table-column prop="agentName" label="服务商名称"></el-table-column>
 				<el-table-column prop="number" label="邮票数量"></el-table-column>
 				<el-table-column label="订单金额">
 					<template slot-scope="scope">
-					  <p>¥{{scope.row.orderMainAmount}}</p>
+					<p>¥ {{scope.row.orderMainAmount}}</p>
 					</template>
 				</el-table-column>
 				<el-table-column prop="gmtCreate" label="创建时间"></el-table-column>
@@ -140,11 +140,13 @@
 						{{ appraisalMode.find(item => item.value === scope.row.evalmethod).name || '' }}
 					</template>
 				</el-table-column>
-			  <el-table-column fixed="right" label="操作" width="100" align="center">
-			    <template slot-scope="scope">
-			      <el-button @click="detail(scope.row)" type="text">查看</el-button>
-			    </template>
-			  </el-table-column>
+				<el-table-column fixed="right" label="操作" width="120" align="center">
+					<template slot-scope="scope">
+						<el-button type="text" v-if="showSendBtn(scope.row)" @click="send(scope.row.orderMainId)">发货</el-button>
+						<el-divider v-if="showSendBtn(scope.row)" direction="vertical"></el-divider>
+						<el-button type="text" @click="detail(scope.row)">查看</el-button>
+					</template>
+				</el-table-column>
 			</el-table>
 		</div>
 		<div class="pagination" v-if="total > pageSize">
@@ -158,222 +160,342 @@
 				:total="total">
 			</el-pagination>
 		</div>
+		<el-dialog
+			title="请填写物流信息"
+			:visible.sync="sendDialigVisible"
+			width="480"
+			:before-close="handleClose">
+			<div>
+				<el-form ref="form" :rules="logisticsRules" :model="logisticsForm" label-width="100px">
+					<el-form-item label="物流公司：" prop="ruleLogisticsId">
+						<el-select v-model="logisticsForm.ruleLogisticsId" placeholder="请选择单位">
+							<el-option
+								v-for="item in logisticsCompanys"
+								:key="item.ruleLogisticsId"
+								:label="item.logisticsName"
+								:value="item.ruleLogisticsId">
+							</el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="发货类型：" prop="shipmentType">
+						<el-radio-group v-model="logisticsForm.shipmentType">
+							<el-radio label="正常发货" :value="0"></el-radio>
+							<el-radio label="退货" :value="1"></el-radio>
+						</el-radio-group>
+					</el-form-item>
+					<el-form-item label="物流单号：" prop="logisticsOrderNo">
+						<el-input v-model="logisticsForm.logisticsOrderNo" placeholder="请输入物流单号："></el-input>
+					</el-form-item>
+				</el-form>
+			</div>
+			<div slot="footer">
+				<el-button @click="handleClose">取 消</el-button>
+				<el-button type="primary" @click="handleSubmit">确 定</el-button>
+			</div>
+		</el-dialog>
 	</div>
 </template>
 <script>
-	import {
-		POST_BUSINESS_ORDER_LISTPAGE,
-		POST_EXPORT_BUSINESS_ORDER_EXPORT,
-		POST_USERCENTER_SERVER_PAGELIST,
-	} from '@/api/request';
+import {
+	POST_BUSINESS_ORDER_LISTPAGE,
+	POST_EXPORT_BUSINESS_ORDER_EXPORT,
+	POST_USERCENTER_SERVER_PAGELIST,
+	POST_BUSINESS_LOGISTISCS_CHANNEL,
+	POST_BUSINESS_DELIVERGOODS,
+} from '@/api/request';
 
-	import Breadcrumb from '@/components/Breadcrumb';
-	export default {
-		name: '',
-		components: {
-			Breadcrumb
+import Breadcrumb from '@/components/Breadcrumb';
+export default {
+	name: '',
+	components: {
+		Breadcrumb
+	},
+	data() {
+		return {
+			pickerOptions: {
+				disabledDate(time) {
+					return time.getTime() > Date.now();
+				}
+			},
+			form: {
+				create_time: ['', ''],
+				evalmethod: null,
+				name: null,
+				orderMainCode: null,
+				orderMainStatus: null,
+				payment_time: ['', ''],
+				phone: null,
+				refundStatus: null,
+				serviceType: null,
+				agentName: null,
+				paymentStatus: null
+			},
+			tableData:[],
+			total: 110,
+			currentPage:0,
+			pageSize:15,
+			// 服务商名称
+			agentName:[],
+			// 服务类型
+			serviceType:[
+				{name: '采集+鉴别',value:0},
+				{name: '采集+评级',value:1},
+				{name: '采集+鉴别+封装',value:2},
+				{name: '采集+评级+封装',value:3},
+				{name: '核验',value:4}
+			],
+			// 支付状态
+			payState:[
+				{name: '未支付',value:0},
+				{name: '已支付',value:1}
+			],
+			// 退款状态
+			refundStatus:[
+				{name: '退款中',value:0},
+				{name: '已退款',value:1}
+			],
+			// 鉴评方式
+			appraisalMode:[
+				{name: '远程鉴评',value:0},
+				{name: '批量鉴评',value:1}
+			],
+			// 订单状态
+			orderState: [
+				{name: '已提交', value: 0},
+				{name: '待审核', value: 2},
+				{name: '待鉴评', value: 3},
+				{name: '封装中', value: 4},
+				{name: '已完成', value: 6},
+				{name: '售后中', value: 8},
+				{name: '已关闭', value: 7},
+				{name: '待核验', value: 5}
+			],
+			sendDialigVisible: false,
+			logisticsForm: {
+				orderMainId: null,
+				ruleLogisticsId: null,
+				logisticsOrderNo: null,
+				shipmentType: null,
+			},
+			logisticsRules: {
+				ruleLogisticsId: [{required: true, message: '请选择单位', trigger: ['change', 'blur']}],
+				logisticsOrderNo: [{required: true, message: '请输入物流单号', trigger: ['change', 'blur']}],
+				shipmentType: [{required: true, message: '请选择发货类型', trigger: ['change', 'blur']}],
+			},
+			logisticsCompanys: [],
+		}
+	},
+	// 模板渲染前钩子函数
+	created() {
+		this.getAgent();
+		this.getList();
+		this.getLogistiscs();
+	},
+	// 模板渲染后钩子函数
+	mounted() {
+
+	},
+	methods: {
+		getLogistiscs() {
+			POST_BUSINESS_LOGISTISCS_CHANNEL().then(res => {
+				this.logisticsCompanys = res.data;
+			});
 		},
-		data() {
-			return {
-				pickerOptions: {
-					disabledDate(time) {
-						return time.getTime() > Date.now();
-					}
-				},
-				form: {
-					create_time: ['', ''],
-					evalmethod: null,
-					name: null,
-					orderMainCode: null,
-					orderMainStatus: null,
-					payment_time: ['', ''],
-					phone: null,
-					refundStatus: null,
-					serviceType: null,
-					agentName: null,
-					paymentStatus: null
-				},
-				tableData:[],
-				total: 110,
-				currentPage:0,
-				pageSize:15,
-				// 服务商名称
-				agentName:[],
-				// 服务类型
-				serviceType:[
-					{name: '采集+鉴别',value:0},
-					{name: '采集+评级',value:1},
-					{name: '采集+鉴别+封装',value:2},
-					{name: '采集+评级+封装',value:3},
-					{name: '核验',value:4}
-				],
-				// 支付状态
-				payState:[
-					{name: '未支付',value:0},
-					{name: '已支付',value:1}
-				],
-				// 退款状态
-				refundStatus:[
-					{name: '退款中',value:0},
-					{name: '已退款',value:1}
-				],
-				// 鉴评方式
-				appraisalMode:[
-					{name: '远程鉴评',value:0},
-					{name: '批量鉴评',value:1}
-				],
-				// 订单状态
-				orderState: [
-					{name: '已提交', value: 0},
-					{name: '待审核', value: 2},
-					{name: '待鉴评', value: 3},
-					{name: '封装中', value: 4},
-					{name: '已完成', value: 6},
-					{name: '售后中', value: 8},
-					{name: '已关闭', value: 7},
-					{name: '待核验', value: 5}
-				]
+		getAgent() {
+			let params = {
+				currentPage: 0,
+				pageSize: 1000
 			}
+			POST_USERCENTER_SERVER_PAGELIST(params).then(res => {
+				this.agentName = res.data.rows;
+			});
 		},
-		// 模板渲染前钩子函数
-		created() {
-			this.getAgent();
+		detail(val){
+			this.$router.push({
+				path: '/business/orderList/details',
+				query: {
+				orderMainId: val.orderMainId,
+				}
+			});
+		},
+		addOrder(){
+			this.$router.push({
+				path: '/business/orderList/add',
+			});
+		},
+		// 查询
+		handleQuery(){
+			this.currentPage=1;
 			this.getList();
 		},
-		// 模板渲染后钩子函数
-		mounted() {
-
+		handleSizeChange(val){
+			this.pageSize=val;
+			this.getList();
 		},
-		methods: {
-			getAgent() {
-				let params = {
-					currentPage: 0,
-					pageSize: 1000
+		handleCurrentChange(val){
+			this.currentPage=val;
+			this.getList();
+		},
+		getList(){
+			let params = {
+				createTimeEnd: this.form.create_time[1],
+				createTimeStart: this.form.create_time[0],
+				currentPage: this.currentPage,
+				evalmethod: this.form.evalmethod,
+				name: this.form.name,
+				orderMainCode: this.form.orderMainCode,
+				orderMainStatus: this.form.orderMainStatus,
+				pageSize: this.pageSize,
+				paymentStatus: this.form.paymentStatus,
+				paymentTimeStart: this.form.payment_time[0],
+				paymentTimeEnd: this.form.payment_time[1],
+				phone: this.form.phone,
+				refundStatus: this.form.refundStatus,
+				serviceType: this.form.serviceType
+			};
+			let table = [
+				{
+					evalmethod: 1,
+					orderMainCode: 10086,
+					orderMainId: 12580,
+					orderMainStatus: 2,
+					paymentStatus: 0,
+					phone: 12345678901,
+					gmtCreate: '2020.02.02',
+					paymentDate: '2021.12.21',
+					number: 12,
+					orderMainAmount: 250
 				}
-				POST_USERCENTER_SERVER_PAGELIST(params).then(res => {
-					this.agentName = res.data.rows;
+			];
+			this.tableData = table;
+			POST_BUSINESS_ORDER_LISTPAGE(params).then(res => {
+				res.data.rows.forEach(item => {
+					item.evalmethod = JSON.parse(item.evalmethod).value;
+					item.orderMainStatus = JSON.parse(item.orderMainStatus).value;
+					item.paymentStatus = JSON.parse(item.paymentStatus).value;
+					item.serviceType = JSON.parse(item.serviceType).value;
 				});
-			},
-			detail(val){
-				this.$router.push({
-				  path: '/business/orderList/details',
-				  query: {
-				    orderMainId: val.orderMainId,
-				  }
+				this.tableData = res.data.rows;
+				this.total = res.data.total;
+			});
+		},
+		handleReset() {
+			let form = {
+				create_time: ['', ''],
+				evalmethod: null,
+				name: null,
+				orderMainCode: null,
+				orderMainStatus: null,
+				payment_time: ['', ''],
+				phone: null,
+				refundStatus: null,
+				serviceType: null,
+				agentName: null,
+				paymentStatus: null
+			};
+			Object.assign(this.form, form);
+		},
+		orderExport(){
+			let params = {
+				createTimeEnd: this.form.create_time[1],
+				createTimeStart: this.form.create_time[0],
+				currentPage: this.currentPage,
+				evalmethod: this.form.evalmethod,
+				name: this.form.name,
+				orderMainCode: this.form.orderMainCode,
+				orderMainStatus: this.form.orderMainStatus,
+				pageSize: this.pageSize,
+				paymentStatus: this.form.paymentStatus,
+				paymentTimeStart: this.form.payment_time[0],
+				paymentTimeEnd: this.form.payment_time[1],
+				phone: this.form.phone,
+				refundStatus: this.form.refundStatus,
+				serviceType: this.form.serviceType
+			};
+			POST_EXPORT_BUSINESS_ORDER_EXPORT(params).then(res => {
+				const blob = new Blob([res], {
+					type: 'application/vnd.ms-excel;charset=utf-8'
 				});
-			},
-			addOrder(){
-				this.$router.push({
-					path: '/business/orderList/add',
-				});
-			},
-			// 查询
-			handleQuery(){
-			  this.currentPage=1;
-			  this.getList();
-			},
-			handleSizeChange(val){
-			  this.pageSize=val;
-			  this.getList();
-			},
-			handleCurrentChange(val){
-			  this.currentPage=val;
-			  this.getList();
-			},
-			getList(){
-				let params = {
-					createTimeEnd: this.form.create_time[1],
-					createTimeStart: this.form.create_time[0],
-					currentPage: this.currentPage,
-					evalmethod: this.form.evalmethod,
-					name: this.form.name,
-					orderMainCode: this.form.orderMainCode,
-					orderMainStatus: this.form.orderMainStatus,
-					pageSize: this.pageSize,
-					paymentStatus: this.form.paymentStatus,
-					paymentTimeStart: this.form.payment_time[0],
-					paymentTimeEnd: this.form.payment_time[1],
-					phone: this.form.phone,
-					refundStatus: this.form.refundStatus,
-					serviceType: this.form.serviceType
-				};
-				let table = [
-					{
-						evalmethod: 1,
-						orderMainCode: 10086,
-						orderMainId: 12580,
-						orderMainStatus: 2,
-						paymentStatus: 0,
-						phone: 12345678901,
-						gmtCreate: '2020.02.02',
-						paymentDate: '2021.12.21',
-						number: 12,
-						orderMainAmount: 250
-					}
-				];
-				this.tableData = table;
-				POST_BUSINESS_ORDER_LISTPAGE(params).then(res => {
-					res.data.rows.forEach(item => {
-						item.evalmethod = JSON.parse(item.evalmethod).value;
-						item.orderMainStatus = JSON.parse(item.orderMainStatus).value;
-						item.paymentStatus = JSON.parse(item.paymentStatus).value;
-					});
-					this.tableData = res.data.rows;
-					this.total = res.data.total;
-				});
-			},
-			handleReset() {
-				let form = {
-					create_time: ['', ''],
-					evalmethod: null,
-					name: null,
-					orderMainCode: null,
-					orderMainStatus: null,
-					payment_time: ['', ''],
-					phone: null,
-					refundStatus: null,
-					serviceType: null,
-					agentName: null,
-					paymentStatus: null
-				};
-				Object.assign(this.form, form);
-			},
-			orderExport(){
-				let params = {
-					createTimeEnd: this.form.create_time[1],
-					createTimeStart: this.form.create_time[0],
-					currentPage: this.currentPage,
-					evalmethod: this.form.evalmethod,
-					name: this.form.name,
-					orderMainCode: this.form.orderMainCode,
-					orderMainStatus: this.form.orderMainStatus,
-					pageSize: this.pageSize,
-					paymentStatus: this.form.paymentStatus,
-					paymentTimeStart: this.form.payment_time[0],
-					paymentTimeEnd: this.form.payment_time[1],
-					phone: this.form.phone,
-					refundStatus: this.form.refundStatus,
-					serviceType: this.form.serviceType
-				};
-				POST_EXPORT_BUSINESS_ORDER_EXPORT(params).then(res => {
-					const blob = new Blob([res], {
-						type: 'application/vnd.ms-excel;charset=utf-8'
-					});
-					let curDate = `${new Date().getFullYear()}年${(new Date().getMonth() + 1)}月${new Date().getDate()}日`
-					const file_name = `订单列表${curDate}.xls`;
-					if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-						window.navigator.msSaveOrOpenBlob(blob, file_name);
-					} else {
-						const aLink = document.createElement('a');
-						aLink.href = URL.createObjectURL(blob);
-						aLink.setAttribute('download', file_name);
-						aLink.click();
-						window.URL.revokeObjectURL(blob);
-					}
-				});
+				let curDate = `${new Date().getFullYear()}年${(new Date().getMonth() + 1)}月${new Date().getDate()}日`
+				const file_name = `订单列表${curDate}.xls`;
+				if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+					window.navigator.msSaveOrOpenBlob(blob, file_name);
+				} else {
+					const aLink = document.createElement('a');
+					aLink.href = URL.createObjectURL(blob);
+					aLink.setAttribute('download', file_name);
+					aLink.click();
+					window.URL.revokeObjectURL(blob);
+				}
+			});
+		},
+		/**
+		 * 主订单展示发货按钮
+		 * @function showSendBtn
+		 * @params {Object} val 主订单信息
+		 * @params {Number} regSys => 登录角色 服务商: 3；供应链(鉴评点、封装厂): 6;
+		 * @params {Number} evalmethod => 鉴评方式 远程鉴评: 0；批量鉴评：1;
+		 * @params {Number} orderMainStatus => 订单状态 已提交: 0; 待审核: 2; 待鉴评: 3; 封装中: 4; 待核验: 5; 已完成: 6; 已关闭: 7; 售后中: 8;
+		 * @params {Number} 物流状态
+		 * @params {Number} 鉴评状态
+		 * @params {Number} serviceType => 服务类型 serviceType: 0; 采集+评级: 1; 采集+鉴别+封装: 2; 采集+评级+封装: 3; 核验: 4
+		 * 不同角色登陆系统触发规则：
+		 * 1-1、服务商权限登录后，选择远程鉴评，订单状态为封装中，物流状态为服务商未发货，鉴评状态为已鉴评
+		 * 1-2、服务商权限登录后，选择批量鉴评，鉴评状态为待鉴评
+		 * 2-1、鉴评点权限登录后，鉴评方式为批量鉴评，物流状态为“鉴评点未发货”
+		 * 3-1、封装厂权限登录后，服务类型含有“封装”的数据
+		 */
+		showSendBtn(val) {
+			let regSys = sessionStorage.getItem('regSys');
+			if ([3].includes(regSys) && [0].includes(val.evalmethod) && [4].includes(val.orderMainStatus)) {
+				return true;
+			} else if ([3].includes(regSys) && [1].includes(val.evalmethod)) {
+				return true;
+			} else if ([6].includes(regSys) && [1].includes(val.evalmethod)) {
+				return true;
+			} else if ([6].includes(regSys) && [2, 3].includes(val.serviceType)) {
+				return true;
+			} else {
+				return false;
 			}
 		},
+		send(id) {
+			this.sendDialigVisible = true;
+			this.logisticsForm.orderMainId = id;
+		},
+		handleSubmit() {
+			this.$refs.form.validate((valid) => {
+			if (valid) {
+				let params = this.logisticsForm;
+				POST_BUSINESS_DELIVERGOODS(params).then(() => {
+					this.$message.sueecss('发货成功');
+					this.getList();
+					let form = {
+						orderMainId: null,
+						ruleLogisticsId: null,
+						logisticsOrderNo: null,
+						shipmentType: null,
+					};
+					Object.assign(this.logisticsForm, form);
+					this.sendDialigVisible = false;
+				})
+			} else {
+				return;
+			}
+			});
+		},
+		handleClose() {
+			let form = {
+				orderMainId: null,
+				ruleLogisticsId: null,
+				logisticsOrderNo: null,
+				shipmentType: null,
+			};
+			Object.assign(this.logisticsForm, form);
+			this.sendDialigVisible = false;
+		},
 	}
+}
 </script>
 <style lang="scss" scoped>
 	.w240 {
@@ -427,6 +549,54 @@
 			}
 			.el-pagination__jump {
 				margin: 0;
+			}
+		}
+	}
+	>>>.el-form {
+		&-item {
+			height: 32px;
+			margin-bottom: 24px;
+			&__label {
+				height: 32px;
+				line-height: 32px;
+				padding: 0;
+			}
+			&__content {
+				display: flex;
+				align-items: center;
+				height: 32px;
+			}
+			.el-input {
+				width: 328px;
+				.el-input__inner {
+					height: 32px;
+					line-height: 32px;
+					border-radius: 2px;
+				}
+			}
+			// 隐藏输入框的上下箭头
+			input[type="number"]::-webkit-inner-spin-button,
+			input[type="number"]::-webkit-outer-spin-button {
+				-webkit-appearance: none !important;
+				-moz-appearance: none !important;
+				-o-appearance: none !important;
+				-ms-appearance: none !important;
+				appearance: none !important;
+				margin: 0;
+			}
+			.el-button {
+				width: 88px;
+				height: 32px;
+				line-height: 32px;
+				border: 1px solid #1890FF;
+				border-radius: 2px;
+				color: #1890FF;
+				margin-left: 16px;
+				padding: 0;
+				background: #FFF;
+			}
+			.add-bankcard-btn {
+				width: 114px;
 			}
 		}
 	}

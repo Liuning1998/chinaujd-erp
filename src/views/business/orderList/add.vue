@@ -249,7 +249,6 @@
 			  // }
 			},
 			handleChangeRadio() {
-				console.log(1111);
 				if (this.serviceTypeClicked) {
 					this.$confirm('更换鉴评方式，将清空现有数据，是否更换？', '提示', {
 						confirmButtonText: '确定',

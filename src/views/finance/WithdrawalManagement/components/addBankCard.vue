@@ -142,7 +142,6 @@ export default {
         handleSubmit() {
             this.$refs['form'].validate((valid) => {
 				if (valid) {
-                    console.log(this.form.openingBank);
                     this.bankCardDisalogVisible = true;
 				} else {
 					return;

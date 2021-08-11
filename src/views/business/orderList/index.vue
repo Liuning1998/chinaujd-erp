@@ -270,7 +270,7 @@ export default {
 				{name: '已关闭', value: 7},
 				{name: '待核验', value: 5}
 			],
-			sendDialigVisible: false,
+			sendDialigVisible: true,
 			logisticsForm: {
 				orderMainId: null,
 				ruleLogisticsId: null,
@@ -552,51 +552,50 @@ export default {
 			}
 		}
 	}
-	>>>.el-form {
-		&-item {
-			height: 32px;
-			margin-bottom: 24px;
-			&__label {
+	>>>.el-dialog {
+		.el-form {
+			&-item {
 				height: 32px;
-				line-height: 32px;
-				padding: 0;
-			}
-			&__content {
-				display: flex;
-				align-items: center;
-				height: 32px;
-			}
-			.el-input {
-				width: 328px;
-				.el-input__inner {
+				margin-bottom: 24px;
+				&__label {
 					height: 32px;
 					line-height: 32px;
-					border-radius: 2px;
+					padding: 0;
 				}
-			}
-			// 隐藏输入框的上下箭头
-			input[type="number"]::-webkit-inner-spin-button,
-			input[type="number"]::-webkit-outer-spin-button {
-				-webkit-appearance: none !important;
-				-moz-appearance: none !important;
-				-o-appearance: none !important;
-				-ms-appearance: none !important;
-				appearance: none !important;
-				margin: 0;
-			}
-			.el-button {
-				width: 88px;
-				height: 32px;
-				line-height: 32px;
-				border: 1px solid #1890FF;
-				border-radius: 2px;
-				color: #1890FF;
-				margin-left: 16px;
-				padding: 0;
-				background: #FFF;
-			}
-			.add-bankcard-btn {
-				width: 114px;
+				&__content {
+					display: flex;
+					align-items: center;
+					height: 32px;
+				}
+				.el-input {
+					width: 328px;
+					.el-input__inner {
+						height: 32px;
+						line-height: 32px;
+						border-radius: 2px;
+					}
+				}
+				// 隐藏输入框的上下箭头
+				input[type="number"]::-webkit-inner-spin-button,
+				input[type="number"]::-webkit-outer-spin-button {
+					-webkit-appearance: none !important;
+					-moz-appearance: none !important;
+					-o-appearance: none !important;
+					-ms-appearance: none !important;
+					appearance: none !important;
+					margin: 0;
+				}
+				.el-button {
+					width: 88px;
+					height: 32px;
+					line-height: 32px;
+					border: 1px solid #1890FF;
+					border-radius: 2px;
+					color: #1890FF;
+					margin-left: 16px;
+					padding: 0;
+					background: #FFF;
+				}
 			}
 		}
 	}

@@ -168,7 +168,6 @@ export default {
 				c:''
 			},
 			serviceTypeClicked: false,
-			addDialog: false,
 			show: true,
 			codeTime: 60,
 			timer: false,
@@ -221,10 +220,10 @@ export default {
 
 		},
 		add() {
-			this.addDialog = true;
+			this.addAlert = true;
 		},
 		modify(val){
-			
+			this.addAlert = true;
 		},
 		delete(val){
 			this.$confirm('您确认要删除该记录吗？', '提示', {
@@ -235,18 +234,18 @@ export default {
 			});
 		},
 		clearAlert(){
-			
+			this.addAlert = false;
 		},
 		addConfirm(){
-			
+			this.addAlert = false;
 		},
 		cancel(){
-			
+			this.addAlert = false;
 		},
 		querySearch(queryString, cb) {
 			let list = [{}];
 			let params = {
-			signalNo: queryString
+				signalNo: queryString
 			}
 			//调用的后台接口
 			// findFullName(params).then(res => {

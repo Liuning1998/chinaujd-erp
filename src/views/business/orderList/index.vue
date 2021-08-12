@@ -466,28 +466,28 @@ export default {
 		},
 		handleSubmit() {
 			this.$refs.form.validate((valid) => {
-			if (valid) {
-				this.$confirm('您确认要发货吗?', '提示', {
-					confirmButtonText: '确定',
-					cancelButtonText: '取消',
-				}).then(() => {
-					let params = this.logisticsForm;
-					POST_BUSINESS_DELIVERGOODS(params).then(() => {
-						this.$message.sueecss('发货成功');
-						this.getList();
-						let form = {
-							orderMainId: null,
-							ruleLogisticsId: null,
-							logisticsOrderNo: null,
-							shipmentType: null,
-						};
-						Object.assign(this.logisticsForm, form);
-						this.sendDialigVisible = false;
+				if (valid) {
+					this.$confirm('您确认要发货吗?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+					}).then(() => {
+						let params = this.logisticsForm;
+						POST_BUSINESS_DELIVERGOODS(params).then(() => {
+							this.$message.sueecss('发货成功');
+							this.getList();
+							let form = {
+								orderMainId: null,
+								ruleLogisticsId: null,
+								logisticsOrderNo: null,
+								shipmentType: null,
+							};
+							Object.assign(this.logisticsForm, form);
+							this.sendDialigVisible = false;
+						});
 					});
-				});
-			} else {
-				return;
-			}
+				} else {
+					return;
+				}
 			});
 		},
 		handleClose() {

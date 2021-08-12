@@ -21,10 +21,10 @@ if (process.env.NODE_ENV == 'development') { //开发环境
   baseURL = 'http://msg5gtest.zuul.srpqa.top';
 }
 
-export function login() {
+export function login(params) {
   return post(baseURL + '/userCenter/login/username', params);
 }
-export function logout() {
+export function logout(params) {
   return post(baseURL + '/userCenter/logout', params);
 }
 export function getImageCode() {};
@@ -70,6 +70,14 @@ export function POST_BUSINESS_LOGISTISCS_CHANNEL() {
 // 发货
 export function POST_BUSINESS_DELIVERGOODS(params) {
   return post(baseURL + '/philatelic/business/applet/appraisalOrder/deliverGoods', params);
+}
+// 获取短信验证码
+export function POST_BUSINESS_GET_SMSCODE(params) {
+  return post(baseURL + '/philatelic/business/orderMain/get/smsCode', params);
+}
+// 订单列表-新增子订单
+export function POST_BUSINESS_ORDERMAIN_ADD(params) {
+  return post(baseURL + '/philatelic/business/orderMain/add', params);
 }
 /**
  * 业务中心 End

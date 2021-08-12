@@ -63,7 +63,7 @@
 						<div style="float: right">
 							<span style="color: #1890FF; font-size: 14px;">订单金额：¥100.00</span>
 							<el-divider direction="vertical"></el-divider>
-							<el-button class="addBtn" type="primary" size="small" icon="el-icon-plus">新增</el-button>
+							<el-button class="addBtn" type="primary" size="small" icon="el-icon-plus" @click="add">新增</el-button>
 						</div>
 					</h3>
 					<div class="tableList">
@@ -73,8 +73,8 @@
 							<el-table-column prop="unit" label="单位"></el-table-column>
 							<el-table-column prop="expectedQuantity" label="采集数量"></el-table-column>
 							<el-table-column prop="serviceType" label="服务类型"></el-table-column>
-							<!-- <el-table-column prop="evalmethod" label="鉴评方式"></el-table-column>
-							<el-table-column prop="date" label="服务费用"></el-table-column> -->
+							<el-table-column prop="evalmethod" label="鉴评方式"></el-table-column>
+							<el-table-column prop="date" label="服务费用"></el-table-column>
 							<el-table-column label="操作">
 								<template slot-scope="scope">
 									<el-link type="primary" :underline="false" @click="modify(scope.row)">修改</el-link>
@@ -87,8 +87,8 @@
 				</div>
 			</el-form>
 			<div class="buttom_btn">
-				<el-button size="small">取消</el-button>
-				<el-button type="primary" size="small">提交订单</el-button>
+				<el-button size="small" @click="handleCancel">取消</el-button>
+				<el-button type="primary" size="small" @click="handleSubmit">提交订单</el-button>
 			</div>
 		</div>
 		<!-- 新增弹窗 -->
@@ -133,150 +133,212 @@
 	</div>
 </template>
 <script>
-	import Breadcrumb from '@/components/Breadcrumb';
-	export default {
-		name: '',
-		components: {
-			Breadcrumb
-		},
-		data() {
-			return {
-				form: {
-					orderAddUserInfoDto: {
-						userPhone: null,
-						phoneCode: null
-					},
-					orderAddInfoServicesDto: {
-						address: null,
-						areaId: null,
-						areaName: null,
-						consignee: null,
-						phone: null,
-					},
-					orders: [],
-					evalmethod: '',
+import {
+	POST_BUSINESS_GET_SMSCODE,
+	POST_BUSINESS_ORDERMAIN_ADD,
+} from '@/api/request';
+
+import Breadcrumb from '@/components/Breadcrumb';
+export default {
+	name: '',
+	components: {
+		Breadcrumb
+	},
+	data() {
+		return {
+			form: {
+				orderAddUserInfoDto: {
+					userPhone: null,
+					phoneCode: null
 				},
-				formAlert: {
-					a:'',
-					b:0,
-					c:''
+				orderAddInfoServicesDto: {
+					address: null,
+					areaId: null,
+					areaName: null,
+					consignee: null,
+					phone: null,
 				},
-				serviceTypeClicked: false,
-				show: true,
-				codeTime: 60,
-				timer: false,
-				options: [],
-				addAlert: false,
-				serviceTypeList:[
-					{name: '采集+鉴别',value: 0},
-					{name: '采集+评级',value: 1},
-					{name: '采集+鉴别+封装',value: 2},
-					{name: '采集+评级+封装',value: 3}
-				],
-				CompanyList: [
-					{name: '枚',value: 0},
-					{name: '版',value: 1},
-					{name: '套',value: 2}
-				],
-				// 子票列表
-				childStamp:[
-					{name: 'J.119 戈壁绿洲',value: 0},
-					{name: 'J.119 油田、天池',value: 1},
-					{name: 'J.119 天山牧场',value: 2},
-					{name: 'J.119 天山',value: 3}
-				],
-				stampImg:''
+				orders: [],
+				evalmethod: null,
+			},
+			evalmethod: null,
+			formAlert: {
+				a:'',
+				b:0,
+				c:''
+			},
+			serviceTypeClicked: false,
+			addDialog: false,
+			show: true,
+			codeTime: 60,
+			timer: false,
+			options: [],
+			addAlert: false,
+			serviceTypeList:[
+				{name: '采集+鉴别',value: 0},
+				{name: '采集+评级',value: 1},
+				{name: '采集+鉴别+封装',value: 2},
+				{name: '采集+评级+封装',value: 3}
+			],
+			CompanyList: [
+				{name: '枚',value: 0},
+				{name: '版',value: 1},
+				{name: '套',value: 2}
+			],
+			// 子票列表
+			childStamp:[
+				{name: 'J.119 戈壁绿洲',value: 0},
+				{name: 'J.119 油田、天池',value: 1},
+				{name: 'J.119 天山牧场',value: 2},
+				{name: 'J.119 天山',value: 3}
+			],
+			stampImg:''
+		}
+	},
+	// 模板渲染前钩子函数
+	created() {
+
+	},
+	// 模板渲染后钩子函数
+	mounted() {
+
+	},
+	methods: {
+		getCode() {
+			let {userPhone = ''} = this.form.orderAddUserInfoDto;
+			if (!userPhone) {
+				this.$message.warning('请输入手机号');
+				return;
 			}
+			let params = {
+				mobile: userPhone
+			}
+			POST_BUSINESS_GET_SMSCODE(params).then(res => {
+				this.form.orderAddUserInfoDto.phoneCode = res.data.phoneCode;
+			});
 		},
-		// 模板渲染前钩子函数
-		created() {
+		addressChange() {
 
 		},
-		// 模板渲染后钩子函数
-		mounted() {
-
+		add() {
+			this.addDialog = true;
 		},
-		methods: {
-			getCode() {
+		modify(val){
+			
+		},
+		delete(val){
+			this.$confirm('您确认要删除该记录吗？', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+			}).then(() => {
 
-			},
-			addressChange() {
-
-			},
-			modify(val){
-				
-			},
-			delete(val){
-				this.$confirm('您确认要删除该记录吗？', '提示', {
+			});
+		},
+		clearAlert(){
+			
+		},
+		addConfirm(){
+			
+		},
+		cancel(){
+			
+		},
+		querySearch(queryString, cb) {
+			let list = [{}];
+			let params = {
+			signalNo: queryString
+			}
+			//调用的后台接口
+			// findFullName(params).then(res => {
+			//   if (res.appraisalResultState.code == '10000') {
+			//     list = res.data.findFullNameList;
+			//     cb(list);
+			//   } else {
+			//     this.$message.warning(res.appraisalResultState.codeName);
+			//   }
+			// });
+		},
+		handleSelect(item) {
+			// this.stampImg = item.imgUrl;
+			// this.stampId = item.stampId;
+		},
+		handleChange() {
+			// if (!this.formAlert.signalNo) {
+			//   this.stampImg = '';
+			//   this.stampId = '';
+			// }
+		},
+		handleChangeRadio(val) {
+			if (this.serviceTypeClicked) {
+				this.$confirm('更换鉴评方式，将清空现有数据，是否更换？', '提示', {
 					confirmButtonText: '确定',
 					cancelButtonText: '取消',
 				}).then(() => {
-
+					let form = {
+						orderAddUserInfoDto: {
+							userPhone: null,
+							phoneCode: null
+						},
+						orderAddInfoServicesDto: {
+							address: null,
+							areaId: null,
+							areaName: null,
+							consignee: null,
+							phone: null,
+						},
+						orders: [],
+						evalmethod: val
+					};
+					this.evalmethod = val;
+					Object.assign(this.form, form);
+				}).catch(() => {
+					this.form.evalmethod = this.evalmethod;
 				});
-			},
-			clearAlert(){
-				
-			},
-			addConfirm(){
-				
-			},
-			cancel(){
-				
-			},
-			querySearch(queryString, cb) {
-			  let list = [{}];
-			  let params = {
-			    signalNo: queryString
-			  }
-			  //调用的后台接口
-			  // findFullName(params).then(res => {
-			  //   if (res.appraisalResultState.code == '10000') {
-			  //     list = res.data.findFullNameList;
-			  //     cb(list);
-			  //   } else {
-			  //     this.$message.warning(res.appraisalResultState.codeName);
-			  //   }
-			  // });
-			},
-			handleSelect(item) {
-			  // this.stampImg = item.imgUrl;
-				// this.stampId = item.stampId;
-			},
-			handleChange() {
-			  // if (!this.formAlert.signalNo) {
-			  //   this.stampImg = '';
-			  //   this.stampId = '';
-			  // }
-			},
-			handleChangeRadio() {
-				if (this.serviceTypeClicked) {
-					this.$confirm('更换鉴评方式，将清空现有数据，是否更换？', '提示', {
-						confirmButtonText: '确定',
-						cancelButtonText: '取消',
-					}).then(() => {
-						let form = {
-							orderAddUserInfoDto: {
-								userPhone: null,
-								phoneCode: null
-							},
-							orderAddInfoServicesDto: {
-								address: null,
-								areaId: null,
-								areaName: null,
-								consignee: null,
-								phone: null,
-							},
-							orders: [],
-						};
-						Object.assign(this.form, form);
-					});
-				} else {
-					this.serviceTypeClicked = true;
-					return;
-				}
-			},
+			} else {
+				this.evalmethod = val;
+				this.serviceTypeClicked = true;
+				return;
+			}
 		},
-	}
+		handleCancel() {
+			this.$router.push('/business/orderList/index');
+		},
+		// 提交订单
+		handleSubmit() {
+			let {orderAddUserInfoDto = {}, orderAddInfoServicesDto = {}, orders = [], evalmethod = null} = this.form;
+			let {userPhone = null, phoneCode = null} = orderAddUserInfoDto;
+			let {address = null, areaId = null, areaName = null, consignee = null, phone = null} = orderAddInfoServicesDto;
+
+			if (!evalmethod) {
+				this.$message.warning('请选择鉴评方式');
+				return;
+			}
+			if (!userPhone || !phoneCode) {
+				this.$message.warning('请完善用户基本信息');
+				return;
+			}
+			if (!address || !areaId || !areaName || !consignee || !phone) {
+				this.$message.warning('请完善服务商基本信息');
+				return;
+			}
+			if (!orders.length) {
+				this.$message.warning('请添加自订单列表');
+				return;
+			}
+			let params = {
+				evalmethod,
+				orderAddInfoServicesDto,
+				orderAddUserInfoDto,
+				orders
+			}
+			POST_BUSINESS_ORDERMAIN_ADD(params).then(() => {
+				this.$message.success('新增成功');
+				this.$router.push('/business/orderList/index');
+			});
+
+		},
+	},
+}
 </script>
 <style lang="scss" scoped>
 	.selectRadio {

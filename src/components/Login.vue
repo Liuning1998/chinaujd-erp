@@ -32,7 +32,7 @@
                         </template>
                     </el-input>
                 </el-form-item>
-                <el-form-item label="">
+                <el-form-item label="" prop="regSys">
                     <el-select v-model="form.regSys" placeholder="请选择角色">
                         <el-option
                             v-for="(item, index) in regSys" :key="index"
@@ -75,7 +75,8 @@ export default{
                 password: [
                     {required: true, message: '请输入登录密码', trigger: ['blur', 'change']},
                 ],
-                imageCode: [{required: true, message: '请填写图形验证码', trigger: ['blur', 'change']}]
+                imageCode: [{required: true, message: '请填写图形验证码', trigger: ['blur', 'change']}],
+                regSys: [{required: true, message: '请选择角色', trigger: ['blur', 'change']}]
             }
         }
     },
@@ -111,7 +112,7 @@ export default{
                         password: this.form.password,
                         imageCode: this.form.imageCode,
                         uuid: this.uuid,
-                        regSys: this.$store.state.regSys
+                        regSys: this.form.regSys,
                     };
                     login(params).then(res => {
                         this.$message.success('登录成功');

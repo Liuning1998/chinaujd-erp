@@ -79,7 +79,7 @@ let router = new Router({
 						component: () => import("@/views/business/orderList/add"),
 						meta: {
 							value: '/business/orderList',
-							title: '新增订单'
+							title: '新增'
 						},
 						name: 'orderAdd'
 					}, {

@@ -3,15 +3,14 @@
         <Breadcrumb></Breadcrumb>
         <div class="tabs">
             <el-tabs v-model="activeName">
-                <el-tab-pane
-                    v-for="(item, index) in jurisdiction" :key="index"
-                    :label="item.label" :name="item.name">
-                    <Withdrawal v-if="activeName === 'withdrawal'"></Withdrawal>
-                    <Capital v-if="activeName === 'capital'"></Capital>
-                    <Review v-if="activeName === 'review'"></Review>
-                </el-tab-pane>
+                <el-tab-pane label="提现" name="withdrawal"></el-tab-pane>
+                <el-tab-pane label="资金明细" name="capital"></el-tab-pane>
+                <el-tab-pane label="提现审核" name="review"></el-tab-pane>
             </el-tabs>
         </div>
+        <Withdrawal v-if="activeName === 'withdrawal'"></Withdrawal>
+        <Capital v-if="activeName === 'capital'"></Capital>
+        <Review v-if="activeName === 'review'"></Review>
     </div>
 </template>
 
@@ -30,24 +29,11 @@ export default {
     },
     data() {
         return {
-            activeName: '',
-            jurisdiction: [],
+            activeName: 'withdrawal',
         }
     },
-    created() {
-        this.getJurisdiction();
-    },
-    methods: {
-        getJurisdiction() {
-            let arr = [
-                {label: '提现', name: 'withdrawal'},
-                {label: '资金明细', name: 'capital'},
-                {label: '提现审核', name: 'review'},
-            ]
-            this.activeName = arr[0].name;
-            this.jurisdiction = arr;
-        }
-    }
+    created() {},
+    methods: {}
 }
 </script>
 

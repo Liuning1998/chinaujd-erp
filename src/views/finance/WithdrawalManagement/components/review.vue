@@ -52,7 +52,7 @@ export default {
     },
     data() {
         return {
-            radio: 1,
+            radio: 0,
             tableData: [],
             total: 110,
             currentPage: 0,
@@ -68,6 +68,11 @@ export default {
          * @function getData
          */
         getData() {
+            let params = {
+                currentPage: this.currentPage,
+                pageSize: this.pageSize,
+                status: this.radio
+            };
             POST_FINANCE_SLIP_CASHOUT_LIST(params).then(res => {
                 this.tableData = res.data.rows;
                 this.total = Number(res.data.total);

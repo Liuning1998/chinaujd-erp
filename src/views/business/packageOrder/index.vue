@@ -11,7 +11,7 @@
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="邮票名称:">
-							<el-input v-model="form.name" class="w240"></el-input>
+							<el-input v-model="form.stampName" class="w240"></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
@@ -23,7 +23,7 @@
 						<el-form-item label="订单状态:">
 							<el-select v-model="form.orderMainStatus" placeholder="请选择" class="w240">
 								<el-option label="全部" value=""></el-option>
-								<el-option v-for="(item,index) in orderState" :key="index" :label="item.name"
+								<el-option v-for="(item,index) in logisticsStatus" :key="index" :label="item.name"
 									:value="item.value"></el-option>
 							</el-select>
 						</el-form-item>
@@ -48,9 +48,18 @@
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="物流状态:">
-							<el-select v-model="form.refundStatus" placeholder="请选择" class="w240">
+							<el-select v-model="form.logisticsStatus" placeholder="请选择" class="w240">
 								<el-option label="全部" value=""></el-option>
-								<el-option v-for="(item,index) in refundStatus" :key="index" :label="item.name"
+								<el-option v-for="(item,index) in logisticsStatus" :key="index" :label="item.name"
+									:value="item.value"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="8">
+						<el-form-item label="鉴评方式:">
+							<el-select v-model="form.evalmethod" placeholder="请选择" class="w240">
+								<el-option label="全部" value=""></el-option>
+								<el-option v-for="(item,index) in appraisalMode" :key="index" :label="item.name"
 									:value="item.value"></el-option>
 							</el-select>
 						</el-form-item>
@@ -69,18 +78,10 @@
 							</el-date-picker>
 						</el-form-item>
 					</el-col>
-					<el-col :span="8">
-						<el-form-item label="鉴评方式:">
-							<el-select v-model="form.evalmethod" placeholder="请选择" class="w240">
-								<el-option label="全部" value=""></el-option>
-								<el-option v-for="(item,index) in appraisalMode" :key="index" :label="item.name"
-									:value="item.value"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="16">
+					<el-col :span="12">
 						<div style="padding-left: 20px;">
 							<el-button type="primary" size="small" @click="handleQuery">查询</el-button>
+							<el-button size="small" @click="handleReset">重置</el-button>
 							<!-- <el-button @click="orderExport" size="small">导出</el-button> -->
 						</div>
 					</el-col>
@@ -174,7 +175,7 @@
 </template>
 <script>
 import {
-	POST_BUSINESS_ORDER_LISTPAGE,
+	POST_BUSINESS_APPRAISAL_ORDER_LIST,
 	POST_EXPORT_BUSINESS_ORDER_EXPORT,
 	POST_USERCENTER_SERVER_PAGELIST,
 	POST_BUSINESS_LOGISTISCS_CHANNEL,
@@ -195,17 +196,15 @@ export default {
 				}
 			},
 			form: {
-				create_time: ['', ''],
-				evalmethod: null,
-				name: null,
 				orderMainCode: null,
-				orderMainStatus: null,
-				payment_time: ['', ''],
+				stampName: null,
 				phone: null,
-				refundStatus: null,
+				orderMainStatus: null,
+				paymentStatus: null,
 				serviceType: null,
-				agentName: null,
-				paymentStatus: null
+				logisticsStatus: null,
+				create_time: ['', ''],
+				evalmethod: null
 			},
 			tableData:[],
 			total: 110,
@@ -226,10 +225,15 @@ export default {
 				{name: '未支付',value:0},
 				{name: '已支付',value:1}
 			],
-			// 退款状态
-			refundStatus:[
-				{name: '退款中',value:0},
-				{name: '已退款',value:1}
+			// 物流状态
+			logisticsStatus:[
+				{name: '服务商未发货',value:0},
+				{name: '服务商已发货',value:1},
+				{name: '鉴评点未发货',value:2},
+				{name: '鉴评点已发货',value:3},
+				{name: '鉴评点已退货',value:4},
+				{name: '封装厂未发货',value:5},
+				{name: '封装厂已发货',value:6},
 			],
 			// 鉴评方式
 			appraisalMode:[
@@ -300,6 +304,20 @@ export default {
 			this.currentPage=1;
 			this.getList();
 		},
+		handleReset() {
+			let form = {
+				orderMainCode: null,
+				stampName: null,
+				phone: null,
+				orderMainStatus: null,
+				paymentStatus: null,
+				serviceType: null,
+				logisticsStatus: null,
+				create_time: ['', ''],
+				evalmethod: null
+			};
+			Object.assign(this.form, form);
+		},
 		handleSizeChange(val){
 			this.pageSize=val;
 			this.getList();
@@ -310,42 +328,25 @@ export default {
 		},
 		getList(){
 			let params = {
-				createTimeEnd: this.form.create_time[1],
-				createTimeStart: this.form.create_time[0],
 				currentPage: this.currentPage,
-				evalmethod: this.form.evalmethod,
-				name: this.form.name,
-				orderMainCode: this.form.orderMainCode,
-				orderMainStatus: this.form.orderMainStatus,
 				pageSize: this.pageSize,
-				paymentStatus: this.form.paymentStatus,
-				paymentTimeStart: this.form.payment_time[0],
-				paymentTimeEnd: this.form.payment_time[1],
+				queryType: 2,
+				orderMainCode: this.form.orderMainCode,
+				stampName: this.form.stampName,
 				phone: this.form.phone,
-				refundStatus: this.form.refundStatus,
-				serviceType: this.form.serviceType
+				paymentStatus: this.form.paymentStatus,
+				logisticsStatus: this.form.logisticsStatus,
+				gmtCreateStart: this.form.create_time[1],
+				gmtCreateEnd: this.form.create_time[0],
+				evalMethod: this.form.evalmethod,
 			};
-			let table = [
-				{
-					evalmethod: 1,
-					orderMainCode: 10086,
-					orderMainId: 12580,
-					orderMainStatus: 2,
-					paymentStatus: 0,
-					phone: 12345678901,
-					gmtCreate: '2020.02.02',
-					paymentDate: '2021.12.21',
-					number: 12,
-					orderMainAmount: 250
-				}
-			];
-			this.tableData = table;
-			POST_BUSINESS_ORDER_LISTPAGE(params).then(res => {
+			POST_BUSINESS_APPRAISAL_ORDER_LIST(params).then(res => {
 				res.data.rows.forEach(item => {
 					item.evalmethod = JSON.parse(item.evalmethod).value;
 					item.orderMainStatus = JSON.parse(item.orderMainStatus).value;
 					item.paymentStatus = JSON.parse(item.paymentStatus).value;
-					item.serviceType = JSON.parse(item.serviceType).value;
+					item.appraisalStatus = JSON.parse(item.appraisalStatus).value;
+					item.logisticsStatus = JSON.parse(item.logisticsStatus).value;
 				});
 				this.tableData = res.data.rows;
 				this.total = res.data.total;
@@ -357,15 +358,13 @@ export default {
 				createTimeStart: this.form.create_time[0],
 				currentPage: this.currentPage,
 				evalmethod: this.form.evalmethod,
-				name: this.form.name,
+				stampName: this.form.stampName,
 				orderMainCode: this.form.orderMainCode,
 				orderMainStatus: this.form.orderMainStatus,
 				pageSize: this.pageSize,
 				paymentStatus: this.form.paymentStatus,
-				paymentTimeStart: this.form.payment_time[0],
-				paymentTimeEnd: this.form.payment_time[1],
 				phone: this.form.phone,
-				refundStatus: this.form.refundStatus,
+				logisticsStatus: this.form.logisticsStatus,
 				serviceType: this.form.serviceType
 			};
 			POST_EXPORT_BUSINESS_ORDER_EXPORT(params).then(res => {
@@ -392,8 +391,8 @@ export default {
 		 * @params {Number} regSys => 登录角色 服务商: 3；供应链(鉴评点、封装厂): 6;
 		 * @params {Number} evalmethod => 鉴评方式 远程鉴评: 0；批量鉴评：1;
 		 * @params {Number} orderMainStatus => 订单状态 已提交: 0; 待审核: 2; 待鉴评: 3; 封装中: 4; 待核验: 5; 已完成: 6; 已关闭: 7; 售后中: 8;
-		 * @params {Number} 物流状态
-		 * @params {Number} 鉴评状态
+		 * @params {Number} logisticsStatus => 物流状态 服务商未发货: 0; 服务商已发货: 1; 鉴评点未发货: 2; 鉴评点已发货: 3; 鉴评点已退货: 4; 封装厂未发货: 5; 封装厂已发货: 6;
+		 * @params {Number} appraisalStatus => 鉴评状态 待鉴评: 0; 已鉴评: 1;
 		 * @params {Number} serviceType => 服务类型 serviceType: 0; 采集+评级: 1; 采集+鉴别+封装: 2; 采集+评级+封装: 3; 核验: 4
 		 * 不同角色登陆系统触发规则：
 		 * 1-1、服务商权限登录后，选择远程鉴评，订单状态为封装中，物流状态为服务商未发货，鉴评状态为已鉴评
@@ -403,14 +402,25 @@ export default {
 		 */
 		showSendBtn(val) {
 			let regSys = sessionStorage.getItem('regSys');
-			// TODO: 判断条件需完善 物流状态 鉴评状态 1-1 1-2 2-1
-			if ([3].includes(regSys) && [0].includes(val.evalmethod) && [4].includes(val.orderMainStatus)) {
+			if ([3].includes(regSys) &&
+				[0].includes(val.evalmethod) &&
+				[4].includes(val.orderMainStatus) &&
+				[0].includes(val.logisticsStatus) &&
+				[1].includes(val.appraisalStatus)) {
 				return true;
-			} else if ([3].includes(regSys) && [1].includes(val.evalmethod)) {
+			} else if (
+				[3].includes(regSys) &&
+				[1].includes(val.evalmethod) &&
+				[0].includes(val.appraisalStatus)) {
 				return true;
-			} else if ([6].includes(regSys) && [1].includes(val.evalmethod)) {
+			} else if (
+				[6].includes(regSys) &&
+				[1].includes(val.evalmethod) &&
+				[2].includes(val.logisticsStatus)) {
 				return true;
-			} else if ([6].includes(regSys) && [2, 3].includes(val.serviceType)) {
+			} else if (
+				[6].includes(regSys) &&
+				[2, 3].includes(val.serviceType)) {
 				return true;
 			} else {
 				return false;

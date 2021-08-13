@@ -255,6 +255,14 @@ export function POST_USERCENTER_ADMIN_UPDATE_PASSWORD(params) {
 export function POST_USERCENTER_SERVER_PAGELIST(params) {
   return post(baseURL + '/philatelic/base/admin/serverPageList', params);
 }
+// 物流信息
+export function POST_BUSINESS_LOGISTISCS_INFO_MATION(params) {
+  return post(baseURL + '/philatelic/business/applet/appraisalOrder/logisticsInformation', params);
+}
+// 鉴评单列表/封装厂列表
+export function POST_BUSINESS_APPRAISAL_ORDER_LIST(params) {
+  return post(baseURL + '/philatelic/business/appraisalOrder/list', params);
+}
 /**
  * 系统管理 End
  * */

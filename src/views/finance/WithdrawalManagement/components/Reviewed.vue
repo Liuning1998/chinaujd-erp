@@ -52,17 +52,6 @@
                 </template>
             </el-table-column>
         </el-table>
-        <div class="pagination" v-if="total > pageSize">
-            <el-pagination
-                background
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="currentPage"
-                :page-size="pageSize"
-                layout="prev, pager, next, sizes, jumper"
-                :total="total">
-            </el-pagination>
-        </div>
         <withdrawal-detail
             :cashout-rec-id="cashoutRecId"
             :dialog-visible="detailDialogVisible"
@@ -82,6 +71,7 @@ export default {
     data() {
         return {
             detailDialogVisible: false,
+            cashoutRecId: null,
         }
     },
     props: {

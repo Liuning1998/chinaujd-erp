@@ -436,8 +436,8 @@ export default {
 		 * @params {Number} regSys => 登录角色 服务商: 3；供应链(鉴评点、封装厂): 6;
 		 * @params {Number} evalmethod => 鉴评方式 远程鉴评: 0；批量鉴评：1;
 		 * @params {Number} orderMainStatus => 订单状态 已提交: 0; 待审核: 2; 待鉴评: 3; 封装中: 4; 待核验: 5; 已完成: 6; 已关闭: 7; 售后中: 8;
-		 * @params {Number} 物流状态
-		 * @params {Number} 鉴评状态
+		 * @params {Number} logisticsStatus => 物流状态 服务商未发货: 0; 服务商已发货: 1; 鉴评点未发货: 2; 鉴评点已发货: 3; 鉴评点已退货: 4; 封装厂未发货: 5; 封装厂已发货: 6;
+		 * @params {Number} appraisalStatus => 鉴评状态 待鉴评: 0; 已鉴评: 1;
 		 * @params {Number} serviceType => 服务类型 serviceType: 0; 采集+评级: 1; 采集+鉴别+封装: 2; 采集+评级+封装: 3; 核验: 4
 		 * 不同角色登陆系统触发规则：
 		 * 1-1、服务商权限登录后，选择远程鉴评，订单状态为封装中，物流状态为服务商未发货，鉴评状态为已鉴评
@@ -447,14 +447,25 @@ export default {
 		 */
 		showSendBtn(val) {
 			let regSys = sessionStorage.getItem('regSys');
-			// TODO: 判断条件需完善 物流状态 鉴评状态 1-1 1-2 2-1
-			if ([3].includes(regSys) && [0].includes(val.evalmethod) && [4].includes(val.orderMainStatus)) {
+			if ([3].includes(regSys) &&
+				[0].includes(val.evalmethod) &&
+				[4].includes(val.orderMainStatus) &&
+				[0].includes(val.logisticsStatus) &&
+				[1].includes(val.appraisalStatus)) {
 				return true;
-			} else if ([3].includes(regSys) && [1].includes(val.evalmethod)) {
+			} else if (
+				[3].includes(regSys) &&
+				[1].includes(val.evalmethod) &&
+				[0].includes(val.appraisalStatus)) {
 				return true;
-			} else if ([6].includes(regSys) && [1].includes(val.evalmethod)) {
+			} else if (
+				[6].includes(regSys) &&
+				[1].includes(val.evalmethod) &&
+				[2].includes(val.logisticsStatus)) {
 				return true;
-			} else if ([6].includes(regSys) && [2, 3].includes(val.serviceType)) {
+			} else if (
+				[6].includes(regSys) &&
+				[2, 3].includes(val.serviceType)) {
 				return true;
 			} else {
 				return false;

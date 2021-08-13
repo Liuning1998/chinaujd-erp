@@ -44,17 +44,6 @@
                 </template>
             </el-table-column>
         </el-table>
-        <div class="pagination" v-if="total > pageSize">
-            <el-pagination
-                background
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="currentPage"
-                :page-size="pageSize"
-                layout="prev, pager, next, sizes, jumper"
-                :total="total">
-            </el-pagination>
-        </div>
         <el-dialog
             title="提现支付"
             width="480px"

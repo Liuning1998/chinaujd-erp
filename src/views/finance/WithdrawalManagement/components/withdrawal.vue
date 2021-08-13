@@ -126,6 +126,11 @@ export default {
          * @function handleWithdrawal
          */
         handleWithdrawalAll() {
+            let balance = Number(this.withdrawalForm.balance);
+            if (!balance) {
+                this.$message.warning('余额不足');
+                return;
+            }
             this.withdrawalForm.cashoutAmount = this.withdrawalForm.balance;
             this.handleBlur();
         },

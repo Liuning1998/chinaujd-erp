@@ -20,7 +20,7 @@
                 <el-table-column
                     label="交易金额">
                     <template slot-scope="scope">
-                        ¥{{ scope.row.platformOrderTransactionAmount }}
+                        ¥ {{ scope.row.platformOrderTransactionAmount }}
                     </template>
                 </el-table-column>
             </el-table-column>
@@ -36,7 +36,7 @@
                         <div v-if="Number(scope.row.status) === 2">
                             <i class="dot-error"></i>
                             <span>异常未处理</span>
-                            <el-button class="detail" type="text" @click="handleAbnormal(scope.row.orderNumber)">查看</el-button>
+                            <el-button class="detail" type="text" @click="handleAbnormal(scope.row.id)">查看</el-button>
                         </div>
                     </template>
                 </el-table-column>
@@ -110,7 +110,7 @@
                         <el-table-column
                             label="交易金额">
                             <template slot-scope="scope">
-                                ¥{{ scope.row.thirdPartTransactionAmount }}
+                                ¥ {{ scope.row.thirdPartTransactionAmount }}
                             </template>
                         </el-table-column>
                     </el-table>
@@ -125,7 +125,7 @@
 
 <script>
 import {
-
+    POST_FINANCE_SLIP_DETAIL,
 } from '@/api/request';
 
 export default {
@@ -133,7 +133,7 @@ export default {
         return {
             abnormalTableData: [],
             orderNumber: null,
-            dialogVisible: true,
+            dialogVisible: false,
         }
     },
     props: {
@@ -149,11 +149,15 @@ export default {
          * 处理异常弹窗
          * @function handleAbnormal
          */
-        handleAbnormal(orderNumber) {
+        handleAbnormal(id) {
             this.orderNumber = orderNumber;
             this.dialogVisible = true;
-            // TODO: 获取三方异常数据列表  platformOrderPaymentType 需JSON.parse处理
-            // this.abnormalTableData = res.data.rows;
+            let params = {
+                id
+            };
+            POST_FINANCE_SLIP_DETAIL(params).then(res => {
+                this.abnormalTableData = res.data.rows;
+            });
         },
         /**
          * 关闭异常处理弹窗

@@ -28,14 +28,14 @@
                     width="80"
                     label="支出金额">
                     <template slot-scope="scope">
-                        <span>¥{{ scope.row.expensesAmount }}</span>
+                        <span>¥ {{ scope.row.expensesAmount }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
                     width="80"
                     label="结算金额">
                     <template slot-scope="scope">
-                        <span>¥{{ scope.row.incomeExpenditure }}</span>
+                        <span>¥ {{ scope.row.incomeExpenditure }}</span>
                     </template>
                 </el-table-column>
             </el-table-column>
@@ -46,27 +46,27 @@
                     width="140"
                     label="中国集邮有限公司">
                     <template slot-scope="scope">
-                        <span>¥{{ scope.row.bossIncome }}</span>
+                        <span>¥ {{ scope.row.bossIncome }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
                     width="80"
                     label="邮来邮网">
                     <template slot-scope="scope">
-                        <span>¥{{ scope.row.ylyIncome }}</span>
+                        <span>¥ {{ scope.row.ylyIncome }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
                     label="代理商（门店）">
                     <template slot-scope="scope">
-                        <span>¥{{ scope.row.serviceIncome }}</span>
+                        <span>¥ {{ scope.row.serviceIncome }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
                     width="80"
                     label="鉴评师">
                     <template slot-scope="scope">
-                        <span>¥{{ scope.row.appraiserIncome }}</span>
+                        <span>¥ {{ scope.row.appraiserIncome }}</span>
                     </template>
                 </el-table-column>
             </el-table-column>
@@ -90,7 +90,7 @@
                         <!-- <el-divider v-if="[1].includes(scopw.row.examineStatus)" direction="vertical"></el-divider>
                         <el-button v-if="[1].includes(scopw.row.examineStatus)" type="text" @click="handleDownload(scope.row)">下载</el-button> -->
                         <el-divider v-if="[1].includes(scopw.row.examineStatus)" direction="vertical"></el-divider>
-                        <el-button v-if="[1].includes(scopw.row.examineStatus)" type="text" @click="handlePayment(scope.row)">支付</el-button>
+                        <el-button v-if="[1].includes(scopw.row.examineStatus)" type="text" @click="handlePayment(scope.row.settlementId)">支付</el-button>
                     </template>
                 </el-table-column>
             </el-table-column>
@@ -98,8 +98,8 @@
         <el-dialog
             title="结算审核"
             width="480px"
-            :visible.sync="dialogVisible"
-            :before-close="handleClose">
+            :visible.sync="settlementDialogVisible"
+            :before-close="handleCloseSettle">
             <div>
                 <div class="radio">
                     <el-radio v-model="reviewForm.radio" :label="1">通过</el-radio>
@@ -111,8 +111,42 @@
                 </div>
             </div>
             <div slot="footer">
-                <el-button class="cancel" @click="handleClose">取 消</el-button>
-                <el-button class="submit" @click="handleSubmit">确 定</el-button>
+                <el-button class="cancel" @click="handleCloseSettle">取 消</el-button>
+                <el-button class="submit" @click="handleSubmitSettle">确 定</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog
+            title="结算支付"
+            :visible.sync="paymentDialogVisible"
+            width="480px"
+            :before-close="handleClosePay">
+            <div class="settle-item">
+                <span>结算方式：</span>
+                <div class="settle-btns">
+                    <span
+                        v-for="(item, index) in settleType" :key="index"
+                        :class="payForm.settlementPayType === item.value ? 'select-btns' : null"
+                        @click="handleSelectSettleType(index)">
+                        {{ item.label }}
+                    </span>
+                </div>
+            </div>
+            <div class="settle-item">
+                <span>支付凭证：</span>
+                <div class="upload">
+                    <el-upload
+                        action="#"
+                        multiple
+                        accept=".jpg,.png,.gif"
+                        list-type="picture-card"
+                        :file-list="payForm.payProve">
+                        <i class="el-icon-plus"></i>
+                    </el-upload>
+                </div>
+            </div>
+            <div slot="footer">
+                <el-button class="cancel" @click="handleClosePay">取 消</el-button>
+                <el-button class="submit" @click="handleSubmitPay">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -122,16 +156,23 @@
 import {
     POST_FINANCE_SLIP_SETTLEMENT_SUCCESS,
     POST_FINANCE_SLIP_SETTLEMENT_REJECT,
+    POST_FINANCE_SLIP_PAY,
 } from '@/api/request';
 
 export default {
     data() {
         return {
-            dialogVisible: false,
+            settlementDialogVisible: false,
+            paymentDialogVisible: false,
             reviewForm: {
                 radio: null,
-                rejectData: '',
-                settlementId: ''
+                rejectData: null,
+                settlementId: null
+            },
+            payForm: {
+                payProve: [],
+                settlementId: null,
+                settlementPayType: null,
             },
             examineStatus: [
                 {label: '待审核', value: 0},
@@ -139,7 +180,11 @@ export default {
                 {label: '已结算', value: 2},
                 {label: '已拒绝', value: 3},
                 {label: '已关闭', value: 4},
-            ]
+            ],
+            settleType: [
+                {label: '线上支付', value: 1},
+                {label: '线下支付', value: 2}
+            ],
         }
     },
     props: {
@@ -154,43 +199,52 @@ export default {
         /**
          * 审核
          * @function handleExamine
-         * @params {Object} data
+         * @params {Number} settlementId 结算订单编号
          */
-        handleExamine(id) {
-            this.reviewForm.settlementId = id;
-            this.dialogVisible = true;
+        handleExamine(settlementId) {
+            this.reviewForm.settlementId = settlementId;
+            this.settlementDialogVisible = true;
         },
         /**
          * 查看
          * @function handleScan
-         * @params {Object} data
+         * @params {Number} settlementId 结算订单编号
          */
-        handleScan(id) {
+        handleScan(settlementId) {
             this.$router.push({
                 path: '/finance/settle/detail',
                 query: {
-                    settlementId: id
+                    settlementId
                 }
             });
         },
         /**
-         * 关闭结算审核弹窗
-         * @function handleClose
+         * 支付
+         * @function handlePayment
+         * @params {Number} settlementId 结算订单编号
          */
-        handleClose() {
-            this.dialogVisible = false;
+        handlePayment(settlementId) {
+            this.payForm.settlementId = settlementId;
+            this.paymentDialogVisible = true;
+        },
+        /**
+         * 关闭结算审核弹窗
+         * @function handleCloseSettle
+         */
+        handleCloseSettle() {
+            this.settlementDialogVisible = false;
             let obj = {
                 radio: null,
-                rejectData: '',
-                settlementId: ''
+                rejectData: null,
+                settlementId: null
             };
             Object.assign(this.reviewForm, obj);
         },
         /**
          * 审核结算
-         * @function handleSubmit
+         * @function handleSubmitSettle
          */
-        handleSubmit() {
+        handleSubmitSettle() {
             if (!this.reviewForm.radio) {
                 this.$message.warning('请选择审核意见');
                 return;
@@ -206,14 +260,56 @@ export default {
             let post_interface = this.reviewForm.radio === 1 ? POST_FINANCE_SLIP_SETTLEMENT_SUCCESS : POST_FINANCE_SLIP_SETTLEMENT_REJECT;
             post_interface(params).then(() => {
                 this.$message.success('审核完成');
-                this.dialogVisible = false;
+                this.settlementDialogVisible = false;
                 let obj = {
                     radio: null,
-                    rejectData: '',
-                    settlementId: ''
+                    rejectData: null,
+                    settlementId: null
                 };
                 Object.assign(this.reviewForm, obj);
                 this.$emit('getData');
+            });
+        },
+        /**
+         * 选择结算方式
+         * @function handleSelectSettleType
+         * @params {Number} index
+         */
+        handleSelectSettleType(index) {
+            this.payForm.settlementPayType = this.settleType[index].value;
+        },
+        /**
+         * 关闭结算支付弹窗
+         * @function handleClosePay
+         */
+        handleClosePay() {
+            this.paymentDialogVisible = false;
+            let obj = {
+                payProve: [],
+                settlementId: null,
+                settlementPayType: null
+            };
+            Object.assign(this.payForm, obj);
+        },
+        /**
+         * 审核支付
+         * @function handleSubmitPay
+         */
+        handleSubmitPay() {
+            if (!this.payForm.settlementPayType) {
+                this.$message.warning('请选择结算方式');
+                return;
+            }
+            let params = this.payForm;
+            POST_FINANCE_SLIP_PAY(params).then(() => {
+                this.$message.success('支付完成');
+                this.paymentDialogVisible = false;
+                let obj = {
+                    payProve: [],
+                    settlementId: null,
+                    settlementPayType: null
+                };
+                Object.assign(this.payForm, obj);
             });
         },
     }
@@ -264,6 +360,48 @@ export default {
             }
             .el-dialog__body {
                 padding: 8px 24px 0;
+                .settle-item {
+                    margin-bottom: 24px;
+                    display: flex;
+                    align-items: center;
+                    >span {
+                        width: 70px;
+                        font-family: PingFangSC-Regular;
+                        font-size: 14px;
+                        color: #333;
+                    }
+                    .settle-btns {
+                        span {
+                            width: 88px;
+                            height: 22px;
+                            line-height: 22px;
+                            background: #F5F5F5;
+                            border: 1px solid #D9D9D9;
+                            border-radius: 2px;
+                            margin-right: 24px;
+                            display: inline-block;
+                            font-family: PingFangSC-Regular;
+                            font-size: 14px;
+                            color: #333333;
+                            text-align: center;
+                            cursor: pointer;
+                        }
+                        .select-btns {
+                            background: #FFFFFF;
+                            border: 1px solid #1890FF;
+                            color: #1890FF;
+                        }
+                    }
+                    .upload {
+                        .el-upload--picture-card {
+                            width: 88px;
+                            height: 88px;
+                            line-height: 88px;
+                            border-radius: 2px;
+                            background: rgba(0,0,0,0.04);
+                        }
+                    }
+                }
                 .reject {
                     margin-top: 24px;
                     display: flex;

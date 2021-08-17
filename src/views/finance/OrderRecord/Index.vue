@@ -4,7 +4,7 @@
         <div class="search">
             <div class="search-item text-align-left">
                 <span>订单状态：</span>
-                <el-select v-model="form.orderStatus" placeholder="">
+                <el-select v-model="form.orderStatus" placeholder="请输入" @change="handleChangeOrderStatus">
                     <el-option label="全部" value=""></el-option>
                     <el-option
                         v-for="item in orderStatus"
@@ -16,7 +16,7 @@
             </div>
             <div class="search-item text-align-center">
                 <span>对账状态：</span>
-                <el-select v-model="form.status" placeholder="">
+                <el-select v-model="form.status" placeholder="请输入">
                     <el-option label="全部" value=""></el-option>
                     <el-option
                         v-for="item in status"
@@ -127,13 +127,13 @@
                         <el-button
                             v-if="Number(scope.row.orderStatus) === 0 && Number(scope.row.status) === 1 ||
                             ([1, 5, 6].includes(Number(scope.row.orderStatus)) && Number(scope.row.status) === 2)"
-                            type="text" @click="handleDelete(scope.row)">删除</el-button>
+                            type="text" @click="handleDelete(scope.row.id)">删除</el-button>
                         <el-divider
                             v-if="[1, 5, 6].includes(Number(scope.row.orderStatus)) && Number(scope.row.status) === 2"
                             direction="vertical"></el-divider>
                         <el-button
                             v-if="[1, 5, 6].includes(Number(scope.row.orderStatus)) && Number(scope.row.status) === 2"
-                            type="text" @click="handleSettle(scope.row)">结算</el-button>
+                            type="text" @click="handleSettle(scope.row.id)">结算</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -234,7 +234,7 @@
             </div>
             <div slot="footer">
                 <el-button class="cancel" @click="settleDialogBeforeClose">取 消</el-button>
-                <el-button :disabled="!multipleSelection.length" @click="handleSettleSubmit">确 定</el-button>
+                <el-button @click="handleSettleSubmit">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -245,6 +245,7 @@ import {
     POST_FINANCE_SLIP_ADD,
     POST_FINANCE_SLIP_LIST,
     POST_FINANCE_SLIP_DELETE,
+    POST_FINANCE_SLIP_SETTLEMENT_SAVE,
     POST_FINANCE_SLIP_SETTLEMENT_LIST,
 } from '@/api/request';
 
@@ -272,18 +273,9 @@ export default {
             },
             orderStatus: [
                 {label: '对账中', value: 0},
-                {label: '待结算', value: 1},
-                // {label: '待审核', value: 2},         需求文档上，筛选没有这些选项
-                // {label: '待付款', value: 3},
-                // {label: '已结算', value: 4},
-                // {label: '已拒绝', value: 5},
-                // {label: '已关闭', value: 6},
+                {label: '待结算', value: 1}
             ],
-            status: [
-                // {label: '待对账', value: 0},         需求文档上，筛选没有这些选项
-                {label: '未平账', value: 1},
-                {label: '已平账', value: 2},
-            ],
+            status: [],
             multipleSelection: [],
             tableData: [],
             settleTableData: [],
@@ -298,11 +290,6 @@ export default {
                 {label: '月', value: 2},
                 {label: '年', value: 3},
             ],
-            settlementForm: {
-                id: null,
-                currentPage: 0,
-                pageSize: '',
-            }
         }
     },
     created() {
@@ -333,6 +320,26 @@ export default {
             });
         },
         /**
+         * 更改订单状态
+         * @function handleChangeOrderStatus
+         */
+        handleChangeOrderStatus(val) {
+            this.form.status = '';
+            if (val === '') {
+                this.status = [];
+            }
+            if (val === 0) {
+                this.status = [
+                    {label: '未平账', value: 1}
+                ];
+            }
+            if (val === 1) {
+                this.status = [
+                    {label: '已平账', value: 2}
+                ];
+            }
+        },
+        /**
          * 查询
          * @function handleSearch
          */
@@ -351,7 +358,11 @@ export default {
          * @function handleAllSettle
          */
         handleAllSettle() {
-            let params = this.settlementForm;
+            let params = {
+                id: null,
+                currentPage: this.currentPage,
+                pageSize: this.pageSize
+            }
             POST_FINANCE_SLIP_SETTLEMENT_LIST(params).then(() => {
                 this.settleDialogVisible = true;
                 this.settleTableData = res.data.rows;
@@ -384,17 +395,22 @@ export default {
          * @function handleDelete
          * @params {Object} data 订单详情
          */
-        handleDelete(data) {
+        handleDelete(id) {
             this.$confirm('您确认要删除该对账单?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
             }).then(() => {
+                let params = {
+                    id
+                };
                 let value = JSON.parse(data.orderStatus).value;
                 if ([2, 3, 4, 5, 6].includes(value)) {
                     this.$message.warning('该对账单已结算');
                     return;
                 }
-                this.$message.success('已删除');
+                POST_FINANCE_SLIP_DELETE(params).then(() => {
+                    this.$message.success('已删除');
+                });
             }).catch(() => {});
         },
         /**
@@ -402,7 +418,7 @@ export default {
          * @function handleSettle
          * @params {Object} data 订单详情
          */
-        handleSettle(data) {
+        handleSettle(id) {
             this.$confirm('您确认要结算该对账单?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -412,7 +428,12 @@ export default {
                     this.$message.success('订单未对账，不可结算');
                     return;
                 }
-                this.$message.warning('已提交');
+                let params = {
+                    shipIdList: [id]
+                }
+                POST_FINANCE_SLIP_SETTLEMENT_SAVE(params).then(() => {
+                    this.$message.warning('已提交');
+                });
             }).catch(() => {});
         },
         /**
@@ -493,7 +514,7 @@ export default {
             this.settleDialogVisible = false;
             // 清空选择
             this.$refs.materialTable.clearSelection();
-            this.$message.success('已申请');
+            // this.$message.success('已申请');
             this.getData();
         },
         /**

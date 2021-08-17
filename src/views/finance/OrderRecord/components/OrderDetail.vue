@@ -44,7 +44,6 @@
                 </template>
             </el-table-column>
             <el-table-column
-                prop="prop8"
                 label="支付状态">
                 <template slot-scope="scope">
                     {{ scope.row.paymentStatus ? JSON.parse(scope.row.paymentStatus).desc : ''}}
@@ -57,7 +56,7 @@
             <el-table-column
                 label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="handleScan(scope.row)">查看</el-button>
+                    <el-button type="text" @click="handleScan(scope.row.orderNumber)">查看</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -84,8 +83,14 @@ export default {
          * 查看订单详情
          * @function handleScan
          */
-        handleScan() {
-
+        handleScan(orderNumber) {
+            // TODO: 跳转至业务订单详情界面
+            this.$router.push({
+                path: '',
+                query: {
+                    orderNumber
+                }
+            })
         },
     }
 }

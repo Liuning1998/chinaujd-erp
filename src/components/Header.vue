@@ -19,7 +19,8 @@
 </template>
 
 <script>
-// import {logout} from '@/api/request.js';
+import {logout} from '@/api/request.js';
+
 export default {
   name: 'Index',
   data () {

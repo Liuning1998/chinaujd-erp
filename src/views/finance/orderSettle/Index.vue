@@ -146,8 +146,8 @@ export default {
          */
         handleReset() {
             let form = {
-                settlementId: '',
-                examineStatus: '',
+                settlementId: null,
+                examineStatus: null,
                 applyTime: ['', ''],
                 examineTime: ['', '']
             };

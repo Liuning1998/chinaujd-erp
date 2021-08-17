@@ -113,9 +113,17 @@ export function POST_FINANCE_SLIP_RECONCATION_INFO(params) {
 export function POST_FINANCE_SLIP_INFO(params) {
   return post(baseURL + '/reconciation/silp/info', params);
 }
+// 根据订单编号查询流水
+export function POST_FINANCE_SLIP_DETAIL(params) {
+  return post(baseURL + '/reconciation/silp/getDetailByOrderNum', params);
+}
 // 对账单信息-导出
 export function POST_EXPORT_FINANCE_SLIP_EXPORT(params) {
   return postExport(baseURL + '/reconciation/silp/export', params);
+}
+// 订单对账-订单结算申请
+export function POST_FINANCE_SLIP_SETTLEMENT_SAVE(params) {
+  return post(baseURL + '/philatelic/finance/settlement/slip/save', params);
 }
 // 订单结算-订单结算列表
 export function POST_FINANCE_SLIP_SETTLEMENT_PAGELIST(params) {
@@ -128,6 +136,18 @@ export function POST_FINANCE_SLIP_SETTLEMENT_SUCCESS(params) {
 // 订单结算-审核-驳回
 export function POST_FINANCE_SLIP_SETTLEMENT_REJECT(params) {
   return post(baseURL + '/philatelic/finance/settlement/slip/reject', params);
+}
+// 订单结算-查看详情-结算明细-备注
+export function POST_FINANCE_SLIP_REMARKS_SAVE(params) {
+  return post(baseURL + '/philatelic/finance/settlement/slip/saveRemarks', params);
+}
+// 系统角色-结算明细
+export function POST_FINANCE_SLIP_VIEWSETTLEMENT_VIEW(params) {
+  return post(baseURL + '/philatelic/finance/settlement//slip/viewSettlement/view', params);
+}
+// 订单结算-结算支付
+export function POST_FINANCE_SLIP_PAY(params) {
+  return post(baseURL + '/philatelic/finance/settlement/slip/pay', params);
 }
 // 订单结算-查看详情-结算明细
 export function POST_FINANCE_SLIP_SETTLEMENT_VIEW(params) {

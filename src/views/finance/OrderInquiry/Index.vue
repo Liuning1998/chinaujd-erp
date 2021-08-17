@@ -6,7 +6,7 @@
                 <span>订单编号：</span>
                 <el-input v-model="form.orderNumber" placeholder="请输入"></el-input>
             </div>
-            <div class="search-item text-align-end">
+            <div class="search-item text-align-center">
                 <span>订单类型：</span>
                 <el-select v-model="form.orderMainType" @change="handleChangeOrderType">
                     <el-option label="全部" :value="0"></el-option>
@@ -18,7 +18,7 @@
                     </el-option>
                 </el-select>
             </div>
-            <!-- <div class="search-item text-align-end">
+            <div class="search-item text-align-end">
                 <span>服务类型：</span>
                 <el-select v-model="form.serviceType">
                     <el-option label="全部" :value="0"></el-option>
@@ -29,8 +29,8 @@
                         :value="item.value">
                     </el-option>
                 </el-select>
-            </div> -->
-            <div class="search-item text-align-end">
+            </div>
+            <div class="search-item text-align-left">
                 <span>订单状态：</span>
                 <el-select v-model="form.orderMainStatus">
                     <el-option label="全部" :value="0"></el-option>
@@ -111,11 +111,11 @@
                     prop="bindingPhone"
                     label="用户手机号">
                 </el-table-column>
-                <!-- <el-table-column
+                <el-table-column
                     prop="serviceType"
                     width="130"
                     label="服务类型">
-                </el-table-column> -->
+                </el-table-column>
                 <el-table-column
                     prop="evalMethod"
                     label="鉴评方式">
@@ -146,7 +146,7 @@
                 <el-table-column
                     label="操作">
                     <template slot-scope="scope">
-                        <el-button type="text" @click="handleScan(scope.row)">查看</el-button>
+                        <el-button type="text" @click="handleScan(scope.row.orderNumber)">查看</el-button>
                         <!-- 退款第一期不做 -->
                         <!-- <el-divider direction="vertical"></el-divider>
                         <el-button type="text" @click="handleRefund(scope.row)">退款</el-button> -->
@@ -231,6 +231,7 @@ export default {
                 currentPage: this.currentPage,
                 pageSize: this.pageSize,
                 orderNumber: this.form.orderNumber,
+                serviceType: this.form.serviceType,
                 evalMethod: this.form.evalMethod,
                 orderMainType: this.form.orderMainType,
                 orderMainStatus: this.form.orderMainStatus,
@@ -240,6 +241,12 @@ export default {
                 payTimeStart: this.form.paymentTime[0],
                 payTimeEnd: this.form.paymentTime[1]
             };
+            if (!this.form.orderNumber) {
+                params = {
+                    currentPage: this.currentPage,
+                    pageSize: this.pageSize,
+                };
+            }
             POST_FINANCE_SLIP_PAGELIST(params).then(res => {
                 res.data.rows.forEach(item => {
                     item.evalMethod = JSON.parse(item.evalMethod).desc;
@@ -249,7 +256,7 @@ export default {
                 });
                 this.tableData = res.data.rows;
                 this.total = res.data.total;
-            });
+            })
         },
         /**
          * 更改订单类型
@@ -302,7 +309,8 @@ export default {
          */
         handleReset() {
             let form = {
-                orderNumber: '',
+                orderNumber: null,
+                serviceType: null,
                 orderMainType: 0,
                 orderMainStatus: 0,
                 paymentStatus: 0,
@@ -339,12 +347,17 @@ export default {
          * @function handleScan
          * @parsms {Object} data 订单详情
          */
-        handleScan(data) {
-
+        handleScan(orderNumber) {
+            // TODO: 跳转到业务订单详情界面
+            this.$router.push({
+                path: '',
+                query: {
+                    orderNumber
+                }
+            })
         },
         /**
-         * 订单退款
-         * TODO: 第一期暂不做
+         * 订单退款 第一期暂不做
          * @function handleRefund
          * @params {Object} data 订单详情
          */
@@ -428,6 +441,9 @@ export default {
             }
             .text-align-left {
                 text-align: left;
+            }
+            .text-align-center {
+                text-align: center;
             }
             .text-align-end {
                 text-align: end;

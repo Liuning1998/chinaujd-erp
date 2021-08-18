@@ -268,14 +268,10 @@ export default {
 				signalNo: queryString
 			}
 			//调用的后台接口
-			// findFullName(params).then(res => {
-			//   if (res.appraisalResultState.code == '10000') {
-			//     list = res.data.findFullNameList;
-			//     cb(list);
-			//   } else {
-			//     this.$message.warning(res.appraisalResultState.codeName);
-			//   }
-			// });
+			findFullName(params).then(res => {
+			  list = res.findFullNameList;
+			  cb(list);
+			});
 		},
 		handleSelect(item) {
 			// this.stampImg = item.imgUrl;

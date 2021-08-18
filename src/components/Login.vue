@@ -81,7 +81,7 @@ export default{
         }
     },
     created() {
-        // this.getImgCode();
+        this.getImgCode();
         // 回车键登录
         let that = this;
         document.onkeydown = function(e) {

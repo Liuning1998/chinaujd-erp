@@ -77,9 +77,10 @@ export function get(url, param) {
         params: param
       })
       .then(res => {
-        if (res.data.resultState.code == '10000') {
+        let {resultState = {}, appraisalResultState = {}} = res.data;
+        if (resultState.code === '10000' || appraisalResultState.code === '10000') {
           resolve(res.data.data);
-        } else if (res.data.resultState.code == '-11000') {
+        } else if (resultState.code === '-11000' || appraisalResultState.code === '-10000') {
           Message({
             showClose: true,
             message: res.data.data,
@@ -89,14 +90,13 @@ export function get(url, param) {
         } else {
           Message({
             showClose: true,
-            message: res.data.resultState.codeName,
+            message: resultState.codeName || appraisalResultState.codeName,
             type: 'warning'
           });
           return false;
         }
       })
       .catch(err => {
-        console.log(err.response.data.appraisalResultState.code)
         if (!err.response) {
           Message({
             showClose: true,
@@ -115,9 +115,10 @@ export function post(url, params) {
   return new Promise((resolve, reject) => {
     axios.post(url, params)
       .then(res => {
-        if (res.data.resultState.code == '10000') {
+        let {resultState = {}, appraisalResultState = {}} = res.data;
+        if (resultState.code === '10000' || appraisalResultState.code === '10000') {
           resolve(res.data.data);
-        } else if (res.data.resultState.code == '-11000') {
+        } else if (resultState.code === '-11000' || appraisalResultState.code === '-10000') {
           Message({
             showClose: true,
             message: res.data.data,
@@ -127,14 +128,13 @@ export function post(url, params) {
         } else {
           Message({
             showClose: true,
-            message: res.data.resultState.codeName,
+            message: resultState.codeName || appraisalResultState.codeName,
             type: 'warning'
           });
           return false;
         }
       })
       .catch(err => {
-        console.log(err.response.data.appraisalResultState.code)
         if (!err.response) {
           Message({
             showClose: true,
@@ -176,20 +176,20 @@ export function deletes(url, params) {
     axios.delete(url, {
       data: params
     }).then(res => {
-      resolve(res.data)
+      resolve(res.data);
     }).catch(err => {
-      reject(err.data)
+      reject(err.data);
     })
   })
 }
 export function put(url, params) {
   return new Promise((resolve, reject) => {
     axios.put(url, params).then(res => {
-      resolve(res.data)
+      resolve(res.data);
     }).catch(err => {
-      reject(err.data)
+      reject(err.data);
     })
   })
 }
 
-export default axios
+export default axios;

@@ -61,8 +61,6 @@
 					<h3>
 						<span>邮票列表</span>
 						<div style="float: right">
-							<span style="color: #1890FF; font-size: 14px;">订单金额：¥100.00</span>
-							<el-divider direction="vertical"></el-divider>
 							<el-button class="addBtn" type="primary" size="small" icon="el-icon-plus" @click="add">新增</el-button>
 						</div>
 					</h3>
@@ -110,6 +108,12 @@
 							:value="item.value"></el-option>
 					</el-select>
 				</el-form-item>
+				<el-form-item label="特有属性：" v-if="formAlert.b == 1">
+					<el-select v-model="formAlert.b" placeholder="请选择特有属性" class="w328">
+						<el-option v-for="(item,index) in attributeList" :key="index" :label="item.name"
+							:value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
 				<el-form-item label="采集数量：" v-if="formAlert.b != 2">
 					<el-input v-model="formAlert.a" class="w328"></el-input>
 				</el-form-item>
@@ -121,6 +125,12 @@
 				<el-form-item label="服务类型：">
 					<el-select v-model="formAlert.a" placeholder="请选择服务类型" class="w328">
 						<el-option v-for="(item,index) in serviceTypeList" :key="index" :label="item.name"
+							:value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="封装套餐：">
+					<el-select v-model="formAlert.a" placeholder="请选择封装套餐" class="w328">
+						<el-option v-for="(item,index) in enclosureList" :key="index" :label="item.name"
 							:value="item.value"></el-option>
 					</el-select>
 				</el-form-item>
@@ -136,6 +146,7 @@
 import {
 	POST_BUSINESS_GET_SMSCODE,
 	POST_BUSINESS_ORDERMAIN_ADD,
+	findFullName
 } from '@/api/request';
 
 import Breadcrumb from '@/components/Breadcrumb';
@@ -183,6 +194,15 @@ export default {
 				{name: '枚',value: 0},
 				{name: '版',value: 1},
 				{name: '套',value: 2}
+			],
+			enclosureList: [
+				{name: '套餐A',value: 0},
+				{name: '套餐B',value: 1},
+				{name: '套餐C',value: 2}
+			],
+			attributeList: [
+				{name: '小型张',value: 0},
+				{name: '小全张',value: 1}
 			],
 			// 子票列表
 			childStamp:[

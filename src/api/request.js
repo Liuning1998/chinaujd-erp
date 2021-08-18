@@ -14,7 +14,7 @@ import {
 let baseURL = '';
 
 if (process.env.NODE_ENV == 'development') { //开发环境
-	baseURL = 'http://192.168.51.26:3000/mock/228';
+	baseURL = 'http://172.18.1.11:8070';
 } else if (process.env.NODE_ENV == 'production') { //生产环境地址
   baseURL = 'http://zuul.5g.silkeroad.cn';
 } else if (process.env.NODE_ENV == 'testing') { //测试环境地址
@@ -27,7 +27,9 @@ export function login(params) {
 export function logout(params) {
   return post(baseURL + '/userCenter/logout', params);
 }
-export function getImageCode() {};
+export function getImageCode(params) {
+  return get(baseURL + '/cmsServer/sms/getImageCode', params)
+};
 /**
  * 业务中心 Start
  */
@@ -38,6 +40,10 @@ export function POST_BUSINESS_ORDER_LISTPAGE(params) {
 // 订单列表-导出
 export function POST_EXPORT_BUSINESS_ORDER_EXPORT(params) {
   return postExport(baseURL + '/philatelic/business/orderMain/export', params);
+}
+// 邮票名称级联查询
+export function findFullName(params) {
+  return post(baseURL + '/stamp/findFullName', params)
 }
 // 订单列表-查看-详情
 export function GET_BUSINESS_ORDERMAIN_VIEW(params) {

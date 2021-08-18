@@ -287,9 +287,9 @@ export default {
 	},
 	// 模板渲染前钩子函数
 	created() {
-		this.getAgent();
-		this.getList();
-		this.getLogistiscs();
+		// this.getAgent();
+		// this.getList();
+		// this.getLogistiscs();
 	},
 	// 模板渲染后钩子函数
 	mounted() {

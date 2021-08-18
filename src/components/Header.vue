@@ -25,11 +25,11 @@ export default {
   name: 'Index',
   data () {
     return {
-      name: '18210652597',
+      name: '',
     }
   },
   created() {
-    // this.getUser();
+    this.getUser();
   },
   filters: {
     capitalize: function (value) {

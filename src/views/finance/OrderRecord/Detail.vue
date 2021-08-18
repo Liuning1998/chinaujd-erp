@@ -125,7 +125,7 @@ export default {
                 res.data.orderStatus = JSON.parse(res.data.orderStatus).desc;
                 res.data.status = JSON.parse(res.data.status).desc;
                 Object.assign(this.orderInfo, res.data);
-                this.total = res.data.total;
+                this.total = Number(res.data.total);
             });
         },
         /**

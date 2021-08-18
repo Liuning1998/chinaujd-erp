@@ -28,7 +28,6 @@ export function logout(params) {
   return post(baseURL + '/userCenter/logout', params);
 }
 export function getImageCode() {
-  console.log('getImageCode')
   return get(baseURL + '/cmsServer/sms/getImageCode');
 };
 /**

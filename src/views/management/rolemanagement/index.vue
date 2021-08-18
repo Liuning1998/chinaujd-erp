@@ -73,14 +73,14 @@
 			 */
 			getData() {
 				let params = {
-					regSys: this.$store.state.regSys,
+					regSys: sessionStorage.getItem('regSys'),
 					roleName: this.keyword,
 					currentPage: this.currentPage,
 					pageSize: this.pageSize
 				};
 				POST_USERCENTER_QUERY_ROLE_PAGE(params).then(res => {
 					this.tableData = res.data.rows;
-					this.total = res.data.total;
+					this.total = Number(res.data.total);
 				});
 			},
 			/**

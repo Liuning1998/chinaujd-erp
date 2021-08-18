@@ -96,7 +96,7 @@ export function get(url, param) {
           return false;
         }
       })
-      .catch(err => {        
+      .catch(err => {
 				if (!err.response) {
           Message({
             showClose: true,

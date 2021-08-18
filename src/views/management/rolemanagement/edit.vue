@@ -75,7 +75,7 @@ export default {
 		 */
 		getData() {
 			let params = {
-				regSys: this.$store.state.regSys
+				regSys: sessionStorage.getItem('regSys')
 			};
 			POST_USERCENTER_QUERY_ALL_AUTHORITIES(params).then(res => {
 				this.dataQList = res.data;
@@ -115,7 +115,7 @@ export default {
 			this.$refs['form'].validate((valid) => {
 				if (valid) {
 					let params = {
-						regSys: this.$store.state.regSys,
+						regSys: sessionStorage.getItem('regSys'),
 						roleList: this.form.authList,
 						roleName: this.form.roleName,
 						description: this.form.roleDescription,

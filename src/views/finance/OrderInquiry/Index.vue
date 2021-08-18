@@ -255,7 +255,7 @@ export default {
                     item.paymentStatus = JSON.parse(item.paymentStatus).desc;
                 });
                 this.tableData = res.data.rows;
-                this.total = res.data.total;
+                this.total = Number(res.data.total);
             })
         },
         /**

@@ -96,8 +96,8 @@ export function get(url, param) {
           return false;
         }
       })
-      .catch(err => {
-        if (!err.response) {
+      .catch(err => {        
+				if (!err.response) {
           Message({
             showClose: true,
             message: 'get请求错误',

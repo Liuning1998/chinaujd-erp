@@ -2,7 +2,7 @@
     <div class="container">
         <div class="account">
             <span>账户可用余额（元）</span>
-            <p class="balance">¥ {{ withdrawalForm.balance | numFormat }}</p>
+            <p class="balance">¥ {{ withdrawalForm.balance | moneyFormat }}</p>
         </div>
         <div class="withdrawal">
             <el-form ref="form" :model="withdrawalForm" label-width="84px">

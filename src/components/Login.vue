@@ -99,6 +99,7 @@ export default{
          // 获取图形验证码
         getImgCode() {
             getImageCode().then(res => {
+                console.log(res);
                 this.imgCode = res.imageCode;
                 this.uuid = res.uuid;
             });

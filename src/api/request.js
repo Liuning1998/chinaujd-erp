@@ -27,8 +27,9 @@ export function login(params) {
 export function logout(params) {
   return post(baseURL + '/userCenter/logout', params);
 }
-export function getImageCode(params) {
-  return get(baseURL + '/cmsServer/sms/getImageCode', params)
+export function getImageCode() {
+  console.log('getImageCode')
+  return get(baseURL + '/cmsServer/sms/getImageCode');
 };
 /**
  * 业务中心 Start

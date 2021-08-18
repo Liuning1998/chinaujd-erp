@@ -1,7 +1,7 @@
 /**
  * 金额千分位格式化
  */
-export function numFormat(value) {
+export function moneyFormat(value) {
     if (!value) return '0.00';
     let result = [];
     // [整数, 小数]

@@ -299,7 +299,7 @@ export default {
 					item.serviceType = JSON.parse(item.serviceType).value;
 				});
 				this.tableData = res.data.rows;
-				this.total = res.data.total;
+				this.total = Number(res.data.total);
 			});
 		},
 		orderExport(){

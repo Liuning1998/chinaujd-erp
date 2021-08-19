@@ -146,7 +146,7 @@ export default {
                     item.reconciliationStatus = JSON.parse(item.reconciliationStatus).desc;
                 });
                 Object.assign(this.orderInfo, res.data);
-                this.total = res.data.total;
+                this.total = Number(res.data.total);
             })
         },
         /**
@@ -169,7 +169,7 @@ export default {
                     item.examineStatus = JSON.parse(item.examineStatus).desc;
                 });
                 Object.assign(this.orderInfo, res.data);
-                this.total = res.data.total;
+                this.total = Number(res.data.total);
             })
         },
         /**

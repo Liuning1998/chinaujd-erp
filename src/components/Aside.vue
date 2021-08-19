@@ -84,13 +84,13 @@ export default {
     },
     created() {
         this.getCurrentUrl();
-        // this.getUserMenu();
+        this.getUserMenu();
     },
     methods: {
         getUserMenu() {
             POST_BASE_MENU_ROUTE_LIST({
-                regSys: this.$store.state.regSys,
-                currentRegSys: 6
+                regSys: sessionStorage.getItem('regSys'),
+                currentRegSys: '6'
             }).then(res =>{
                 this.menu = res.data.rows;
             });

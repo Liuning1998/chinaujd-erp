@@ -128,7 +128,7 @@ export default {
 					item.status = JSON.parse(item.status).value;
 				});
 				this.tableData = res.data.rows;
-				this.total = res.data.total;
+				this.total = Number(res.data.total);
 			});
 		},
 		/**

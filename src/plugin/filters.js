@@ -15,3 +15,10 @@ export function moneyFormat(value) {
     }
     return decimal ? result.reverse().join('') + '.' + decimal : result.reverse().join('');
 }
+/**
+ * 手机号码格式化，隐藏中间四位
+ */
+export function telFormat(value) {
+    if (!value) return '';
+    return value.substr(0, 3) + "****" + value.substr(7);
+}

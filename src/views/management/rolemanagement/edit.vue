@@ -50,8 +50,8 @@ export default {
 	data() {
 		return {
 			form: {
-				roleName: "",
-				roleDescription: "",
+				roleName: null,
+				roleDescription: null,
 				authList: [],
 			},
 			defaultProps: {
@@ -72,16 +72,18 @@ export default {
   	methods: {
 		/**
 		 * 获取权限列表
+		 * @function getData
 		 */
 		getData() {
 			let params = {
-				regSys: this.$store.state.regSys
+				regSys: sessionStorage.getItem('regSys')
 			};
 			POST_USERCENTER_QUERY_ALL_AUTHORITIES(params).then(res => {
 				this.dataQList = res.data;
 			});
 		},
 		/**
+		 * 查看所有角色
 		 * @function creatData
 		 */
 		creatData() {
@@ -115,7 +117,7 @@ export default {
 			this.$refs['form'].validate((valid) => {
 				if (valid) {
 					let params = {
-						regSys: this.$store.state.regSys,
+						regSys: sessionStorage.getItem('regSys'),
 						roleList: this.form.authList,
 						roleName: this.form.roleName,
 						description: this.form.roleDescription,

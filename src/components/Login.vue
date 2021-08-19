@@ -119,7 +119,7 @@ export default{
                         this.$store.commit('set_token', res.token);
                         this.$store.commit('set_name', res.username);
                         this.$store.commit('set_userId', res.userId);
-                        this.$store.commit('set_regSys', res.regSys);
+                        this.$store.commit('set_regSys', this.form.regSys);
                         this.$router.push('/index');
                     }).catch(() => {
                         this.$message.warning('登录失败');

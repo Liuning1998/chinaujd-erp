@@ -349,7 +349,7 @@ export default {
 					item.logisticsStatus = JSON.parse(item.logisticsStatus).value;
 				});
 				this.tableData = res.data.rows;
-				this.total = res.data.total;
+				this.total = Number(res.data.total);
 			});
 		},
 		orderExport(){

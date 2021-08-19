@@ -50,8 +50,8 @@ export default {
 	data() {
 		return {
 			form: {
-				roleName: "",
-				roleDescription: "",
+				roleName: null,
+				roleDescription: null,
 				authList: [],
 			},
 			defaultProps: {
@@ -72,6 +72,7 @@ export default {
   	methods: {
 		/**
 		 * 获取权限列表
+		 * @function getData
 		 */
 		getData() {
 			let params = {
@@ -82,6 +83,7 @@ export default {
 			});
 		},
 		/**
+		 * 查看所有角色
 		 * @function creatData
 		 */
 		creatData() {

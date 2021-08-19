@@ -1,7 +1,7 @@
 /**
  * 命名规范
  * eg:GET_USERCENTER_DELETE_ROLE
- * 1、请求方式：  POST          post请求
+ * 1、请求方式：  GET           get请求
  * 2、模块名：    USERCENTER    系统管理
  * 3、功能名：    DELETE_ROLE   新增角色
  */

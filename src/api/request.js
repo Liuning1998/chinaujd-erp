@@ -44,7 +44,15 @@ export function POST_EXPORT_BUSINESS_ORDER_EXPORT(params) {
 }
 // 邮票名称级联查询
 export function findFullName(params) {
-  return post(baseURL + '/stamp/findFullName', params)
+  return post(baseURL + '/stamp/findFullNameAndType', params)
+}
+// 邮票Id查询子票
+export function POST_FIND_ID_STAMP(params) {
+  return post(baseURL + '/stamp/findIdStamp', params);
+}
+// 新增核验-扫码查询
+export function GET_ORDERITEM_QUERY(params) {
+  return get(baseURL + '/philatelic/business/orderitem/query', params);
 }
 // 订单列表-查看-详情
 export function GET_BUSINESS_ORDERMAIN_VIEW(params) {

@@ -255,27 +255,27 @@ export function POST_USERCENTER_EDIT_ROLE(params) {
 }
 // 管理员账号列表
 export function POST_USERCENTER_BASE_ADMIN_LIST(params) {
-  return post(baseURL + '/base/admin/list', params);
+  return post(baseURL + '/philatelic/base/admin/pageList', params);
 }
 // 新增管理员
 export function POST_USERCENTER_BASE_ADMIN_ADD(params) {
-  return post(baseURL + '/base/admin/add', params);
+  return post(baseURL + '/philatelic/base/admin/add', params);
 }
 // 编辑管理员
 export function POST_USERCENTER_BASE_ADMIN_EDIT(params) {
-  return post(baseURL + '/base/admin/edit', params);
+  return post(baseURL + '/philatelic/base/admin/edit', params);
 }
 // 禁用管理员
 export function POST_USERCENTER_BASE_ADMIN_DEAL_DISABLE(params) {
-  return post(baseURL + '/base/admin/dealDisable', params);
+  return post(baseURL + '/philatelic/base/admin/dealDisable', params);
 }
 // 恢复管理员
 export function POST_USERCENTER_BASE_ADMIN_DEAL_ENABLE(params) {
-  return post(baseURL + '/base/admin/dealEnable', params);
+  return post(baseURL + '/philatelic/base/admin/dealEnable', params);
 }
 // 查看管理员详情
 export function POST_USERCENTER_BASE_ADMIN_VIEW(params) {
-  return post(baseURL + '/base/admin/view', params);
+  return post(baseURL + '/philatelic/base/admin/view', params);
 }
 // 获取所有菜单
 export function POST_USERCENTER_QUERY_ALL_MENU(params) {
@@ -284,6 +284,10 @@ export function POST_USERCENTER_QUERY_ALL_MENU(params) {
 // 查看菜单
 export function GET_USERCENTER_MENU_VIEW(params) {
   return get(baseURL + '/userCenter/menu/view', params);
+}
+// 查看所有角色
+export function POST_USERCENTER_ROLE_ALL(params) {
+  return post(baseURL + '/userCenter/role/query/all', params);
 }
 // 更新菜单
 export function POST_USERCENTER_UPDATE_MENU(params) {

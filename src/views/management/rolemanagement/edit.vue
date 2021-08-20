@@ -76,10 +76,11 @@ export default {
 		 */
 		getData() {
 			let params = {
-				regSys: sessionStorage.getItem('regSys')
+				regSys: '6',
+				username: sessionStorage.getItem('name'),
 			};
 			POST_USERCENTER_QUERY_ALL_AUTHORITIES(params).then(res => {
-				this.dataQList = res.data;
+				this.dataQList = res;
 			});
 		},
 		/**
@@ -91,7 +92,7 @@ export default {
 				roleId: this.$route.query.roleId
 			};
 			GET_USERCENTER_ROLE_VIEW(params).then(res => {
-				Object.assign(this.form, res.data);
+				Object.assign(this.form, res);
 			});
 		},
 		/**
@@ -117,7 +118,7 @@ export default {
 			this.$refs['form'].validate((valid) => {
 				if (valid) {
 					let params = {
-						regSys: sessionStorage.getItem('regSys'),
+						regSys: '6',
 						roleList: this.form.authList,
 						roleName: this.form.roleName,
 						description: this.form.roleDescription,

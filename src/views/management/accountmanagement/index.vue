@@ -12,10 +12,10 @@
 			</div>
 			<div class="search-item flex-end">
 				<span>状态：</span>
-				<el-select v-model="form.status" placeholder="请选择">
-					<el-option label="全部" value=""></el-option>
+				<el-select v-model="form.adminStatus" placeholder="请选择">
+					<el-option label="全部" :value="null"></el-option>
 					<el-option
-						v-for="(item,index) in accountStatus" :key="index"
+						v-for="(item, index) in accountStatus" :key="index"
 						:label="item.label"
 						:value="item.value"></el-option>
 				</el-select>
@@ -44,20 +44,22 @@
 				<el-table-column
 					label="状态">
 					<template slot-scope="scope">
-						<span>{{ JSON.parse(scope.row.status).desc }}</span>
+						<span>{{ accountStatus[scope.row.adminStatus].label }}</span>
 					</template>
 				</el-table-column>
 				<el-table-column
-					prop="gmtCreate"
 					label="创建时间">
+					<template slot-scope="scope">
+                        {{ scope.row.gmtCreate | dateFormat }}
+                    </template>
 				</el-table-column>
 				<el-table-column
 					label="操作">
 					<template slot-scope="scope">
 						<el-button type="text" @click="handleEdit(scope.row.adminId)">编辑</el-button>
 						<el-divider direction="vertical"></el-divider>
-						<el-button v-if="scope.row.status === 1" type="text" @click="handleDisable(scope.row.adminId)">禁用</el-button>
-						<el-button v-if="scope.row.status === 0" type="text" @click="handleRecover(scope.row.adminId)">恢复</el-button>
+						<el-button v-if="scope.row.adminStatus === 1" type="text" @click="handleDisable(scope.row.adminId)">禁用</el-button>
+						<el-button v-if="scope.row.adminStatus === 0" type="text" @click="handleRecover(scope.row.adminId)">恢复</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -93,9 +95,9 @@ export default {
 	data() {
 		return {
 			form: {
-				name: '',
-				mobile: '',
-				status: '',
+				name: null,
+				mobile: null,
+				adminStatus: null,
 			},
 			accountStatus: [
 				{label: '禁用', value: 0},
@@ -103,7 +105,7 @@ export default {
 			],
 			tableData: [],
 			total: 0,
-            currentPage: 0,
+            currentPage: 1,
             pageSize: 15,
 		}
 	},
@@ -121,14 +123,14 @@ export default {
 				pageSize: this.pageSize,
 				name: this.form.name,
 				mobile: this.form.mobile,
-				status: this.form.status
+				adminStatus: this.form.adminStatus
 			};
 			POST_USERCENTER_BASE_ADMIN_LIST(params).then(res => {
-				res.data.rows.forEach(item => {
-					item.status = JSON.parse(item.status).value;
+				res.rows.forEach(item => {
+					item.adminStatus = JSON.parse(item.adminStatus).value;
 				});
-				this.tableData = res.data.rows;
-				this.total = Number(res.data.total);
+				this.tableData = res.rows;
+				this.total = Number(res.total);
 			});
 		},
 		/**
@@ -175,7 +177,6 @@ export default {
 			}).then(() => {
 				let params = {
 					adminId: id,
-					status: 0
 				};
 				POST_USERCENTER_BASE_ADMIN_DEAL_DISABLE(params).then(() => {
 					this.$message.success('禁用成功');
@@ -194,7 +195,6 @@ export default {
 			}).then(() => {
 				let params = {
 					adminId: id,
-					status: 1
 				};
 				POST_USERCENTER_BASE_ADMIN_DEAL_ENABLE(params).then(() => {
 					this.$message.success('恢复成功');

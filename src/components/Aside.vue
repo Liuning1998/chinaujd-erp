@@ -40,38 +40,7 @@ export default {
                 '/finance': [require('../assets/images/aside/icon_finance.png'), require('../assets/images/aside/icon_finance_select.png')],
                 '/management': [require('../assets/images/aside/icon_system.png'), require('../assets/images/aside/icon_system_select.png')]
             },
-            menu: [
-                {
-                    menuName: '邮票业务中心',
-                    url: '/business',
-                    children: [
-                        {menuName: '订单列表', url: '/business/orderList'},
-                        {menuName: '鉴评单列表', url: '/business/appraisalOrder'},
-                        {menuName: '封装单列表', url: '/business/packageOrder'},
-                        {menuName: '退货单列表', url: '/business/returnOrder'},
-                    ],
-                },
-                {
-                    menuName: '财务中心',
-                    url: '/finance',
-                    children: [
-                        {menuName: '订单查询', url: '/finance/inquiry'},
-                        {menuName: '订单对账', url: '/finance/record/index'},
-                        {menuName: '订单结算', url: '/finance/settle/index'},
-                        {menuName: '提现管理', url: '/finance/withdraw'},
-                    ],
-                },
-                {
-                    menuName: '系统管理',
-                    url: '/management',
-                    children: [
-                        {menuName: '角色管理', url: '/management/rolemanagement'},
-                        {menuName: '账号管理', url: '/management/accountmanagement'},
-                        {menuName: '菜单管理', url: '/management/menumanagement'},
-                        {menuName: '账号设置', url: '/management/accountsetting'},
-                    ],
-                },
-            ]
+            menu: [],
         }
     },
     watch: {
@@ -89,10 +58,10 @@ export default {
     methods: {
         getUserMenu() {
             POST_BASE_MENU_ROUTE_LIST({
-                regSys: sessionStorage.getItem('regSys'),
-                currentRegSys: '6'
+                regSys: '6',
+                currentRegSys: sessionStorage.getItem('regSys')
             }).then(res =>{
-                this.menu = res.data.rows;
+                this.menu = res;
             });
         },
         getCurrentUrl() {

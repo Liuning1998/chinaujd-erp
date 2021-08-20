@@ -101,7 +101,7 @@ export default {
                 {label: '支出', value: 0},
             ],
             total: 0,
-            currentPage: 0,
+            currentPage: 1,
             pageSize: 15,
         }
     },

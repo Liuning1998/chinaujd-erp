@@ -13,8 +13,10 @@
                     label="手机号">
                 </el-table-column>
                 <el-table-column
-                    prop="gmtCreate"
                     label="创建时间">
+                    <template slot-scope="scope">
+                        {{ scope.row.gmtCreate | dateFormat }}
+                    </template>
                 </el-table-column>
             </el-table>
         </div>
@@ -48,7 +50,7 @@ export default {
         return {
             tableData: [],
             total: 0,
-            currentPage: 0,
+            currentPage: 1,
             pageSize: 15,
         }
     },
@@ -65,8 +67,8 @@ export default {
                 pageSize: this.pageSize
             };
             POST_USERCENTER_SERVER_PAGELIST(params).then(res => {
-                this.tableData = res.data.rows;
-                this.total = Number(res.data.total);
+                this.tableData = res.rows;
+                this.total = Number(res.total);
             })
         },
         /**

@@ -74,10 +74,11 @@ export default {
 		 */
 		getData() {
 			let params = {
-				regSys: sessionStorage.getItem('regSys')
+				regSys: '6',
+				username: sessionStorage.getItem('name'),
 			};
 			POST_USERCENTER_QUERY_ALL_AUTHORITIES(params).then(res => {
-				this.dataQList = res.data;
+				this.dataQList = res;
 			});
 		},
 		/**
@@ -103,7 +104,7 @@ export default {
 			this.$refs['form'].validate((valid) => {
 				if (valid) {
 					let params = {
-						regSys: sessionStorage.getItem('regSys'),
+						regSys: '6',
 						roleList: this.form.authList,
 						roleName: this.form.roleName,
 						description: this.form.roleDescription,

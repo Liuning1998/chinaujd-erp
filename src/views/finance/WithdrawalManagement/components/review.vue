@@ -55,7 +55,7 @@ export default {
             radio: 0,
             tableData: [],
             total: 110,
-            currentPage: 0,
+            currentPage: 1,
             pageSize: 15,
         }
     },

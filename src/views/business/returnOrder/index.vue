@@ -239,7 +239,7 @@ export default {
 		},
 		getAgent() {
 			let params = {
-				currentPage: 0,
+				currentPage: 1,
 				pageSize: 1000
 			}
 			POST_USERCENTER_SERVER_PAGELIST(params).then(res => {

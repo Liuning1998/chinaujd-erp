@@ -212,7 +212,7 @@ export default {
                 {label: '核验', value: 3},
             ],
             total: 0,
-            currentPage: 0,
+            currentPage: 1,
             pageSize: 15,
             tableData: [],
         }

@@ -73,7 +73,7 @@ export default {
 					let params = {
 						menuId: this.$route.query.menuId,
 						menuUrl: this.form.menuUrl,
-						regSys: sessionStorage.getItem('regSys')
+						regSys: '6'
 					}
 					POST_USERCENTER_UPDATE_MENU(params).then(res => {
 						this.$message.success('编辑成功');

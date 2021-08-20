@@ -22,3 +22,10 @@ export function telFormat(value) {
     if (!value) return '';
     return value.substr(0, 3) + "****" + value.substr(7);
 }
+/**
+ * 时间格式化
+ */
+export function dateFormat(value) {
+    let dt = new Date(value);
+    return `${dt.getFullYear()}-${(dt.getMonth() + 1)}-${dt.getDate()} ${dt.getHours()}:${dt.getMinutes()}:${dt.getSeconds()}`;
+}

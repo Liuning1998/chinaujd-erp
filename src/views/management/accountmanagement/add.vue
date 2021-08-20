@@ -13,10 +13,7 @@
 			</el-form-item>
 			<el-form-item label="权限：" prop="roleId">
 				<el-radio-group v-model="form.roleId">
-					<el-radio :label="1">超级管理员</el-radio>
-					<el-radio :label="2">财务</el-radio>
-					<el-radio :label="3">运营</el-radio>
-					<el-radio :label="4">客服</el-radio>
+					<el-radio v-for="item in roles" :key="item.roleId" :label="item.roleId">{{ item.roleName }}</el-radio>
 				</el-radio-group>
 			</el-form-item>
 		</el-form>
@@ -30,6 +27,7 @@
 <script>
 import {
 	POST_USERCENTER_BASE_ADMIN_ADD,
+	POST_USERCENTER_ROLE_ALL,
 } from '@/api/request';
 
 import Breadcrumb from '@/components/Breadcrumb';
@@ -42,31 +40,46 @@ export default {
 	data() {
 		return {
 			form: {
-				name: '',
-				mobile: '',
-				password: '',
-				roleId: ''
+				name: null,
+				mobile: null,
+				password: null,
+				roleId: null
 			},
 			rules: {
 				name: [{required: true, message: '请输入账号名称', trigger: ['blur', 'change']}],
 				mobile: [{required: true, message: '请输入手机号', trigger: ['blur', 'change']}],
 				password: [{required: true, message: '请输入密码', trigger: ['blur', 'change']}],
 				roleId: [{required: true, message: '请选择权限', trigger: ['blur', 'change']}],
-			}
+			},
+			roles: [],
 		}
 	},
-    created() {},
+    created() {
+		this.getRoles();
+	},
 	methods: {
+		/**
+		 * 获取所有角色
+		 * @function getRoles
+		 */
+		getRoles() {
+			let params = {
+				regSys: '6',
+			};
+			POST_USERCENTER_ROLE_ALL(params).then(res => {
+				this.roles = res;
+			});
+		},
 		/**
 		 * 返回上一级
 		 * @function handleReturn
 		 */
 		handleReturn() {
 			let form = {
-				name: '',
-				mobile: '',
-				password: '',
-				roleId: ''
+				name: null,
+				mobile: null,
+				password: null,
+				roleId: null
 			};
 			Object.assign(this.form, form);
 			this.$router.push('/management/accountmanagement/index');

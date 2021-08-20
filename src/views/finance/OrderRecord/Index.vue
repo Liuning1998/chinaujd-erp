@@ -280,7 +280,7 @@ export default {
             tableData: [],
             settleTableData: [],
             total: 0,
-            currentPage: 0,
+            currentPage: 1,
             pageSize: 15,
             addOrderDialogVisible: false,
             settleDialogVisible: false,

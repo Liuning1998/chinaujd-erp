@@ -42,7 +42,7 @@ export default {
 		 */
 		getMenu(){
 			let params = {
-				regSys: "APPRAISAL_BOSS"
+				regSys: "6"
 			};
 			POST_USERCENTER_QUERY_ALL_MENU(params).then(res => {
 				this.tableData = res.data;

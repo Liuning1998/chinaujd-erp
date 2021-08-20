@@ -95,7 +95,7 @@ export default {
     data() {
         return {
             activeName: 'order',
-            currentPage: 0,
+            currentPage: 1,
             pageSize: 15,
             total: 0,
             orderInfo: {

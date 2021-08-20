@@ -58,7 +58,7 @@ export default {
 			keyword: null,
 			tableData: [],
 			total: 0,
-			currentPage: 0,
+			currentPage: 1,
 			pageSize: 15,
 		}
 	},
@@ -73,14 +73,14 @@ export default {
 		 */
 		getData() {
 			let params = {
-				regSys: sessionStorage.getItem('regSys'),
+				regSys: '6',
 				roleName: this.keyword,
 				currentPage: this.currentPage,
 				pageSize: this.pageSize
 			};
 			POST_USERCENTER_QUERY_ROLE_PAGE(params).then(res => {
-				this.tableData = res.data.rows;
-				this.total = Number(res.data.total);
+				this.tableData = res.rows;
+				this.total = Number(res.total);
 			});
 		},
 		/**

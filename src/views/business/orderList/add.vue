@@ -35,7 +35,7 @@
 						</el-input>
 					</el-form-item>
 					<el-form-item label="验证码" prop="orderAddUserInfoDto.phoneCode">
-						<el-input v-model="form.orderAddUserInfoDto.phoneCode" type="text" class="w200"></el-input>
+						<el-input v-model="form.orderAddUserInfoDto.phoneCode" maxlength="4" type="text" class="w200"></el-input>
 						<el-button @click="getCode" v-if="show" style="width: 138px;" size="small" class="getcode">获取验证码
 						</el-button>
 						<el-button v-if="!show" style="width: 138px;" size="small">{{codeTime}}S</el-button>
@@ -44,7 +44,7 @@
 				<div class="floor">
 					<h3>服务商基本信息</h3>
 					<el-form-item label="收货地址:" prop="areaId">
-						<el-cascader v-model="form.orderAddInfoServicesDto.areaId" :options="options"
+						<el-cascader v-model="form.orderAddInfoServicesDto.areaId" ref="nameAddress" :options="options"
 							:props="{value:'id',label:'name',children:'childrens'}" @change="addressChange"
 							class="w350"></el-cascader>
 					</el-form-item>
@@ -73,7 +73,11 @@
 						<el-table :data="tableData"
 							:header-cell-style="{'background':'#fafafa','font-size':'14px','color':'#333333'}">
 							<el-table-column label="序号" type="index"></el-table-column>
-							<el-table-column prop="fullName" label="邮票名称"></el-table-column>
+							<el-table-column label="邮票名称">
+								<template slot-scope="scope">
+									<p style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;">{{scope.row.fullName}}</p>
+								</template>
+							</el-table-column>
 							<el-table-column label="单位">
 								<template slot-scope="scope">
 									{{ CompanyList.find(item => item.value === scope.row.unit).name || '' }}
@@ -87,9 +91,7 @@
 							</el-table-column>
 							<el-table-column label="操作">
 								<template slot-scope="scope">
-									<el-link type="primary" :underline="false" @click="modify(scope.row)">修改</el-link>
-									<el-divider direction="vertical"></el-divider>
-									<el-link type="primary" :underline="false" @click="delete(scope.row)">删除</el-link>
+									<el-link type="primary" :underline="false" @click="DeleteStamp(scope.row)">删除</el-link>
 								</template>
 							</el-table-column>
 						</el-table>
@@ -150,8 +152,8 @@
 				<el-form-item label="封装套餐："
 					v-if="alertStampId && (formAlert.serviceType==2 || formAlert.serviceType==3)" prop="packTypeId">
 					<el-select v-model="formAlert.packTypeId" placeholder="请选择封装套餐" class="w328">
-						<el-option v-for="(item,index) in enclosureList" :key="index" :label="item.name"
-							:value="item.value"></el-option>
+						<el-option v-for="(item,index) in enclosureList" :key="index" :label="item.packTypeName"
+							:value="item.packTypeId"></el-option>
 					</el-select>
 				</el-form-item>
 			</el-form>
@@ -190,6 +192,8 @@
 		POST_BUSINESS_ORDERMAIN_ADD,
 		POST_FIND_ID_STAMP,
 		GET_ORDERITEM_QUERY,
+		POST_AREA_LIST,
+		POST_GETPACKTYPE,
 		findFullName
 	} from '@/api/request';
 
@@ -227,7 +231,7 @@
 					signalNo: '',
 					unit: '',
 					serviceType: '',
-					quantity: '',
+					quantity: '1',
 					specifName: null,
 					packTypeId: '',
 					orderItems: []
@@ -254,11 +258,7 @@
 					{ name: '版', value: '2' },
 					{ name: '套', value: '1' }
 				],
-				enclosureList: [
-					{ name: '套餐A', value: 0 },
-					{ name: '套餐B', value: 1 },
-					{ name: '套餐C', value: 2 }
-				],
+				enclosureList: [],
 				attributeList: [
 					{ name: '小型张', value: 'XXZ' },
 					{ name: '小全张', value: 'XQZ' }
@@ -300,13 +300,27 @@
 		},
 		// 模板渲染前钩子函数
 		created() {
-
+			this.getAddressList();
+			this.getEnclosureList();
 		},
 		// 模板渲染后钩子函数
 		mounted() {
 
 		},
 		methods: {
+			// 获取封装套餐
+			getEnclosureList(){
+				POST_GETPACKTYPE().then(res =>{
+					this.enclosureList=res;
+				})
+			},
+			// 获取地址列表
+			getAddressList(){
+				POST_AREA_LIST().then(res =>{
+					this.options=res.provinces;
+				})
+			},
+			// 获取短信验证码
 			getCode() {
 				let { userPhone = '' } = this.form.orderAddUserInfoDto;
 				if (!userPhone) {
@@ -336,8 +350,9 @@
 					}
 				});
 			},
-			addressChange() {
-
+			addressChange(val) {
+				let lab=this.$refs['nameAddress'].getCheckedNodes()[0].pathLabels;
+				this.form.orderAddInfoServicesDto.areaName=lab;
 			},
 			add() {
 					if(this.form.evalmethod == 2){
@@ -349,15 +364,16 @@
 						return false;
 					}
 			},
-			modify(val) {
-				this.addAlert = true;
-			},
-			delete(val) {
+			DeleteStamp(val) {
+				let that = this;
 				this.$confirm('您确认要删除该记录吗？', '提示', {
 					confirmButtonText: '确定',
-					cancelButtonText: '取消',
+					cancelButtonText: '取消'
 				}).then(() => {
-
+					let index=that.tableData.indexOf(val);
+					index != -1 && that.tableData.splice(index, 1);
+				}).catch(() => {
+					
 				});
 			},
 			// 核验查询
@@ -411,7 +427,7 @@
 					signalNo: '',
 					unit: '',
 					serviceType: '',
-					quantity: '',
+					quantity: '1',
 					specifName: null,
 					packTypeId: '',
 					orderItems: []
@@ -427,6 +443,13 @@
 					this.$message.warning('请选择关联邮票！');
 					return false;
 				}
+				if(this.formAlert.unit == 1){
+					if(this.formAlert.orderItems.length < 4){
+						this.$message.warning('最少勾选4枚');
+						return false;
+					}
+				}
+				
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
 						let tempData={
@@ -534,22 +557,29 @@
 				let { userPhone = null, phoneCode = null } = orderAddUserInfoDto;
 				let { address = null, areaId = null, areaName = null, consignee = null, phone = null } =
 				orderAddInfoServicesDto;
-
-				if (!evalmethod) {
+				
+				if (evalmethod !=0 && evalmethod !=1 && evalmethod !=2) {
 					this.$message.warning('请选择鉴评方式');
 					return;
 				}
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
-						if (!orders.length) {
-							this.$message.warning('请添加自订单列表');
+						if (!this.tableData.length) {
+							this.$message.warning('请添加订单列表');
 							return;
 						}
+						let tempFWS={
+							address:address,
+							areaId:areaId[2],
+							areaName:areaName.join(),
+							consignee:consignee,
+							phone:phone
+						}
 						let params = {
-							evalmethod,
-							orderAddInfoServicesDto,
+							evalMethod:this.form.evalmethod,
+							orderAddInfoServicesDto:tempFWS,
 							orderAddUserInfoDto,
-							orders
+							orders:this.tableData
 						}
 						POST_BUSINESS_ORDERMAIN_ADD(params).then(() => {
 							this.$message.success('新增成功');
@@ -557,14 +587,6 @@
 						});
 					}
 				})
-				// if (!userPhone || !phoneCode) {
-				// 	this.$message.warning('请完善用户基本信息');
-				// 	return;
-				// }
-				// if (!address || !areaId || !areaName || !consignee || !phone) {
-				// 	this.$message.warning('请完善服务商基本信息');
-				// 	return;
-				// }
 			},
 		},
 	}

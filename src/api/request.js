@@ -93,6 +93,14 @@ export function POST_BUSINESS_GET_SMSCODE(params) {
 export function POST_BUSINESS_ORDERMAIN_ADD(params) {
   return post(baseURL + '/philatelic/business/orderMain/add', params);
 }
+// 地址列表
+export function POST_AREA_LIST(params) {
+  return post(baseURL + '/philatelic/base/area/list', params);
+}
+// 获取封装套餐
+export function POST_GETPACKTYPE(params) {
+  return post(baseURL + '/philatelic/business/orderMain/get/getPackType', params);
+}
 /**
  * 业务中心 End
  */

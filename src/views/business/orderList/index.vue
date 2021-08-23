@@ -127,17 +127,17 @@
 				<el-table-column prop="paymentDate" label="支付时间"></el-table-column>
 				<el-table-column label="订单状态">
 					<template slot-scope="scope">
-						{{ orderState.find(item => item.value === scope.row.orderMainStatus).name || '' }}
+						<P v-if="scope.row.orderMainStatus">{{JSON.parse(scope.row.orderMainStatus).desc}}</P>
 					</template>
 				</el-table-column>
 				<el-table-column label="支付状态">
 					<template slot-scope="scope">
-						{{ payState.find(item => item.value === scope.row.paymentStatus).name || '' }}
+						<P v-if="scope.row.paymentStatus">{{JSON.parse(scope.row.paymentStatus).desc}}</P>
 					</template>
 				</el-table-column>
 				<el-table-column label="鉴评方式">
 					<template slot-scope="scope">
-						{{ appraisalMode.find(item => item.value === scope.row.evalmethod).name || '' }}
+						<P v-if="scope.row.appraisalStatus">{{JSON.parse(scope.row.appraisalStatus).desc}}</P>
 					</template>
 				</el-table-column>
 				<el-table-column fixed="right" label="操作" width="120" align="center">
@@ -231,8 +231,8 @@ export default {
 				paymentStatus: null
 			},
 			tableData:[],
-			total: 110,
-			currentPage:0,
+			total: 0,
+			currentPage:1,
 			pageSize:15,
 			// 服务商名称
 			agentName:[],
@@ -288,7 +288,7 @@ export default {
 	// 模板渲染前钩子函数
 	created() {
 		// this.getAgent();
-		// this.getList();
+		this.getList();
 		// this.getLogistiscs();
 	},
 	// 模板渲染后钩子函数
@@ -353,30 +353,11 @@ export default {
 				refundStatus: this.form.refundStatus,
 				serviceType: this.form.serviceType
 			};
-			let table = [
-				{
-					evalmethod: 1,
-					orderMainCode: 10086,
-					orderMainId: 12580,
-					orderMainStatus: 2,
-					paymentStatus: 0,
-					phone: 12345678901,
-					gmtCreate: '2020.02.02',
-					paymentDate: '2021.12.21',
-					number: 12,
-					orderMainAmount: 250
-				}
-			];
-			this.tableData = table;
 			POST_BUSINESS_ORDER_LISTPAGE(params).then(res => {
-				res.data.rows.forEach(item => {
-					item.evalmethod = JSON.parse(item.evalmethod).value;
-					item.orderMainStatus = JSON.parse(item.orderMainStatus).value;
-					item.paymentStatus = JSON.parse(item.paymentStatus).value;
-					item.serviceType = JSON.parse(item.serviceType).value;
-				});
-				this.tableData = res.data.rows;
-				this.total = Number(res.data.total);
+				this.tableData = res.rows;
+				// this.currentPage=res.currentPage-0;
+				// this.pageSize=res.pageSize-0;
+				this.total = Number(res.total);
 			});
 		},
 		handleReset() {

@@ -106,7 +106,7 @@
 							<el-button type="primary" size="small" @click="handleQuery">查询</el-button>
 							<el-button size="small" @click="handleReset">重置</el-button>
 							<el-button type="primary" size="small" @click="addOrder">新增业务单</el-button>
-							<!-- <el-button @click="orderExport" size="small">导出</el-button> -->
+							<el-button @click="orderExport" size="small">导出</el-button>
 						</div>
 					</el-col>
 				</el-row>
@@ -380,12 +380,12 @@ export default {
 			let params = {
 				createTimeEnd: this.form.create_time[1],
 				createTimeStart: this.form.create_time[0],
-				currentPage: this.currentPage,
+				// currentPage: this.currentPage,
 				evalmethod: this.form.evalmethod,
 				name: this.form.name,
 				orderMainCode: this.form.orderMainCode,
 				orderMainStatus: this.form.orderMainStatus,
-				pageSize: this.pageSize,
+				// pageSize: this.pageSize,
 				paymentStatus: this.form.paymentStatus,
 				paymentTimeStart: this.form.payment_time[0],
 				paymentTimeEnd: this.form.payment_time[1],

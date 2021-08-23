@@ -452,10 +452,17 @@
 				
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
+						let Items=[]
+						if(this.formAlert.unit == 1){
+							Items=this.formAlert.orderItems
+						}else{
+							Items=[this.tempStamp]
+						}
 						let tempData={
+							expectedQuantity:this.tempStamp.expectedQuantity,
 							fullName:this.tempStamp.fullName,
 							name:this.tempStamp.fullName,
-							orderItems:this.formAlert.orderItems,
+							orderItems:Items,
 							packTypeId:this.formAlert.packTypeId,
 							pictureSeq:this.tempStamp.pictureSeq,
 							price:this.tempStamp.price,

@@ -11,10 +11,10 @@
 				</div>
 				<div class="floor">
 					<h3>服务商基本信息</h3>
-					<el-form-item label="收货地址：" prop="areaId">
-						<el-input v-model="form.orderServicesInfoVO.areaId" placeholder="" disabled class="w272"></el-input>
+					<el-form-item label="收货地址：">
+						<el-input v-model="form.orderServicesInfoVO.areaName" placeholder="" disabled class="w272"></el-input>
 					</el-form-item>
-					<el-form-item label="" prop="address">
+					<el-form-item label="">
 						<el-input v-model="form.orderServicesInfoVO.address" type="textarea" disabled :rows="2" resize="none" placeholder="详细地址"
 							class="w272"></el-input>
 					</el-form-item>
@@ -34,19 +34,19 @@
 						</el-col>
 						<el-col :span="8">
 							<span class="order_info">订单状态：</span>
-							<span>{{ orderState.find(item => item.value === form.orderMainStatus).name || '' }}</span>
+							<span v-if="form.orderMainStatus">{{ form.orderMainStatus.desc }}</span>
 						</el-col>
 						<el-col :span="8">
 							<span class="order_info">鉴评方式：</span>
-							<span>{{ appraisalMode.find(item => item.value === form.evalmethod).name || ''  }}</span>
+							<span v-if="form.evalmethod">{{ form.evalmethod.desc }}</span>
 						</el-col>
 						<el-col :span="8">
 							<span class="order_info">支付状态：</span>
-							<span>{{ payState.find(item => item.value === form.paymentStatus).name || ''  }}</span>
+							<span v-if="form.paymentStatus">{{ form.paymentStatus.desc }}</span>
 						</el-col>
 						<el-col :span="8">
 							<span class="order_info">支付方式：</span>
-							<span>{{ paymentMethod.find(item => item.value === form.paymentMethod).name || '' }}</span>
+							<span v-if="form.paymentMethod">{{ form.paymentMethod.desc }}</span>
 						</el-col>
 						<el-col :span="8">
 							<span class="order_info">订单金额：</span>
@@ -63,7 +63,7 @@
 					<el-row>
 						<el-col :span="8">
 							<span class="order_info">售后状态：</span>
-							<span>{{ refundStatus.find(item => item.value === form.orderRefundInfoVO.refundStatus).name || '' }}</span>
+							<span v-if="form.orderRefundInfoVO.refundStatus">{{ JSON.parse(form.orderRefundInfoVO.refundStatus).desc }}</span>
 						</el-col>
 						<el-col :span="8">
 							<span class="order_info">退款金额：</span>
@@ -82,43 +82,50 @@
 							<el-table-column label="序号" type="index"></el-table-column>
 							<el-table-column prop="orderId" label="子订单号"></el-table-column>
 							<el-table-column prop="fullName" label="邮票名称"></el-table-column>
-							<el-table-column prop="unit" label="单位"></el-table-column>
-							<!-- <el-table-column prop="quantity" label="数量"></el-table-column> -->
-							<el-table-column label="服务类型">
+							<el-table-column label="单位">
 								<template slot-scope="scope">
-									{{ serviceType.find(item => item.value === scope.row.serviceType).name }}
+									<span v-if="scope.row.unit">{{scope.row.unit.desc}}</span>
 								</template>
 							</el-table-column>
-							<el-table-column label="鉴评方式">
+							<el-table-column label="服务类型">
+								<template slot-scope="scope">
+									<span v-if="scope.row.serviceType">{{scope.row.serviceType.desc}}</span>
+								</template>
+							</el-table-column>
+							<el-table-column label="服务费用">
+								<template slot-scope="scope">
+									¥{{ scope.row.cost }}
+								</template>
+							</el-table-column>
+							<!-- <el-table-column label="鉴评方式">
 								<template slot-scope="scope">
 									{{ appraisalMode.find(item => item.value === scope.row.evalmethod).name }}
 								</template>
-							</el-table-column>
-							<el-table-column prop="modifyPriceNumber" label="服务费用"></el-table-column>
+							</el-table-column> -->
 							<el-table-column label="订单状态">
 								<template slot-scope="scope">
-									{{ orderState.find(item => item.value === scope.row.orderstatus).name }}
+									<span v-if="scope.row.orderstatus">{{scope.row.orderstatus.desc}}</span>
 								</template>
 							</el-table-column>
 							<el-table-column width="180" label="操作">
 								<template slot-scope="scope">
 									<el-link
-										v-if="Number(scope.row.bindStatus) === 0 && [2].includes(form.orderMainStatus)"
+										v-if="scope.row.bindStatus.value === 0 && [2].includes(form.orderMainStatus.value)"
 										type="primary"
 										@click="bound(scope.row.orderId)">绑定</el-link>
 									<el-divider
-										v-if="Number(scope.row.bindStatus) === 0 && [2].includes(form.orderMainStatus)"
+										v-if="scope.row.bindStatus.value === 0 && [2].includes(form.orderMainStatus.value)"
 										direction="vertical"></el-divider>
 									<el-link
-										v-if="Number(scope.row.bindStatus) === 1 && [2].includes(form.orderMainStatus)"
+										v-if="scope.row.bindStatus.value === 1 && [2].includes(form.orderMainStatus.value)"
 										type="primary"
 										@click="Unbound(scope.row.orderId)">解绑</el-link>
 									<el-divider
-										v-if="Number(scope.row.bindStatus) === 1 && [2].includes(form.orderMainStatus)"
+										v-if="scope.row.bindStatus.value === 1 && [2].includes(form.orderMainStatus.value)"
 										direction="vertical"></el-divider>
-									<el-link
+									<!-- <el-link
 										v-if="!Number(scope.row.modifyPriceNumber) && [2].includes(form.orderMainStatus)"
-										type="primary" @click="modifyPrice(scope.row.orderId)">调价</el-link>
+										type="primary" @click="modifyPrice(scope.row.orderId)">调价</el-link> -->
 									<el-divider
 										v-if="!Number(scope.row.modifyPriceNumber) && [2].includes(form.orderMainStatus)"
 										direction="vertical"></el-divider>
@@ -134,13 +141,13 @@
 			<div class="button_btn">
 				<el-button @click="goBack" size="small">返回</el-button>
 				<el-button
-					v-if="[2].includes(form.orderMainStatus)"
+					v-if="[2].includes(form.orderMainStatus.value)"
 					type="primary" size="small" @click="audit">审核</el-button>
 				<el-button
-					v-if="[1].includes(form.orderMainStatus)"
+					v-if="[2].includes(form.orderMainStatus.value)"
 					type="primary" size="small" @click="cancel">取消订单</el-button>
 				<el-button
-					v-if="[0].includes(form.orderMainStatus)"
+					v-if="[0].includes(form.orderMainStatus.value)"
 					type="primary" size="small" @click="print">打印订单</el-button>
 			</div>
 		</div>
@@ -165,7 +172,7 @@ export default {
 		return {
 			form: {
 				orderUserInfoVO: {
-					userPhone: '',
+					userPhone: ''
 				},
 				orderServicesInfoVO: {
 					areaId: '',
@@ -173,56 +180,7 @@ export default {
 					consignee: '',
 					phone: ''
 				},
-				ordersInfoVOS: [
-					{
-						orderId: 1,
-						fullName: '大撒上的',
-						unit: '个',
-						quantity: 12,
-						serviceType: 1,
-						evalmethod: 1,
-						modifyPriceNumber: 111,
-						orderstatus: 3,
-						bindStatus: 1,
-						modifyPriceNumber: 1
-					},
-					{
-						orderId: 1,
-						fullName: '大撒上的',
-						unit: '个',
-						quantity: 12,
-						serviceType: 1,
-						evalmethod: 1,
-						modifyPriceNumber: 111,
-						orderstatus: 3,
-						bindStatus: 0,
-						modifyPriceNumber: 0
-					},
-					{
-						orderId: 1,
-						fullName: '大撒上的',
-						unit: '个',
-						quantity: 12,
-						serviceType: 1,
-						evalmethod: 1,
-						modifyPriceNumber: 111,
-						orderstatus: 3,
-						bindStatus: 0,
-						modifyPriceNumber: 1
-					},
-					{
-						orderId: 1,
-						fullName: '大撒上的',
-						unit: '个',
-						quantity: 12,
-						serviceType: 1,
-						evalmethod: 1,
-						modifyPriceNumber: 111,
-						orderstatus: 3,
-						bindStatus: 1,
-						modifyPriceNumber: 0
-					},
-				],
+				ordersInfoVOS: [],
 				orderMainStatus: '',
 				paymentMethod: '',
 				paymentStatus: '',
@@ -231,10 +189,6 @@ export default {
 				orderMainCode: '',
 				orderMainAmount: ''
 			},
-			show: true,
-			codeTime: 60,
-			timer: false,
-			options: [],
 			orderState: [
 				{name: '已提交', value: 0},
 				{name: '待审核', value: 2},
@@ -289,32 +243,20 @@ export default {
 				orderMainId: this.$route.query.orderMainId
 			}
 			GET_BUSINESS_ORDERMAIN_VIEW(params).then(res => {
-				Object.assign(this.form, res.data);
+				res.ordersInfoVOS.forEach(item =>{
+					item.bindStatus=item.bindStatus&&JSON.parse(item.bindStatus);
+					item.orderstatus=item.orderstatus&&JSON.parse(item.orderstatus);
+					item.serviceType=item.serviceType&&JSON.parse(item.serviceType);
+					item.unit=item.unit&&JSON.parse(item.unit);
+				})
+				Object.assign(this.form, res);
+				let tempArr=res.orderServicesInfoVO.areaName.split(',');
+				this.form.orderServicesInfoVO.areaName=tempArr.join('/');
+				this.form.evalmethod=res.evalmethod&&JSON.parse(res.evalmethod);
+				this.form.orderMainStatus=res.orderMainStatus&&JSON.parse(res.orderMainStatus);
+				this.form.paymentStatus=res.paymentStatus&&JSON.parse(res.paymentStatus);
+				this.form.paymentMethod=res.paymentMethod&&JSON.parse(res.paymentMethod);
 			});
-			let data = {
-				orderUserInfoVO: {
-					userPhone: 11,
-				},
-				orderServicesInfoVO: {
-					areaId: 22,
-					address: '山西',
-					consignee: '张三',
-					phone: '10086'
-				},
-				// orderRefundInfoVO: {
-				// 	refundCost: '11',
-				// 	refundDate: '2020.20.20',
-				// 	refundStatus: 1
-				// },
-				orderMainStatus: 2,
-				paymentMethod: 'WX_OFFLINE',
-				paymentStatus: 1,
-				evalmethod: 1,
-				paymentDate: '2020.01.01',
-				orderMainCode: 12345678,
-				orderMainAmount: 100
-			};
-			Object.assign(this.form, data);
 		},
 		/**
 		 * 获取邮票列表-绑定用
@@ -366,6 +308,8 @@ export default {
 				}).then(() => {
 					this.$message.success('取消成功!');
 				});
+			}).catch(() => {
+				
 			});
 		},
 		// 审核订单
@@ -379,6 +323,8 @@ export default {
 				}).then(() => {
 					this.$message.success('审核成功!');
 				});
+			}).catch(() => {
+				
 			});
 		},
 		// 绑定

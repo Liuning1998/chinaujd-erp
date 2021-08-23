@@ -59,7 +59,7 @@ export default {
         getUserMenu() {
             POST_BASE_MENU_ROUTE_LIST({
                 regSys: '6',
-                currentRegSys: sessionStorage.getItem('regSys')
+                currentRegSys: sessionStorage.getItem('currentRegSys')
             }).then(res =>{
                 this.menu = res;
             });

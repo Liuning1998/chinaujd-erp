@@ -10,7 +10,7 @@ const store = new Vuex.Store({
     token: '',
     name:'',
     userId:'',
-    regSys: '',
+    currentRegSys: '',
     groupData: [],
   },
   mutations:{
@@ -27,9 +27,9 @@ const store = new Vuex.Store({
       state.userId = userId;
       sessionStorage.setItem('userId', userId);
     },
-    set_regSys(state, regSys) {
-      state.regSys = regSys;
-      sessionStorage.setItem('regSys', regSys);
+    set_currentRegSys(state, currentRegSys) {
+      state.currentRegSys = currentRegSys;
+      sessionStorage.setItem('currentRegSys', currentRegSys);
     },
     // 删除token
     del_token(state) {
@@ -44,9 +44,9 @@ const store = new Vuex.Store({
       state.userId = '';
       sessionStorage.removeItem('userId');
     },
-    del_regSys(state) {
-      state.regSys = '';
-      sessionStorage.removeItem('regSys');
+    del_currentRegSys(state) {
+      state.currentRegSys = '';
+      sessionStorage.removeItem('currentRegSys');
     },
     // 设置分组数据
     set_group_data(state, data) {

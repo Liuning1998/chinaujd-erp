@@ -26,6 +26,7 @@ export function telFormat(value) {
  * 时间格式化
  */
 export function dateFormat(value) {
+    if (!value) return '';
     let dt = new Date(value);
     return `${dt.getFullYear()}-${(dt.getMonth() + 1)}-${dt.getDate()} ${dt.getHours()}:${dt.getMinutes()}:${dt.getSeconds()}`;
 }

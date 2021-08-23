@@ -109,11 +109,11 @@ export function POST_GETPACKTYPE(params) {
  * */
 // 对账单列表
 export function POST_FINANCE_SLIP_LIST(params) {
-  return post(baseURL + '/reconciation/silp/pageList', params);
+  return post(baseURL + '/philatelic/finance/reconciation/silp/pageList', params);
 }
 // 分页查询订单
 export function POST_FINANCE_SLIP_PAGELIST(params) {
-  return post(baseURL + '/financial/order/pageList', params);
+  return post(baseURL + '/philatelic/finance/order/pageList', params);
 }
 // 新增对账单
 export function POST_FINANCE_SLIP_ADD(params) {

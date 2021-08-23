@@ -28,5 +28,11 @@ export function telFormat(value) {
 export function dateFormat(value) {
     if (!value) return '';
     let dt = new Date(value);
-    return `${dt.getFullYear()}-${(dt.getMonth() + 1)}-${dt.getDate()} ${dt.getHours()}:${dt.getMinutes()}:${dt.getSeconds()}`;
+    let year = dt.getFullYear();
+    let month = (dt.getMonth() + 1) < 10 ? '0' + (dt.getMonth() + 1) : (dt.getMonth() + 1);
+    let date = dt.getDate() < 10 ? '0' + dt.getDate() : dt.getDate();
+    let hours = dt.getHours() < 10 ? '0' + dt.getHours() : dt.getHours();
+    let minutes = dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes();
+    let seconds = dt.getSeconds() < 10 ? '0' + dt.getSeconds() : dt.getSeconds();
+    return `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
 }

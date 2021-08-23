@@ -74,6 +74,7 @@ export default {
                 path: this.path
             });
             this.getCurrentUrl();
+            this.getUserMenu();
         },
     }
 }

@@ -52,8 +52,7 @@ export default {
 				menuId: this.$route.query.menuId
 			};
 			GET_USERCENTER_MENU_VIEW(params).then(res => {
-				this.form = res.data;
-				Object.assign(this.form, res.data);
+				Object.assign(this.form, res);
 			});
 		},
 		/**

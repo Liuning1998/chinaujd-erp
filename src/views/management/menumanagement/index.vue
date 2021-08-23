@@ -2,8 +2,12 @@
 	<div class="container">
 		<Breadcrumb></Breadcrumb>
 		<div class="table">
-			<el-table :data="tableData" style="width: 800px;margin-bottom: 20px;" row-key="menuId" border default-expand-all :tree-props="{children: 'children',hasChildren: 'hasChildren'}">
-				<el-table-column prop="menuName" label="名称" align="center"></el-table-column>
+			<el-table
+				:data="tableData"
+				style="width: 800px;margin-bottom: 20px;"
+				row-key="menuId" border
+				:tree-props="{children: 'children',hasChildren: 'hasChildren'}">
+				<el-table-column prop="menuName" label="名称"></el-table-column>
 				<el-table-column label="操作" align="center">
 					<template slot-scope="scope">
 						<el-button type="text" @click="handleEdit(scope.row.menuId)">编辑</el-button>
@@ -45,7 +49,7 @@ export default {
 				regSys: "6"
 			};
 			POST_USERCENTER_QUERY_ALL_MENU(params).then(res => {
-				this.tableData = res.data;
+				this.tableData = res;
 			});
 		},
 		/**

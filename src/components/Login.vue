@@ -112,7 +112,7 @@ export default{
                         password: this.form.password,
                         imageCode: this.form.imageCode,
                         uuid: this.uuid,
-                        currentRegSys: this.form.currentRegSys,
+                        regSys: this.form.currentRegSys,
                     };
                     login(params).then(res => {
                         this.$message.success('登录成功');

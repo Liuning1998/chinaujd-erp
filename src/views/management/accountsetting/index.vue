@@ -14,7 +14,7 @@
 		</el-form>
 		<div class="btns">
 			<!-- <el-button class="return">返回</el-button> -->
-			<el-button class="save" @click="handleSave">保存</el-button>
+			<el-button class="save" @click="handleSave('form')">保存</el-button>
 		</div>
 	</div>
 </template>
@@ -34,9 +34,9 @@ export default {
 	data() {
 		return {
 			form: {
-				password: '',
-				passwordNew: '',
-				surepassword: ''
+				password: null,
+				passwordNew: null,
+				surepassword: null
 			},
 			rules: {
 				password: [{required: true, message: '请输入', trigger: ["change", "blur"]}],
@@ -54,15 +54,26 @@ export default {
 		 * 修改密码
 		 * @function handleSave
 		 */
-		handleSave() {
-			let {password = '', passwordNew = ''} = this.form;
-			let params = {
-				password,
-				passwordNew
-			}
-			POST_USERCENTER_ADMIN_UPDATE_PASSWORD(params).then(() => {
-				this.$message.success('修改密码成功');
-			});
+		handleSave(formName) {
+			this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    let {password = '', passwordNew = ''} = this.form;
+					let params = {
+						password,
+						passwordNew
+					};
+                    POST_USERCENTER_ADMIN_UPDATE_PASSWORD(params).then(() => {
+						this.$message.success('修改密码成功');
+						let form = {
+							password: null,
+							passwordNew: null,
+							surepassword: null
+						};
+						Object.assign(this.form, form);
+						this.$router.push('/welcome');
+					});
+                }
+            });
 		},
 		/**
 		 * 验证新密码 和 确认密码

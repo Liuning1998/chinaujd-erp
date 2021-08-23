@@ -5,7 +5,7 @@
             <div class="search-item text-align-left">
                 <span>订单状态：</span>
                 <el-select v-model="form.orderStatus" placeholder="请输入" @change="handleChangeOrderStatus">
-                    <el-option label="全部" value=""></el-option>
+                    <el-option label="全部" :value="null"></el-option>
                     <el-option
                         v-for="item in orderStatus"
                         :key="item.value"
@@ -17,7 +17,7 @@
             <div class="search-item text-align-center">
                 <span>对账状态：</span>
                 <el-select v-model="form.status" placeholder="请输入">
-                    <el-option label="全部" value=""></el-option>
+                    <el-option label="全部" :value="null"></el-option>
                     <el-option
                         v-for="item in status"
                         :key="item.value"
@@ -54,63 +54,62 @@
                     label="订单编号">
                 </el-table-column>
                 <el-table-column
-                    width="100"
+                    width="170"
                     label="账单时间段">
                     <template slot-scope="scope">
-                        {{ scope.row.startTime }}~{{ scope.row.endTime }}
+                        {{ scope.row.startTime | dateFormat }}~{{ scope.row.endTime | dateFormat }}
                     </template>
                 </el-table-column>
                 <el-table-column
                     width="80"
                     label="收入金额">
                     <template slot-scope="scope">
-                        ¥{{ scope.row.incomeAmount }}
+                        ¥ {{ scope.row.incomeAmount }}
                     </template>
                 </el-table-column>
                 <el-table-column
                     width="80"
                     label="支出金额">
                     <template slot-scope="scope">
-                        ¥{{ scope.row.expensesAmount }}
+                        ¥ {{ scope.row.expensesAmount }}
                     </template>
                 </el-table-column>
                 <el-table-column
                     width="80"
                     label="收支净额">
                     <template slot-scope="scope">
-                        ¥{{ scope.row.incomeExpenditure }}
+                        ¥ {{ scope.row.incomeExpenditure }}
                     </template>
                 </el-table-column>
                 <el-table-column
                     width="80"
                     label="订单状态">
                     <template slot-scope="scope">
-                        {{ orderStatus.find(item => item.value === scope.row.orderStatus).label }}
+                        {{ scope.row.orderStatus ? (orderStatus.find(item => item.value === scope.row.orderStatus)).label : ''}}
                     </template>
                 </el-table-column>
                 <el-table-column
                     width="80"
                     label="对账状态">
                     <template slot-scope="scope">
-                        {{ orderStatus.find(item => item.value === scope.row.status).label }}
+                        {{ scope.row.status ? (status.find(item => item.value === scope.row.status)).label : ''}}
                     </template>
                 </el-table-column>
                 <el-table-column
                     width="120"
                     label="异常未处理金额">
                     <template slot-scope="scope">
-                        ¥{{ scope.row.exceptionUnprocessedAmount }}
+                        ¥ {{ scope.row.exceptionUnprocessedAmount }}
                     </template>
                 </el-table-column>
                 <el-table-column
                     width="110"
                     label="异常挂起金额">
                     <template slot-scope="scope">
-                        ¥{{ scope.row.exceptionHangAmount }}
+                        ¥ {{ scope.row.exceptionHangAmount }}
                     </template>
                 </el-table-column>
                 <el-table-column
-                    width="240"
                     label="操作">
                     <template slot-scope="scope">
                         <el-button type="text" @click="handleScan(scope.row)">查看</el-button>
@@ -263,8 +262,8 @@ export default {
                 }
             },
             form: {
-                orderStatus: '',
-                status: '',
+                orderStatus: null,
+                status: null,
                 time: ['', ''],
             },
             addOrderForm: {
@@ -272,10 +271,23 @@ export default {
                 time: ['', ''],
             },
             orderStatus: [
-                {label: '对账中', value: 0},
-                {label: '待结算', value: 1}
+                {label: '对账中', value: 1},
+                {label: '待结算', value: 2},
+                {label: '待审核', value: 3},
+                {label: '待付款', value: 4},
+                {label: '已结算', value: 5},
+                {label: '已拒绝', value: 6},
+                {label: '已关闭', value: 7},
+                {label: '已提交', value: 8},
+                {label: '处理中', value: 9},
+                {label: '已到账', value: 10},
             ],
-            status: [],
+            status: [
+                {label: '待对账', value: 0},
+                {label: '未平账', value: 1},
+                {label: '已平账', value: 2},
+                {label: '已提交结算', value: 3},
+            ],
             multipleSelection: [],
             tableData: [],
             settleTableData: [],
@@ -311,12 +323,13 @@ export default {
                 status: this.form.status
             }
             POST_FINANCE_SLIP_LIST(params).then(res => {
-                res.data.forEach(item => {
+                console.log(res);
+                res.rows.forEach(item => {
                     item.orderStatus = JSON.parse(item.orderStatus).value;
                     item.status = JSON.parse(item.status).value;
                 });
-                this.tableData = res.data.rows;
-                this.total = Number(res.data.total);
+                this.tableData = res.rows;
+                this.total = Number(res.total);
             });
         },
         /**
@@ -324,7 +337,7 @@ export default {
          * @function handleChangeOrderStatus
          */
         handleChangeOrderStatus(val) {
-            this.form.status = '';
+            this.form.status = null;
             if (val === '') {
                 this.status = [];
             }

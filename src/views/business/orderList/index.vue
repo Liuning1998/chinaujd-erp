@@ -414,7 +414,7 @@ export default {
 		 * 主订单展示发货按钮
 		 * @function showSendBtn
 		 * @params {Object} val 主订单信息
-		 * @params {Number} regSys => 登录角色 服务商: 3；供应链(鉴评点、封装厂): 6;
+		 * @params {Number} currentRegSys => 登录角色 服务商: 3；供应链(鉴评点、封装厂): 6;
 		 * @params {Number} evalmethod => 鉴评方式 远程鉴评: 0；批量鉴评：1;
 		 * @params {Number} orderMainStatus => 订单状态 已提交: 0; 待审核: 2; 待鉴评: 3; 封装中: 4; 待核验: 5; 已完成: 6; 已关闭: 7; 售后中: 8;
 		 * @params {Number} logisticsStatus => 物流状态 服务商未发货: 0; 服务商已发货: 1; 鉴评点未发货: 2; 鉴评点已发货: 3; 鉴评点已退货: 4; 封装厂未发货: 5; 封装厂已发货: 6;
@@ -427,25 +427,25 @@ export default {
 		 * 3-1、封装厂权限登录后，服务类型含有“封装”的数据
 		 */
 		showSendBtn(val) {
-			let regSys = sessionStorage.getItem('regSys');
-			if ([3].includes(regSys) &&
+			let currentRegSys = sessionStorage.getItem('currentRegSys');
+			if ([3].includes(currentRegSys) &&
 				[0].includes(val.evalmethod) &&
 				[4].includes(val.orderMainStatus) &&
 				[0].includes(val.logisticsStatus) &&
 				[1].includes(val.appraisalStatus)) {
 				return true;
 			} else if (
-				[3].includes(regSys) &&
+				[3].includes(currentRegSys) &&
 				[1].includes(val.evalmethod) &&
 				[0].includes(val.appraisalStatus)) {
 				return true;
 			} else if (
-				[6].includes(regSys) &&
+				[6].includes(currentRegSys) &&
 				[1].includes(val.evalmethod) &&
 				[2].includes(val.logisticsStatus)) {
 				return true;
 			} else if (
-				[6].includes(regSys) &&
+				[6].includes(currentRegSys) &&
 				[2, 3].includes(val.serviceType)) {
 				return true;
 			} else {

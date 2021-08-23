@@ -32,10 +32,10 @@
                         </template>
                     </el-input>
                 </el-form-item>
-                <el-form-item label="" prop="regSys">
-                    <el-select v-model="form.regSys" placeholder="请选择角色">
+                <el-form-item label="" prop="currentRegSys">
+                    <el-select v-model="form.currentRegSys" placeholder="请选择角色">
                         <el-option
-                            v-for="(item, index) in regSys" :key="index"
+                            v-for="(item, index) in currentRegSys" :key="index"
                             :label="item.label" :value="item.value">
                         </el-option>
                     </el-select>
@@ -59,11 +59,11 @@ export default{
                 username: '',
                 password: '',
                 imageCode: '',
-                regSys: ''
+                currentRegSys: ''
             },
             imgCode: '',
             uuid: '',
-            regSys: [
+            currentRegSys: [
                 {label: '供应链', value: 6},
                 {label: '服务商', value: 3},
             ],
@@ -76,7 +76,7 @@ export default{
                     {required: true, message: '请输入登录密码', trigger: ['blur', 'change']},
                 ],
                 imageCode: [{required: true, message: '请填写图形验证码', trigger: ['blur', 'change']}],
-                regSys: [{required: true, message: '请选择角色', trigger: ['blur', 'change']}]
+                currentRegSys: [{required: true, message: '请选择角色', trigger: ['blur', 'change']}]
             }
         }
     },
@@ -112,14 +112,14 @@ export default{
                         password: this.form.password,
                         imageCode: this.form.imageCode,
                         uuid: this.uuid,
-                        regSys: this.form.regSys,
+                        regSys: this.form.currentRegSys,
                     };
                     login(params).then(res => {
                         this.$message.success('登录成功');
                         this.$store.commit('set_token', res.token);
                         this.$store.commit('set_name', res.username);
                         this.$store.commit('set_userId', res.userId);
-                        this.$store.commit('set_regSys', this.form.regSys);
+                        this.$store.commit('set_currentRegSys', this.form.currentRegSys);
                         this.$router.push('/index');
                     }).catch(() => {
                         this.$message.warning('登录失败');

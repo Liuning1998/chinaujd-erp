@@ -9,7 +9,7 @@
             <div class="search-item text-align-center">
                 <span>订单类型：</span>
                 <el-select v-model="form.orderMainType" @change="handleChangeOrderType">
-                    <el-option label="全部" :value="0"></el-option>
+                    <el-option label="全部" :value="null"></el-option>
                     <el-option
                         v-for="item in orderType"
                         :key="item.value"
@@ -21,7 +21,7 @@
             <div class="search-item text-align-end">
                 <span>服务类型：</span>
                 <el-select v-model="form.serviceType">
-                    <el-option label="全部" :value="0"></el-option>
+                    <el-option label="全部" :value="null"></el-option>
                     <el-option
                         v-for="item in serviceType"
                         :key="item.value"
@@ -33,7 +33,7 @@
             <div class="search-item text-align-left">
                 <span>订单状态：</span>
                 <el-select v-model="form.orderMainStatus">
-                    <el-option label="全部" :value="0"></el-option>
+                    <el-option label="全部" :value="null"></el-option>
                     <el-option
                         v-for="item in orderStatus"
                         :key="item.value"
@@ -45,7 +45,7 @@
             <div class="search-item text-align-center">
                 <span>支付状态：</span>
                 <el-select v-model="form.paymentStatus" placeholder="">
-                    <el-option label="全部" :value="0"></el-option>
+                    <el-option label="全部" :value="null"></el-option>
                     <el-option
                         v-for="item in paymentStatus"
                         :key="item.value"
@@ -57,7 +57,7 @@
             <div class="search-item text-align-end">
                 <span>鉴评方式：</span>
                 <el-select v-model="form.evalMethod" placeholder="">
-                    <el-option label="全部" :value="0"></el-option>
+                    <el-option label="全部" :value="null"></el-option>
                     <el-option
                         v-for="item in evaluateType"
                         :key="item.value"
@@ -112,36 +112,52 @@
                     label="用户手机号">
                 </el-table-column>
                 <el-table-column
-                    prop="serviceType"
                     width="130"
                     label="服务类型">
+                    <template slot-scope="scope">
+                         {{ scope.row.serviceType ? (serviceType.find(item => item.value === scope.row.serviceType)).label : ''}}
+                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="evalMethod"
                     label="鉴评方式">
+                    <template slot-scope="scope">
+                        {{ scope.row.evalMethod ? (evaluateType.find(item => item.value === scope.row.evalMethod)).label : ''}}
+                    </template>
                 </el-table-column>
                 <el-table-column
                     prop="orderMainType"
                     label="订单类型">
+                    <template slot-scope="scope">
+                        {{ scope.row.orderMainType ? (orderType.find(item => item.value === scope.row.orderMainType)).label : ''}}
+                    </template>
                 </el-table-column>
                 <el-table-column
                     label="订单金额">
                     <template slot-scope="scope">
-                        ¥{{ scope.row.orderMainAmount }}
+                        <span></span>
+                        ¥ {{ scope.row.orderMainAmount }}
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="orderMainStatus"
                     label="订单状态">
+                    <template slot-scope="scope">
+                        {{ scope.row.orderMainStatus ? (orderStatus.find(item => item.value === scope.row.orderMainStatus)).label : ''}}
+                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="paymentStatus"
+                    prop=""
                     width="100"
                     label="支付状态">
+                    <template slot-scope="scope">
+                        {{ scope.row.paymentStatus ? (paymentStatus.find(item => item.value === scope.row.paymentStatus)).label : ''}}
+                    </template>
                 </el-table-column>
                 <el-table-column
-                    prop="gmtCreate"
+                    width="105"
                     label="创建时间">
+                    <template slot-scope="scope">
+                        {{ scope.row.gmtCreate | dateFormat }}
+                    </template>
                 </el-table-column>
                 <el-table-column
                     label="操作">
@@ -183,10 +199,10 @@ export default {
         return {
             form: {
                 orderNumber: '',
-                orderMainType: 0,
-                orderMainStatus: 0,
-                paymentStatus: 0,
-                evalMethod: 0,
+                orderMainType: null,
+                orderMainStatus: null,
+                paymentStatus: null,
+                evalMethod: null,
                 createTime: ['', ''],
                 paymentTime: ['', '']
             },
@@ -202,7 +218,18 @@ export default {
                 {label: '采集+评级+封装', value: 4},
                 {label: '核验', value: 5},
             ],
-            orderStatus: [],
+            orderStatus: [
+                {label: '对账中', value: 1},
+                {label: '待结算', value: 2},
+                {label: '待审核', value: 3},
+                {label: '待付款', value: 4},
+                {label: '已结算', value: 5},
+                {label: '已拒绝', value: 6},
+                {label: '已关闭', value: 7},
+                {label: '已提交', value: 8},
+                {label: '处理中', value: 9},
+                {label: '已到账', value: 10},
+            ],
             paymentStatus: [
                 {label: '已支付', value: 1},
             ],
@@ -248,14 +275,8 @@ export default {
                 };
             }
             POST_FINANCE_SLIP_PAGELIST(params).then(res => {
-                res.data.rows.forEach(item => {
-                    item.evalMethod = JSON.parse(item.evalMethod).desc;
-                    item.orderMainType = JSON.parse(item.orderMainType).desc;
-                    item.orderMainStatus = JSON.parse(item.orderMainStatus).desc;
-                    item.paymentStatus = JSON.parse(item.paymentStatus).desc;
-                });
-                this.tableData = res.data.rows;
-                this.total = Number(res.data.total);
+                this.tableData = res.rows;
+                this.total = Number(res.total);
             })
         },
         /**
@@ -267,14 +288,14 @@ export default {
                 this.orderStatus = [];
             }
             if (val === 1) {
-                this.form.orderMainStatus = 0;
+                this.form.orderMainStatus = null;
                 this.orderStatus = [
                     {label: '售后中', value: 11},
                     {label: '已关闭', value: 7},
                 ];
             }
             if (val === 2) {
-                this.form.orderMainStatus = 0;
+                this.form.orderMainStatus = null;
                 this.orderStatus = [
                     {label: '对账中', value: 1},
                     {label: '待结算', value: 2},
@@ -286,7 +307,7 @@ export default {
                 ];
             }
             if (val === 3) {
-                this.form.orderMainStatus = 0;
+                this.form.orderMainStatus = null;
                 this.orderStatus = [
                     {label: '已提交', value: 8},
                     {label: '处理中', value: 9},

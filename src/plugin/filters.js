@@ -23,7 +23,7 @@ export function telFormat(value) {
     return value.substr(0, 3) + "****" + value.substr(7);
 }
 /**
- * 时间格式化
+ * 时间格式化, 返回年月日 时分秒
  */
 export function dateFormat(value) {
     if (!value) return '';
@@ -35,4 +35,15 @@ export function dateFormat(value) {
     let minutes = dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes();
     let seconds = dt.getSeconds() < 10 ? '0' + dt.getSeconds() : dt.getSeconds();
     return `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
+}
+/**
+ * 时间格式化, 返回年月日
+ */
+ export function dateFormat2(value) {
+    if (!value) return '';
+    let dt = new Date(value);
+    let year = dt.getFullYear();
+    let month = (dt.getMonth() + 1) < 10 ? '0' + (dt.getMonth() + 1) : (dt.getMonth() + 1);
+    let date = dt.getDate() < 10 ? '0' + dt.getDate() : dt.getDate();
+    return `${year}-${month}-${date}`;
 }

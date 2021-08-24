@@ -54,7 +54,7 @@
                     label="订单编号">
                 </el-table-column>
                 <el-table-column
-                    width="170"
+                    width="175"
                     label="账单时间段">
                     <template slot-scope="scope">
                         {{ scope.row.startTime | dateFormat }}~{{ scope.row.endTime | dateFormat }}
@@ -112,26 +112,26 @@
                 <el-table-column
                     label="操作">
                     <template slot-scope="scope">
-                        <el-button type="text" @click="handleScan(scope.row)">查看</el-button>
+                        <el-button type="text" @click="handleScan(scope.row.id)">查看</el-button>
                         <el-divider
-                            v-if="Number(scope.row.orderStatus) === 0 && Number(scope.row.status) === 1"
+                            v-if="[0].includes(Number(scope.row.orderStatus)) && [1].includes(Number(scope.row.status))"
                             direction="vertical"></el-divider>
                         <el-button
-                            v-if="Number(scope.row.orderStatus) === 0 && Number(scope.row.status) === 1"
-                            type="text" @click="handleRefund(scope.row)">对账</el-button>
+                            v-if="[0].includes(Number(scope.row.orderStatus)) && [1].includes(Number(scope.row.status))"
+                            type="text" @click="handleRefund(scope.row.id)">对账</el-button>
                         <el-divider
-                            v-if="Number(scope.row.orderStatus) === 0 && Number(scope.row.status) === 1 ||
-                            ([1, 5, 6].includes(Number(scope.row.orderStatus)) && Number(scope.row.status) === 2)"
+                            v-if="([0].includes(Number(scope.row.orderStatus)) && [1].includes(Number(scope.row.status))) ||
+                            ([1, 5, 6].includes(Number(scope.row.orderStatus)) && [2].includes(Number(scope.row.status)))"
                             direction="vertical"></el-divider>
                         <el-button
-                            v-if="Number(scope.row.orderStatus) === 0 && Number(scope.row.status) === 1 ||
-                            ([1, 5, 6].includes(Number(scope.row.orderStatus)) && Number(scope.row.status) === 2)"
+                            v-if="([0].includes(Number(scope.row.orderStatus)) && [1].includes(Number(scope.row.status))) ||
+                            ([1, 5, 6].includes(Number(scope.row.orderStatus)) && [2].includes(Number(scope.row.status)))"
                             type="text" @click="handleDelete(scope.row.id)">删除</el-button>
                         <el-divider
-                            v-if="[1, 5, 6].includes(Number(scope.row.orderStatus)) && Number(scope.row.status) === 2"
+                            v-if="[1, 5, 6].includes(Number(scope.row.orderStatus)) && [2].includes(Number(scope.row.status))"
                             direction="vertical"></el-divider>
                         <el-button
-                            v-if="[1, 5, 6].includes(Number(scope.row.orderStatus)) && Number(scope.row.status) === 2"
+                            v-if="[1, 5, 6].includes(Number(scope.row.orderStatus)) && [2].includes(Number(scope.row.status))"
                             type="text" @click="handleSettle(scope.row.id)">结算</el-button>
                     </template>
                 </el-table-column>
@@ -203,37 +203,38 @@
                     </el-table-column>
                      <el-table-column
                         align="center"
+                        width="170"
                         label="账单时间段">
                         <template slot-scope="scope">
-                            {{ scope.row.startTime }}~{{ scope.row.endTime}}
+                            {{ scope.row.startTime | dateFormat }}~{{ scope.row.endTime | dateFormat }}
                         </template>
                     </el-table-column>
                      <el-table-column
                         align="center"
                         label="收入金额">
                         <template slot-scope="scope">
-                            ¥{{ scope.row.incomeAmount }}
+                            ¥ {{ scope.row.incomeAmount }}
                         </template>
                     </el-table-column>
                      <el-table-column
                         align="center"
                         label="支出金额">
                         <template slot-scope="scope">
-                            ¥{{ scope.row.expensesAmount }}
+                            ¥ {{ scope.row.expensesAmount }}
                         </template>
                     </el-table-column>
                      <el-table-column
                         align="center"
                         label="收支净额">
                         <template slot-scope="scope">
-                            ¥{{ scope.row.incomeExpenditure }}
+                            ¥ {{ scope.row.incomeExpenditure }}
                         </template>
                     </el-table-column>
                 </el-table>
             </div>
             <div slot="footer">
                 <el-button class="cancel" @click="settleDialogBeforeClose">取 消</el-button>
-                <el-button @click="handleSettleSubmit">确 定</el-button>
+                <el-button :disabled="!multipleSelection.length" @click="handleSettleSubmit">确 定</el-button>
             </div>
         </el-dialog>
     </div>
@@ -323,7 +324,6 @@ export default {
                 status: this.form.status
             }
             POST_FINANCE_SLIP_LIST(params).then(res => {
-                console.log(res);
                 res.rows.forEach(item => {
                     item.orderStatus = JSON.parse(item.orderStatus).value;
                     item.status = JSON.parse(item.status).value;
@@ -376,30 +376,36 @@ export default {
                 currentPage: this.currentPage,
                 pageSize: this.pageSize
             }
-            POST_FINANCE_SLIP_SETTLEMENT_LIST(params).then(() => {
+            POST_FINANCE_SLIP_SETTLEMENT_LIST(params).then(res => {
                 this.settleDialogVisible = true;
-                this.settleTableData = res.data.rows;
+                this.settleTableData = res.rows;
             });
         },
         /**
          * 查看订单
          * @function handleScan
-         * @parsms {Object} data 订单详情
+         * @parsms {String} id 订单id
          */
-        handleScan(data) {
-            // TODO: 更换订单详情页
-            this.$router.push('/finance/record/detail');
+        handleScan(id) {
+            this.$router.push({
+                path: '/finance/record/detail',
+                query: {
+                    id,
+                    activeName: 'order'
+                }
+            });
         },
         /**
          * 订单退款
          * @function handleRefund
-         * @params {Object} data 订单详情
+         * @params {String} id 订单id
          */
-        handleRefund(data) {
+        handleRefund(id) {
             this.$router.push({
                 path: '/finance/record/detail',
                 query: {
-                    id: data.id
+                    id,
+                    activeName: 'record'
                 }
             });
         },
@@ -416,13 +422,9 @@ export default {
                 let params = {
                     id
                 };
-                let value = JSON.parse(data.orderStatus).value;
-                if ([2, 3, 4, 5, 6].includes(value)) {
-                    this.$message.warning('该对账单已结算');
-                    return;
-                }
                 POST_FINANCE_SLIP_DELETE(params).then(() => {
                     this.$message.success('已删除');
+                    this.getData();
                 });
             }).catch(() => {});
         },
@@ -436,18 +438,42 @@ export default {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
             }).then(() => {
-                let value = JSON.parse(data.orderStatus).value;
-                if ([0].includes(value)) {
-                    this.$message.success('订单未对账，不可结算');
-                    return;
-                }
                 let params = {
                     shipIdList: [id]
                 }
                 POST_FINANCE_SLIP_SETTLEMENT_SAVE(params).then(() => {
                     this.$message.warning('已提交');
+                    this.getData();
                 });
             }).catch(() => {});
+        },
+        /**
+         * 申请结算
+         * @function handleSettleSubmit
+         */
+        handleSettleSubmit() {
+            this.$confirm('您确认要结算该对账单?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            }).then(() => {
+                let params = {
+                    shipIdList: this.multipleSelection
+                }
+                POST_FINANCE_SLIP_SETTLEMENT_SAVE(params).then(() => {
+                    this.$message.warning('已提交');
+                    this.settleDialogVisible = false;
+                    this.$refs.materialTable.clearSelection();
+                    this.getData();
+                });
+            }).catch(() => {});
+        },
+        /**
+         * 选择申请结算的订单
+         * @function handleSelectionChange
+         * @params {Array} val
+         */
+        handleSelectionChange(val) {
+            this.multipleSelection = val.map(item => item.id);
         },
         /**
          * 更改每页条数
@@ -490,7 +516,7 @@ export default {
                 this.$message.warning('请选择对账时段');
                 return;
             }
-            if (!type) {
+            if (![0, 1, 2, 3].includes(type)) {
                 this.$message.warning('请选择对账方式');
                 return;
             }
@@ -518,25 +544,6 @@ export default {
             this.settleDialogVisible = false;
             // 清空选择
             this.$refs.materialTable.clearSelection();
-        },
-        /**
-         * 申请结算
-         * @function handleSettleSubmit
-         */
-        handleSettleSubmit() {
-            this.settleDialogVisible = false;
-            // 清空选择
-            this.$refs.materialTable.clearSelection();
-            // this.$message.success('已申请');
-            this.getData();
-        },
-        /**
-         * 选择申请结算的订单
-         * @function handleSelectionChange
-         * @params {Array} val
-         */
-        handleSelectionChange(val) {
-            this.multipleSelection = val.map(item => item.id);
         },
         /**
          * 选择对账方式 周/月/年/自定义
@@ -615,7 +622,7 @@ export default {
         }
         .table {
             margin-top: 16px;
-            padding: 16px 24px 0 24px;
+            padding: 16px 16px 0 16px;
             border-radius: 2px;
             background: #fff;
             >>>.el-table {

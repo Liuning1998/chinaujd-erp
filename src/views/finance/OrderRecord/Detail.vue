@@ -24,27 +24,27 @@
             </div>
             <div class="order-info-item">
                 <span class="label">对账时间段：</span>
-                <span class="value">{{ orderInfo.startTime }}~{{ orderInfo.endTime }}</span>
+                <span class="value">{{ orderInfo.startTime | dateFormat2 }}~{{ orderInfo.endTime | dateFormat2 }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">创建时间：</span>
-                <span class="value">{{ orderInfo.gmtCreate }}</span>
+                <span class="value">{{ orderInfo.gmtCreate | dateFormat2 }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">收入金额：</span>
-                <span class="value">￥{{ orderInfo.incomeAmount || '0.00' }}</span>
+                <span class="value">￥ {{ orderInfo.incomeAmount || '0' }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">支出金额：</span>
-                <span class="value">￥{{ orderInfo.expensesAmount || '0.00' }}</span>
+                <span class="value">￥ {{ orderInfo.expensesAmount || '0' }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">异常未处理金额：</span>
-                <span class="value">￥{{ orderInfo.exceptionUnprocessedAmount || '0.00' }}</span>
+                <span class="value">￥ {{ orderInfo.exceptionUnprocessedAmount || '0' }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">异常挂起金额：</span>
-                <span class="value">￥{{ orderInfo.exceptionHangAmount || '0.00' }}</span>
+                <span class="value">￥ {{ orderInfo.exceptionHangAmount || '0' }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">创建人：</span>
@@ -54,10 +54,12 @@
         <div class="order-detail">
             <el-tabs v-model="activeName" @tab-click="handleClick">
                 <el-tab-pane label="订单明细" name="order">
-                    <order-detail :table-data="orderInfo.rconciliationOrderAssociateList"></order-detail>
+                    <order-detail :table-data="orderInfo.rconciliationOrderAssociateList ?
+                        orderInfo.rconciliationOrderAssociateList.rows : []"></order-detail>
                 </el-tab-pane>
                 <el-tab-pane label="对账明细" name="record">
-                    <record-detail :table-data="orderInfo.rconciliationDetailList"></record-detail>
+                    <record-detail :table-data="orderInfo.rconciliationDetailList ?
+                        orderInfo.rconciliationDetailList.rows : []"></record-detail>
                 </el-tab-pane>
             </el-tabs>
         </div>
@@ -107,6 +109,15 @@ export default {
     created() {
         this.getData();
     },
+    watch: {
+        '$route': {
+            handler() {
+                this.activeName = this.$route.query.activeName;
+            },
+            deep: true,
+            immediate: true,
+        }
+    },
     methods: {
         /**
          * 获取对账单详情
@@ -119,13 +130,13 @@ export default {
                 currentPage: this.currentPage,
                 pageSize: this.pageSize
             };
-            let post_interface = this.activeName === 'order' ? POST_FINANCE_SLIP_RECONCATION_INFO : POST_FINANCE_SLIP_INFO;
+            let post_interface = this.activeName === 'order' ? POST_FINANCE_SLIP_INFO : POST_FINANCE_SLIP_RECONCATION_INFO;
             post_interface(params).then(res => {
-                res.data.orderType = JSON.parse(res.data.orderType).desc;
-                res.data.orderStatus = JSON.parse(res.data.orderStatus).desc;
-                res.data.status = JSON.parse(res.data.status).desc;
-                Object.assign(this.orderInfo, res.data);
-                this.total = Number(res.data.total);
+                res.orderType = JSON.parse(res.orderType).desc;
+                res.orderStatus = JSON.parse(res.orderStatus).desc;
+                res.status = JSON.parse(res.status).desc;
+                Object.assign(this.orderInfo, res);
+                this.total = Number(res.total);
             });
         },
         /**
@@ -178,6 +189,13 @@ export default {
          */
         handleClick(tab) {
             this.activeName = tab.name;
+            this.$router.push({
+                path: '/finance/record/detail',
+                query: {
+                    id: this.$route.query.id,
+                    activeName: tab.name
+                }
+            })
             this.getData();
         }
     }

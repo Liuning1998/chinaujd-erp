@@ -117,31 +117,31 @@ export function POST_FINANCE_SLIP_PAGELIST(params) {
 }
 // 新增对账单
 export function POST_FINANCE_SLIP_ADD(params) {
-  return post(baseURL + '/reconciation/silp/add', params);
+  return post(baseURL + '/philatelic/finance/reconciation/silp/add', params);
 }
 // 删除对账单
 export function POST_FINANCE_SLIP_DELETE(params) {
-  return post(baseURL + '/reconciation/silp/delete', params);
+  return post(baseURL + '/philatelic/finance/reconciation/silp/delete', params);
 }
 // 对账单-订单结算列表
 export function POST_FINANCE_SLIP_SETTLEMENT_LIST(params) {
-  return post(baseURL +'/reconciation/silp/settlementList', params);
+  return post(baseURL +'/philatelic/finance/reconciation/silp/settlementList', params);
 }
 // 获取对账单对账内容详情
 export function POST_FINANCE_SLIP_RECONCATION_INFO(params) {
-  return post(baseURL + '/reconciation/silp/reconciationInfo', params);
+  return post(baseURL + '/philatelic/finance/reconciation/silp/reconciationInfo', params);
 }
 // 获取对账单订单内容详情
 export function POST_FINANCE_SLIP_INFO(params) {
-  return post(baseURL + '/reconciation/silp/info', params);
+  return post(baseURL + '/philatelic/finance/reconciation/silp/info', params);
 }
 // 根据订单编号查询流水
 export function POST_FINANCE_SLIP_DETAIL(params) {
-  return post(baseURL + '/reconciation/silp/getDetailByOrderNum', params);
+  return post(baseURL + '/philatelic/finance/reconciation/silp/getDetailByOrderNum', params);
 }
 // 对账单信息-导出
 export function POST_EXPORT_FINANCE_SLIP_EXPORT(params) {
-  return postExport(baseURL + '/reconciation/silp/export', params);
+  return postExport(baseURL + '/philatelic/finance/reconciation/silp/export', params);
 }
 // 订单对账-订单结算申请
 export function POST_FINANCE_SLIP_SETTLEMENT_SAVE(params) {

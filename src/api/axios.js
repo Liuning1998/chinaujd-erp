@@ -155,7 +155,7 @@ export function postExport(url, params) {
         responseType: 'blob'
       })
       .then(res => {
-        resolve(res.data);
+        resolve(res);
       })
       .catch(err => {
         if (!err.response) {

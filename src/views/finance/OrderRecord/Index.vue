@@ -150,20 +150,26 @@
         </div>
         <el-dialog
             title="新增对账单"
-            width="480px"
+            width="540px"
             class="add-dialog"
             :visible.sync="addOrderDialogVisible"
             :before-close="addOrderDialogBeforeClose">
             <div class="add-dialog-item">
                 <span>对账时段：</span>
                 <el-date-picker
-                    v-model="addOrderForm.time"
-                    type="datetimerange"
-                    :picker-options="pickerOptions"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    :default-time="['00:00:00', '23:59:59']">
+                    disabled
+                    v-model="addOrderForm.startTime"
+                    type="datetime"
+                    placeholder="开始日期"
+                    default-time="00:00:00">
+                </el-date-picker>
+                <span class="separator">至</span>
+                <el-date-picker
+                    v-model="addOrderForm.endTime"
+                    :picker-options="endTimePickerOptions"
+                    type="datetime"
+                    placeholder="结束日期"
+                    default-time="23:59:59">
                 </el-date-picker>
             </div>
             <div class="add-dialog-item">
@@ -247,6 +253,7 @@ import {
     POST_FINANCE_SLIP_DELETE,
     POST_FINANCE_SLIP_SETTLEMENT_SAVE,
     POST_FINANCE_SLIP_SETTLEMENT_LIST,
+    POST_FINANCE_SLIP_GETSTARTTIME,
 } from '@/api/request';
 
 import Breadcrumb from '@/components/Breadcrumb';
@@ -262,6 +269,7 @@ export default {
                     return time.getTime() > Date.now();
                 }
             },
+            endTimePickerOptions: {},
             form: {
                 orderStatus: null,
                 status: null,
@@ -269,19 +277,20 @@ export default {
             },
             addOrderForm: {
                 type: null,
-                time: ['', ''],
+                startTime: '',
+                endTime: ''
             },
             orderStatus: [
-                {label: '对账中', value: 1},
-                {label: '待结算', value: 2},
-                {label: '待审核', value: 3},
-                {label: '待付款', value: 4},
-                {label: '已结算', value: 5},
-                {label: '已拒绝', value: 6},
-                {label: '已关闭', value: 7},
-                {label: '已提交', value: 8},
-                {label: '处理中', value: 9},
-                {label: '已到账', value: 10},
+                {label: '对账中', value: 0},
+                {label: '待结算', value: 1},
+                {label: '待审核', value: 2},
+                {label: '待付款', value: 3},
+                {label: '已结算', value: 4},
+                {label: '已拒绝', value: 5},
+                {label: '已关闭', value: 6},
+                {label: '已提交', value: 7},
+                {label: '处理中', value: 8},
+                {label: '已到账', value: 9},
             ],
             status: [
                 {label: '待对账', value: 0},
@@ -298,10 +307,10 @@ export default {
             addOrderDialogVisible: false,
             settleDialogVisible: false,
             orderCycle: [
-                {label: '全部', value: 0},
-                {label: '周', value: 1},
-                {label: '月', value: 2},
-                {label: '年', value: 3},
+                {label: '全部', value: 'ALL'},
+                {label: '周', value: 'WEEK'},
+                {label: '月', value: 'MONTH'},
+                {label: '年', value: 'YEAR'},
             ],
         }
     },
@@ -364,7 +373,16 @@ export default {
          * @function handleAddOrder
          */
         handleAddOrder() {
-            this.addOrderDialogVisible = true;
+            let that = this;
+            that.addOrderDialogVisible = true;
+            POST_FINANCE_SLIP_GETSTARTTIME().then(res => {
+                that.addOrderForm.startTime = res;
+                that.endTimePickerOptions = {
+                    disabledDate(time) {
+                        return time.getTime() < new Date(res).getTime();
+                    }
+                }
+            });
         },
         /**
          * 申请结算
@@ -501,7 +519,8 @@ export default {
             this.addOrderDialogVisible = false;
             let obj = {
                 type: null,
-                time: ['', ''],
+                startTime: '',
+                endTime: ''
             };
             Object.assign(this.addOrderForm, obj);
         },
@@ -510,13 +529,13 @@ export default {
          * @function handleAddOrderSubmit
          */
         handleAddOrderSubmit() {
-            let {time: [startTime = '', endTime = ''], type = ''} = this.addOrderForm;
+            let {startTime = '', endTime = '', type = ''} = this.addOrderForm;
 
             if (!startTime || !endTime) {
                 this.$message.warning('请选择对账时段');
                 return;
             }
-            if (![0, 1, 2, 3].includes(type)) {
+            if (!type) {
                 this.$message.warning('请选择对账方式');
                 return;
             }
@@ -531,7 +550,8 @@ export default {
                 this.addOrderDialogVisible = false;
                 let obj = {
                     type: null,
-                    time: ['', ''],
+                    startTime: '',
+                    endTime: ''
                 };
                 Object.assign(this.addOrderForm, obj);
             });
@@ -717,6 +737,7 @@ export default {
                         color: #333333;
                         text-align: center;
                         cursor: pointer;
+                        box-sizing: border-box;
                     }
                     .select-btns {
                         background: #FFFFFF;
@@ -724,11 +745,18 @@ export default {
                         color: #1890FF;
                     }
                 }
-                >>>.el-date-editor--datetimerange {
-                    width: 360px;
-                    height: 32px;
-                    padding: 0 10px;
+                >>>.el-date-editor {
+                    width: 194px;
                     border-radius: 2px;
+                    .el-input__inner,
+                    .el-input__icon {
+                        height: 32px;
+                        line-height: 32px;
+                    }
+                }
+                .separator {
+                    width: 20px;
+                    text-align: center;
                 }
             }
             >>>.el-dialog__header {

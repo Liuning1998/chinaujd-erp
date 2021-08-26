@@ -151,6 +151,14 @@ export function POST_FINANCE_SLIP_SETTLEMENT_SAVE(params) {
 export function POST_FINANCE_SLIP_SETTLEMENT_PAGELIST(params) {
   return post(baseURL + '/philatelic/finance/settlement/slip/pageList', params);
 }
+// 获取新增对账单开始时间
+export function POST_FINANCE_SLIP_GETSTARTTIME() {
+  return post(baseURL + '/philatelic/finance/reconciation/silp/getStartTime');
+}
+// 下载模版
+export function POST_FINANCE_SLIP_DOWNLOAD_TEMPLATE() {
+  return post(baseURL + '/philatelic/finance/reconciation/silp/downloadTemplate');
+}
 // 订单结算-审核-通过
 export function POST_FINANCE_SLIP_SETTLEMENT_SUCCESS(params) {
   return post(baseURL + '/philatelic/finance/settlement/slip/success', params);
@@ -319,6 +327,10 @@ export function POST_BUSINESS_APPRAISAL_ORDER_LIST(params) {
 // 获取侧边栏
 export function POST_BASE_MENU_ROUTE_LIST(params) {
   return post(baseURL + '/userCenter/menuRoute/query', params);
+}
+let templateUploadUrl = baseURL + '/philatelic/finance/reconciation/silp/uploadReconciliation';
+export {
+  templateUploadUrl,
 }
 /**
  * 其他 End

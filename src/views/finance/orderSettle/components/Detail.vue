@@ -24,23 +24,23 @@
             </div>
             <div class="order-info-item">
                 <span class="label">结算时间段：</span>
-                <span class="value">{{ orderInfo.startTime }}~{{ orderInfo.endTime }}</span>
+                <span class="value">{{ orderInfo.startTime | dateFormat2 }}~{{ orderInfo.endTime | dateFormat2 }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">创建时间：</span>
-                <span class="value">{{ orderInfo.gmtCreate }}</span>
+                <span class="value">{{ orderInfo.gmtCreate | dateFormat2 }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">收入金额：</span>
-                <span class="value">¥{{ orderInfo.incomeAmount }}</span>
+                <span class="value">¥ {{ orderInfo.incomeAmount || '0.00' }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">支出金额：</span>
-                <span class="value">¥{{ orderInfo.expensesAmount }}</span>
+                <span class="value">¥ {{ orderInfo.expensesAmount || '0.00' }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">结算金额：</span>
-                <span class="value">¥{{ orderInfo.incomeExpenditure }}</span>
+                <span class="value">¥ {{ orderInfo.incomeExpenditure || '0.00' }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">创建人：</span>
@@ -52,7 +52,7 @@
             </div>
             <div class="order-info-item">
                 <span class="label">审核时间：</span>
-                <span class="value">{{ orderInfo.examineDatetime }}</span>
+                <span class="value">{{ orderInfo.examineDatetime | dateFormat2 }}</span>
             </div>
             <div class="order-info-item">
                 <span class="label">结算人：</span>
@@ -60,7 +60,7 @@
             </div>
             <div class="order-info-item">
                 <span class="label">结算时间：</span>
-                <span class="value">{{ orderInfo.settlementDatetime }}</span>
+                <span class="value">{{ orderInfo.settlementDatetime | dateFormat2 }}</span>
             </div>
         </div>
         <div class="order-detail">
@@ -136,17 +136,9 @@ export default {
                 settlementId: this.$route.query.settlementId
             };
             POST_FINANCE_SLIP_ORDER_VIEW(params).then(res => {
-                res.orderType = JSON.parse(res.orderType).desc;
-                res.orderStatus = JSON.parse(res.orderStatus).desc;
                 res.examineStatus = JSON.parse(res.examineStatus).desc;
-                res.data.rows.forEach(item => {
-                    item.orderType = JSON.parse(item.orderType).desc;
-                    item.orderStatus = JSON.parse(item.orderStatus).desc;
-                    item.examineStatus = JSON.parse(item.examineStatus).desc;
-                    item.reconciliationStatus = JSON.parse(item.reconciliationStatus).desc;
-                });
-                Object.assign(this.orderInfo, res.data);
-                this.total = Number(res.data.total);
+                Object.assign(this.orderInfo, res);
+                this.total = Number(res.total);
             })
         },
         /**
@@ -160,16 +152,9 @@ export default {
                 settlementId: this.$route.query.settlementId
             };
             POST_FINANCE_SLIP_SETTLEMENT_VIEW(params).then(res => {
-                res.orderType = JSON.parse(res.orderType).desc;
-                res.orderStatus = JSON.parse(res.orderStatus).desc;
                 res.examineStatus = JSON.parse(res.examineStatus).desc;
-                res.data.rows.forEach(item => {
-                    item.orderType = JSON.parse(item.orderType).desc;
-                    item.orderStatus = JSON.parse(item.orderStatus).desc;
-                    item.examineStatus = JSON.parse(item.examineStatus).desc;
-                });
-                Object.assign(this.orderInfo, res.data);
-                this.total = Number(res.data.total);
+                Object.assign(this.orderInfo, res);
+                this.total = Number(res.total);
             })
         },
         /**

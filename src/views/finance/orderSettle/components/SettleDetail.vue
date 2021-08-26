@@ -15,7 +15,7 @@
             <el-table-column
                 label="结算金额">
                 <template slot-scope="scope">
-                    <span>¥ {{ scope.row.userAmount }}</span>
+                    <span>¥ {{ scope.row.userAmount || '0.00' }}</span>
                 </template>
             </el-table-column>
             <el-table-column

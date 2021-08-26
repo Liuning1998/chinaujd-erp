@@ -9,7 +9,7 @@ import {
   get,
   post,
   postExport
-} from '@/api/axios'
+} from '@/api/axios';
 
 let baseURL = '';
 
@@ -328,9 +328,15 @@ export function POST_BUSINESS_APPRAISAL_ORDER_LIST(params) {
 export function POST_BASE_MENU_ROUTE_LIST(params) {
   return post(baseURL + '/userCenter/menuRoute/query', params);
 }
+// 获取token
+export function GET_TOKEN(params) {
+  return get(baseURL + '/imageFile/getToken', params);
+}
 let templateUploadUrl = baseURL + '/philatelic/finance/reconciation/silp/uploadReconciliation';
+let payOrderUploadUrl = baseURL + '/imageFile/upload';
 export {
   templateUploadUrl,
+  payOrderUploadUrl,
 }
 /**
  * 其他 End

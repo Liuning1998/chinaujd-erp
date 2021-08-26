@@ -12,12 +12,20 @@ const store = new Vuex.Store({
     userId:'',
     currentRegSys: '',
     groupData: [],
+    tokens: {
+      ossAccessKeyId: null,
+      ossAccessKeySecret: null,
+      ossToken: null
+    },
   },
   mutations:{
     // 存储token
     set_token(state, token) {
       state.token = token;
       sessionStorage.setItem('token', token);
+    },
+    set_tokens(state, tokens) {
+      Object.assign(state.tokens, tokens);
     },
     set_name(state, name) {
       state.name = name;

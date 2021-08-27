@@ -2,7 +2,7 @@
     <div class="container">
         <div class="capital-type">
             <span>资金类型：</span>
-            <el-select v-model="flagType" placeholder="">
+            <el-select v-model="flagType" placeholder="" @change="handleChange">
                 <el-option label="全部" :value="2"></el-option>
                 <el-option
                     v-for="item in flagTypeOptions"
@@ -13,7 +13,7 @@
             </el-select>
         </div>
         <div class="capital-info">
-            <div class="capital-info-item" v-for="item in tableData" :key="item.historyId">
+            <div class="capital-info-item" v-for="(item, index) in tableData" :key="item.historyId">
                 <img v-if="item.flag === 1" src="~@/assets/images/finance/icon_appraisal_income.png" alt="鉴定收益">
                 <img v-else src="~@/assets/images/finance/icon_cash_out.png" alt="提现">
                 <div class="detail">
@@ -23,13 +23,13 @@
                     </div>
                 </div>
                 <div class="profit">
-                    <span class="top">{{ item.flag === 1 ? '+' : '-' }}{{ item.trxAmount }}</span>
+                    <span class="top">{{ item.trxAmount }}</span>
                     <span class="bottom">{{ item.showStatus }}<i class="received"></i></span>
                 </div>
                 <div class="more" v-if="item.flag === 0">
-                    <el-button type="text" @click="showMore">查看详情<i :class="item.showMoreIcon"></i></el-button>
+                    <el-button type="text" @click="showMore(index)">查看详情<i :class="item.showMoreIcon"></i></el-button>
                 </div>
-                <div class="more-info" v-if="item.flag === 0" :class="item.showMoreIcon === 'down' ? 'show' : 'hidden'">
+                <div class="more-info" v-if="item.flag === 0" :class="item.showMoreIcon === 'up' ? 'show' : 'hidden'">
                     <el-row>
                         <el-col :span="8">
                             <span class="label">提现金额：</span>
@@ -61,10 +61,8 @@
                     <el-row>
                         <el-col :span="8">
                             <span class="label">到账账户：</span>
-                            <span>{{ item.form.bankName }}（{{ item.form.cardNumber ?
-                                (item.form.cardNumber).substring(item.form.cardNumber.length - 4) :
-                                '' }}）
-                            </span>
+                            <span>{{ item.form.bankName }}</span>
+                            <span v-if="item.form.cardNumber">（{{ (item.form.cardNumber).substring(item.form.cardNumber.length - 4) }}）</span>
                         </el-col>
                     </el-row>
                 </div>
@@ -120,15 +118,16 @@ export default {
                 flagType: this.flagType
             };
             POST_FINANCE_SLIP_QUERY_ACCOUNT_HISTORY(params).then(res => {
-                res.data.historyList.forEach(item => {
+                res.historyList.forEach(item => {
+                    item.showMoreIcon = '';
                     item.flag = JSON.parse(item.flag).value;
                     if (!item.flag) {
                         item.showMoreIcon = 'down';
                         item.form = {};
                     }
                 })
-                this.tableData = res.data.historyList;
-                this.total = Number(res.data.total);
+                this.tableData = res.historyList;
+                this.total = Number(res.total);
             });
         },
         /**
@@ -145,7 +144,7 @@ export default {
             let params = {
                 cashoutRecId: this.tableData[index].historyId
             }
-            POST_FINANCE_SLIP_CASHOUT_INFO(params).then(res => {
+            this.tableData[index].showMoreIcon === 'up' && POST_FINANCE_SLIP_CASHOUT_INFO(params).then(res => {
                 Object.assign(this.tableData[index].form, res.data);
             })
         },
@@ -167,6 +166,14 @@ export default {
             this.currentPage = currentPage;
             this.getData();
         },
+        /**
+         * 更改资金类型
+         * @function handleChange
+         */
+        handleChange(val) {
+            this.flagType = val;
+            this.getData();
+        }
     }
 }
 </script>
@@ -289,7 +296,7 @@ export default {
                     }
                 }
                 .show {
-                    display: blick;
+                    display: block;
                 }
                 .hidden {
                     display: none;

@@ -326,7 +326,7 @@ export default {
                 this.$message.warning('请选择结算方式');
                 return;
             }
-            this.payForm.payProve = this.payForm.payProve.map(item => item.response.data.path);
+            this.payForm.payProve = this.payForm.payProve.map(item => item.response.data.path.split('?')[0]).join(',');
             let params = this.payForm;
             POST_FINANCE_SLIP_PAY(params).then(() => {
                 this.$message.success('支付完成');

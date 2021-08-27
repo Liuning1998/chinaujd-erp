@@ -14,8 +14,10 @@
                     label="订单号">
                 </el-table-column>
                 <el-table-column
-                    prop="platformOrderTransactionTime"
                     label="交易时间">
+                    <template slot-scope="scope">
+                        {{ scope.row.platformOrderTransactionTime | dateFormat}}
+                    </template>
                 </el-table-column>
                 <el-table-column
                     label="交易金额">
@@ -48,9 +50,14 @@
                         <span>三方账户对账数据</span>
                         <div class="btns">
                             <span class="download">
-                                <el-button type="text" size="small"><i></i>模版下载</el-button>
+                                <el-button type="text" size="small" @click="handleDownload"><i></i>模版下载</el-button>
                             </span>
-                            <el-upload action="#" class="upload">
+                            <el-upload
+                                :action="templateUploadUrl" class="upload"
+                                accept=".xlsx, .xls"
+                                :headers="headersData"
+                                :on-success="onSuccess"
+                                :show-file-list="false">
                                 <el-button type="text" size="small"><i></i>上传对账数据</el-button>
                             </el-upload>
                         </div>
@@ -59,7 +66,7 @@
                 <el-table-column
                     label="交易金额">
                     <template slot-scope="scope">
-                        ¥{{ scope.row.thirdPartTransactionAmount }}
+                        ¥ {{ scope.row.thirdPartTransactionAmount }}
                     </template>
                 </el-table-column>
                 <!-- <el-table-column
@@ -69,8 +76,10 @@
                     </template>
                 </el-table-column> -->
                 <el-table-column
-                    prop="thirdPartTransacionTime"
                     label="交易时间">
+                    <template slot-scope="scope">
+                        {{ scope.row.thirdPartTransacionTime | dateFormat}}
+                    </template>
                 </el-table-column>
                 <el-table-column
                     prop="thirdPartNumber"
@@ -104,8 +113,10 @@
                             label="交易流水号">
                         </el-table-column>
                         <el-table-column
-                            prop="thirdPartTransacionTime"
                             label="交易时间">
+                            <template slot-scope="scope">
+                                {{ scope.row.thirdPartTransacionTime | dateFormat}}
+                            </template>
                         </el-table-column>
                         <el-table-column
                             label="交易金额">
@@ -125,12 +136,18 @@
 
 <script>
 import {
+    templateUploadUrl,
     POST_FINANCE_SLIP_DETAIL,
+    POST_FINANCE_SLIP_DOWNLOAD_TEMPLATE
 } from '@/api/request';
 
 export default {
     data() {
         return {
+            templateUploadUrl: templateUploadUrl,
+            headersData: {
+                'Authorization': sessionStorage.getItem('token'),
+            },
             abnormalTableData: [],
             orderNumber: null,
             dialogVisible: false,
@@ -165,6 +182,18 @@ export default {
          */
         handleClose() {
             this.dialogVisible = false;
+        },
+        /**
+         * 下载模版
+         * @function handleDownload
+         */
+        handleDownload() {
+            POST_FINANCE_SLIP_DOWNLOAD_TEMPLATE().then(res => {
+                window.location.href = res;
+			});
+        },
+        onSuccess() {
+            this.$message.success('上传成功');
         },
     }
 }

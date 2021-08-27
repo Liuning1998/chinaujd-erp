@@ -11,17 +11,17 @@
                     label="结算订单编号">
                 </el-table-column>
                 <el-table-column
-                    width="100"
+                    width="170"
                     label="结算时间段">
                     <template slot-scope="scope">
-                        {{ scope.row.startTime }}~{{ scope.row.endTime }}
+                        {{ scope.row.startTime | dateFormat }}~{{ scope.row.endTime | dateFormat }}
                     </template>
                 </el-table-column>
                 <el-table-column
                     width="80"
                     label="收入金额">
                     <template slot-scope="scope">
-                        <span>¥{{ scope.row.incomeAmount }}</span>
+                        <span>¥ {{ scope.row.incomeAmount }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -85,12 +85,12 @@
                     label="操作">
                     <template slot-scope="scope">
                         <el-button type="text" @click="handleScan(scope.row.settlementId)">查看</el-button>
-                        <el-divider v-if="[0].includes(scopw.row.examineStatus)" direction="vertical"></el-divider>
-                        <el-button v-if="[0].includes(scopw.row.examineStatus)" type="text" @click="handleExamine(scope.row.settlementId)">审核</el-button>
+                        <el-divider v-if="[0].includes(scope.row.examineStatus)" direction="vertical"></el-divider>
+                        <el-button v-if="[0].includes(scope.row.examineStatus)" type="text" @click="handleExamine(scope.row.settlementId)">审核</el-button>
                         <!-- <el-divider v-if="[1].includes(scopw.row.examineStatus)" direction="vertical"></el-divider>
                         <el-button v-if="[1].includes(scopw.row.examineStatus)" type="text" @click="handleDownload(scope.row)">下载</el-button> -->
-                        <el-divider v-if="[1].includes(scopw.row.examineStatus)" direction="vertical"></el-divider>
-                        <el-button v-if="[1].includes(scopw.row.examineStatus)" type="text" @click="handlePayment(scope.row.settlementId)">支付</el-button>
+                        <el-divider v-if="[1].includes(scope.row.examineStatus)" direction="vertical"></el-divider>
+                        <el-button v-if="[1].includes(scope.row.examineStatus)" type="text" @click="handlePayment(scope.row.settlementId)">支付</el-button>
                     </template>
                 </el-table-column>
             </el-table-column>
@@ -102,10 +102,10 @@
             :before-close="handleCloseSettle">
             <div>
                 <div class="radio">
-                    <el-radio v-model="reviewForm.radio" :label="1">通过</el-radio>
-                    <el-radio v-model="reviewForm.radio" :label="2">驳回</el-radio>
+                    <el-radio v-model="reviewForm.radio" label="pass">通过</el-radio>
+                    <el-radio v-model="reviewForm.radio" label="reject">驳回</el-radio>
                 </div>
-                <div class="reject" v-if="reviewForm.radio === 2">
+                <div class="reject" v-if="reviewForm.radio === 'reject'">
                     <span>驳回原因：</span>
                     <el-input type="textarea" v-model="reviewForm.rejectData"></el-input>
                 </div>
@@ -135,10 +135,14 @@
                 <span>支付凭证：</span>
                 <div class="upload">
                     <el-upload
-                        action="#"
+                        :action="payOrderUploadUrl"
                         multiple
+                        :data="imageUploadForm"
+                        :headers="headersData"
                         accept=".jpg,.png,.gif"
                         list-type="picture-card"
+                        :on-success="onSuccess"
+                        :on-remove="onRemove"
                         :file-list="payForm.payProve">
                         <i class="el-icon-plus"></i>
                     </el-upload>
@@ -157,11 +161,23 @@ import {
     POST_FINANCE_SLIP_SETTLEMENT_SUCCESS,
     POST_FINANCE_SLIP_SETTLEMENT_REJECT,
     POST_FINANCE_SLIP_PAY,
+    payOrderUploadUrl,
+    GET_TOKEN,
 } from '@/api/request';
 
 export default {
     data() {
         return {
+            payOrderUploadUrl: payOrderUploadUrl,
+            headersData: {
+                'Authorization': sessionStorage.getItem('token'),
+            },
+            imageUploadForm: {
+                ossToken: null,
+                ossAccessKeyId: null,
+                ossAccessKeySecret: null,
+                type: 'PHILATELIC_PROVE'
+            },
             settlementDialogVisible: false,
             paymentDialogVisible: false,
             reviewForm: {
@@ -224,8 +240,14 @@ export default {
          * @params {Number} settlementId 结算订单编号
          */
         handlePayment(settlementId) {
-            this.payForm.settlementId = settlementId;
-            this.paymentDialogVisible = true;
+            let params = {
+                systemType: 'PHILATELIC'
+            }
+            GET_TOKEN(params).then(res => {
+                Object.assign(this.imageUploadForm, res);
+                this.payForm.settlementId = settlementId;
+                this.paymentDialogVisible = true;
+            });
         },
         /**
          * 关闭结算审核弹窗
@@ -249,15 +271,19 @@ export default {
                 this.$message.warning('请选择审核意见');
                 return;
             }
-            if (this.reviewForm.radio === 2 && !this.reviewForm.rejectData) {
+            if (this.reviewForm.radio === 'reject' && !this.reviewForm.rejectData) {
                 this.$message.warning('请输入拒绝原因');
                 return;
             }
             let params = {
                 settlementId: this.reviewForm.settlementId
             }
-            this.reviewForm.radio === 2 && (params.rejectData = this.reviewForm.rejectData);
-            let post_interface = this.reviewForm.radio === 1 ? POST_FINANCE_SLIP_SETTLEMENT_SUCCESS : POST_FINANCE_SLIP_SETTLEMENT_REJECT;
+            this.reviewForm.radio === 'reject' && (params.rejectData = this.reviewForm.rejectData);
+            let post_interface =
+                this.reviewForm.radio === 'pass' ?
+                POST_FINANCE_SLIP_SETTLEMENT_SUCCESS :
+                POST_FINANCE_SLIP_SETTLEMENT_REJECT;
+
             post_interface(params).then(() => {
                 this.$message.success('审核完成');
                 this.settlementDialogVisible = false;
@@ -300,6 +326,7 @@ export default {
                 this.$message.warning('请选择结算方式');
                 return;
             }
+            this.payForm.payProve = this.payForm.payProve.map(item => item.response.data.path.split('?')[0]).join(',');
             let params = this.payForm;
             POST_FINANCE_SLIP_PAY(params).then(() => {
                 this.$message.success('支付完成');
@@ -312,6 +339,20 @@ export default {
                 Object.assign(this.payForm, obj);
             });
         },
+        /**
+         * 上传凭证
+         * @function onSuccess
+         */
+        onSuccess(response, file, fileList) {
+            this.payForm.payProve = fileList.map(item => item);
+        },
+        /**
+         * 删除凭证
+         * @function onRemove
+         */
+        onRemove(file, fileList) {
+            this.payForm.payProve = fileList.map(item => item);
+        },
     }
 }
 </script>
@@ -319,7 +360,7 @@ export default {
 <style lang="scss" scoped>
     .container {
         >>>.el-table {
-            padding: 24px 24px 0 24px;
+            padding: 24px;
             border-radius: 2px;
             background: #fff;
             thead {
@@ -348,6 +389,10 @@ export default {
                     }
                 }
             }
+        }
+        >>>.el-table::before,
+        >>>.el-table::after {
+            background: transparent;
         }
         >>>.el-dialog__wrapper {
             .el-dialog__header {
@@ -399,6 +444,10 @@ export default {
                             line-height: 88px;
                             border-radius: 2px;
                             background: rgba(0,0,0,0.04);
+                        }
+                        .el-upload-list__item {
+                            width: 88px;
+                            height: 88px;
                         }
                     }
                 }

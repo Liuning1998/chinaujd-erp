@@ -125,7 +125,6 @@
                     </template>
                 </el-table-column>
                 <el-table-column
-                    prop="orderMainType"
                     label="订单类型">
                     <template slot-scope="scope">
                         {{ scope.row.orderMainType ? (orderType.find(item => item.value === scope.row.orderMainType)).label : ''}}

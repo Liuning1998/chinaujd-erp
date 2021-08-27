@@ -89,8 +89,8 @@ export default {
                 }
             },
             form: {
-                settlementId: '',
-                examineStatus: '',
+                settlementId: null,
+                examineStatus: null,
                 applyTime: ['', ''],
                 examineTime: ['', '']
             },
@@ -107,6 +107,9 @@ export default {
             pageSize: 15,
             tableData: [],
         }
+    },
+    created() {
+        this.getData();
     },
     methods: {
         /**
@@ -126,11 +129,11 @@ export default {
                 examineStatus: this.form.examineStatus,
             };
             POST_FINANCE_SLIP_SETTLEMENT_PAGELIST(params).then(res => {
-                res.data.rows.forEach(item => {
+                res.rows.forEach(item => {
                     item.examineStatus = Number(JSON.parse(item.examineStatus).value);
                 })
-                this.tableData = res.data.rows;
-                this.total = total;
+                this.tableData = res.rows;
+                this.total = Number(res.total);
             })
         },
         /**

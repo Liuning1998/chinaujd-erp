@@ -8,41 +8,47 @@
                 label="对账订单编号">
             </el-table-column>
             <el-table-column
-                width="180"
+                width="170"
                 label="账单时间段">
                 <template slot-scope="scope">
-                    {{ scope.row.startTime }}~{{ scope.row.endTime }}
+                    {{ scope.row.startTime | dateFormat }}~{{ scope.row.endTime | dateFormat }}
                 </template>
             </el-table-column>
             <el-table-column
                 label="收入金额">
                 <template slot-scope="scope">
-                    <span>¥{{ scope.row.incomeAmount }}</span>
+                    <span>¥ {{ scope.row.incomeAmount || '0.00' }}</span>
                 </template>
             </el-table-column>
             <el-table-column
                 label="支出金额">
                 <template slot-scope="scope">
-                    <span>¥{{ scope.row.expensesAmount }}</span>
+                    <span>¥ {{ scope.row.expensesAmount || '0.00' }}</span>
                 </template>
             </el-table-column>
             <el-table-column
                 label="收支净额">
                 <template slot-scope="scope">
-                    <span>¥{{ scope.row.incomeExpenditure }}</span>
+                    <span>¥ {{ scope.row.incomeExpenditure || '0.00' }}</span>
                 </template>
             </el-table-column>
             <el-table-column
-                prop="orderType"
                 label="订单类型">
+                <template slot-scope="scope">
+                    {{ orderType[scope.row.orderType] ? orderType[scope.row.orderType].label : '' }}
+                </template>
             </el-table-column>
             <el-table-column
-                prop="orderStatus"
                 label="订单状态">
+                <template slot-scope="scope">
+                    {{ orderStatus[scope.row.orderStatus] ? orderStatus[scope.row.orderStatus].label : '' }}
+                </template>
             </el-table-column>
             <el-table-column
-                prop="reconciliationStatus"
                 label="对账状态">
+                <template slot-scope="scope">
+                    {{ status[scope.row.reconciliationStatus] ? status[scope.row.reconciliationStatus].label : '' }}
+                </template>
             </el-table-column>
             <el-table-column
                 label="操作">
@@ -57,7 +63,31 @@
 <script>
 export default {
     data() {
-        return {}
+        return {
+            orderType: [
+                {label: '售后订单', value: 1},
+                {label: '结算订单', value: 2},
+                {label: '提现订单', value: 3},
+            ],
+            orderStatus: [
+                {label: '对账中', value: 1},
+                {label: '待结算', value: 2},
+                {label: '待审核', value: 3},
+                {label: '待付款', value: 4},
+                {label: '已结算', value: 5},
+                {label: '已拒绝', value: 6},
+                {label: '已关闭', value: 7},
+                {label: '已提交', value: 8},
+                {label: '处理中', value: 9},
+                {label: '已到账', value: 10},
+            ],
+            status: [
+                {label: '待对账', value: 0},
+                {label: '未平账', value: 1},
+                {label: '已平账', value: 2},
+                {label: '已提交结算', value: 3},
+            ],
+        }
     },
     props: {
         tableData: {
@@ -78,7 +108,8 @@ export default {
             this.$router.push({
                 path: '/finance/record/detail',
                 query: {
-                    reconciliationId: id
+                    id,
+                    activeName: 'order'
                 }
             });
         },

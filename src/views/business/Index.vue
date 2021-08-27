@@ -1,42 +1,42 @@
 <template>
 	<div class="container">
 		<div class="header">
-			<p>邮票名称：<span>J.119 戈壁绿洲</span></p>
+			<p>邮票名称：<span>{{orderDetails.stampName}}</span></p>
 		</div>
 		<div class="floor">
 			<h3>采集单信息</h3>
 			<el-row>
 				<el-col :span="12">
 					<span class="order_info">采集ID：</span>
-					<span>862378522264469504</span>
+					<span>{{orderDetails.collectionId}}</span>
 				</el-col>
 				<el-col :span="12">
 					<span class="order_info">采集点编号：</span>
-					<span>829778347583078400</span>
+					<span>{{orderDetails.collectionPointCode}}</span>
 				</el-col>
 				<el-col :span="12">
 					<span class="order_info">采集点名称：</span>
-					<span>北京和平门第一采集点</span>
+					<span>{{orderDetails.collectionPointName}}</span>
 				</el-col>
 				<el-col :span="12">
 					<span class="order_info">采集设备编号：</span>
-					<span>22224</span>
+					<span>{{orderDetails.acquisitionEquipmentNo}}</span>
 				</el-col>
 				<el-col :span="12">
 					<span class="order_info">代理商编号：</span>
-					<span>809067215776120833</span>
+					<span>{{orderDetails.agentNumber}}</span>
 				</el-col>
 				<el-col :span="12">
 					<span class="order_info">代理商名称：</span>
-					<span>北京邮来邮网络科技有限公司</span>
+					<span>{{orderDetails.agentName}}</span>
 				</el-col>
 				<el-col :span="12">
 					<span class="order_info">创建时间：</span>
-					<span>2021.07.07 17:04:22</span>
+					<span>{{orderDetails.createTime}}</span>
 				</el-col>
 				<el-col :span="12">
 					<span class="order_info">传输状态：</span>
-					<span>已完成</span>
+					<span v-if="orderDetails.transmissionStatus">{{JSON.parse(orderDetails.transmissionStatus).desc}}</span>
 				</el-col>
 				<el-col :span="12">
 					<span>邮票信息 </span>
@@ -82,27 +82,42 @@
 </template>
 
 <script>
+	import {
+		GET_STAMPVIEW,
+	} from '@/api/request';
+	
 	export default {
+		props:['orderStampId'],
 		data() {
 			return {
+				orderDetails:{},
 				samllImg:[
 					'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fcar0.autoimg.cn%2Fupload%2F2013%2F2%2F18%2Fu_20130218165304639264.jpg&refer=http%3A%2F%2Fcar0.autoimg.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1630047673&t=360cbc971b870a2149cdbf6c1d509148',
 					'https://ss2.baidu.com/-vo3dSag_xI4khGko9WTAnF6hhy/zhidao/pic/item/adaf2edda3cc7cd970a17b3d3b01213fb90e9142.jpg'
 				],
 				barCodeSrc:'https://ss2.baidu.com/-vo3dSag_xI4khGko9WTAnF6hhy/zhidao/pic/item/adaf2edda3cc7cd970a17b3d3b01213fb90e9142.jpg',
-				orderResultVo:[]
+				orderResultVo:[],
+				orderItemId:''
 			}
 		},
 		// 模板渲染前钩子函数
 		created() {
-		
+			// this.orderItemId=this.orderStampId;
+			this.getDetail();
 		},
 		// 模板渲染后钩子函数
 		mounted() {
 		
 		},
 		methods: {
-			
+			getDetail(){
+				let params={
+					orderItemId:this.orderStampId
+				}
+				GET_STAMPVIEW(params).then(res =>{
+					this.orderDetails=res;
+				})
+			}
 		}
 	}
 </script>

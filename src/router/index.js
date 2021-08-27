@@ -98,6 +98,14 @@ let router = new Router({
 							title: '子订单详情'
 						},
 						name: 'childOrderDetails'
+					}, {
+						path: '/business/orderList/print',
+						component: () => import("@/views/business/orderList/Print"),
+						meta: {
+							value: '/business/orderList',
+							title: '订单打印'
+						},
+						name: 'orderDetails'
 					}]
 				},
 				{

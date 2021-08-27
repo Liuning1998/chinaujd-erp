@@ -21,10 +21,10 @@
 							class="w350"></el-input>
 					</el-form-item>
 					<el-form-item label="收货人">
-						<el-input v-model="form.phone" type="text" disabled class="w350"></el-input>
+						<el-input v-model="form.consignee" type="text" disabled class="w350"></el-input>
 					</el-form-item>
 					<el-form-item label="收货手机号">
-						<el-input v-model="form.phone" type="text" disabled class="w350"></el-input>
+						<el-input v-model="form.rePhone" type="text" disabled class="w350"></el-input>
 					</el-form-item>
 				</div>
 				<div class="floor">
@@ -32,48 +32,48 @@
 					<el-row>
 						<el-col :span="8">
 							<span class="order_info">业务订单编号：</span>
-							<span>343535455</span>
+							<span>{{form.orderMainCode}}</span>
 						</el-col>
 						<el-col :span="8">
 							<span class="order_info">订单状态：</span>
-							<span>已提交</span>
+							<span v-if="form.orderMainStatus">{{ JSON.parse(form.orderMainStatus).desc }}</span>
 						</el-col>
 						<el-col :span="8">
 							<span class="order_info">鉴评方式：</span>
-							<span>远程鉴评</span>
+							<span v-if="form.evalMethod">{{ JSON.parse(form.evalMethod).desc }}</span>
 						</el-col>
 						<el-col :span="8">
 							<span class="order_info">支付状态：</span>
-							<span>未支付</span>
+							<span v-if="form.paymentStatus">{{ JSON.parse(form.paymentStatus).desc }}</span>
 						</el-col>
 						<el-col :span="8">
 							<span class="order_info">支付方式：</span>
-							<span>343535455</span>
+							<span v-if="form.paymentMethod">{{ JSON.parse(form.paymentMethod).desc }}</span>
 						</el-col>
 						<el-col :span="8">
 							<span class="order_info">订单金额：</span>
-							<span>¥189.00</span>
+							<span>¥{{form.orderMainAmount}}</span>
 						</el-col>
 						<el-col :span="8">
 							<span class="order_info">支付时间：</span>
-							<span>343535455</span>
+							<span>{{form.paymentDate}}</span>
 						</el-col>
 					</el-row>
 				</div>
-				<div class="floor">
+				<div class="floor" v-if="form.refundStatus&&form.refundAmount&&form.refundDate">
 					<h3>售后信息</h3>
 					<el-row>
 						<el-col :span="8">
 							<span class="order_info">售后状态：</span>
-							<span>343535455</span>
+							<span v-if="form.refundStatus">{{ JSON.parse(form.refundStatus).desc }}</span>
 						</el-col>
 						<el-col :span="8">
 							<span class="order_info">退款金额：</span>
-							<span>已提交</span>
+							<span>¥{{form.refundAmount}}</span>
 						</el-col>
 						<el-col :span="8">
 							<span class="order_info">退款时间：</span>
-							<span>远程鉴评</span>
+							<span>{{form.refundDate}}</span>
 						</el-col>
 					</el-row>
 				</div>
@@ -81,16 +81,32 @@
 					<h3>邮票列表</h3>
 					<div class="tableList">
 						<el-table :data="tableData" :header-cell-style="{'background':'#fafafa','font-size':'14px','color':'#333333'}">
-							<el-table-column prop="date" label="序号"></el-table-column>
-							<el-table-column prop="date" label="子订单号"></el-table-column>
-							<el-table-column prop="date" label="邮票名称"></el-table-column>
-							<el-table-column prop="date" label="单位"></el-table-column>
-							<el-table-column prop="date" label="采集数量"></el-table-column>
-							<el-table-column prop="date" label="服务类型"></el-table-column>
-							<el-table-column prop="date" label="服务费用"></el-table-column>
-							<el-table-column prop="date" label="订单状态"></el-table-column>
-							<el-table-column prop="date" label="鉴评状态"></el-table-column>
-							<el-table-column prop="date" label="物流状态"></el-table-column>
+							<el-table-column prop="no" label="序号"></el-table-column>
+							<el-table-column prop="orderCode" label="子订单号"></el-table-column>
+							<el-table-column prop="name" label="邮票名称"></el-table-column>
+							<el-table-column prop="unit" label="单位"></el-table-column>
+							<el-table-column prop="quantity" label="采集数量"></el-table-column>
+							<el-table-column label="服务类型">
+								<teleport slot-scope="scope">
+									<span v-if="scope.row.serviceType">{{JSON.parse(scope.row.serviceType).desc}}</span>
+								</teleport>
+							</el-table-column>
+							<el-table-column prop="orderAmount" label="服务费用"></el-table-column>
+							<el-table-column label="订单状态">
+								<teleport slot-scope="scope">
+									<span v-if="scope.row.orderMainStatus">{{JSON.parse(scope.row.orderMainStatus).desc}}</span>
+								</teleport>
+							</el-table-column>
+							<el-table-column label="鉴评状态">
+								<teleport slot-scope="scope">
+									<span v-if="scope.row.appraisalStatus">{{JSON.parse(scope.row.appraisalStatus).desc}}</span>
+								</teleport>
+							</el-table-column>
+							<el-table-column label="物流状态">
+								<teleport slot-scope="scope">
+									<span v-if="scope.row.logisticsStatus">{{JSON.parse(scope.row.logisticsStatus).desc}}</span>
+								</teleport>
+							</el-table-column>
 							<el-table-column prop="date" label="操作" width="150px" align="center">
 								<template slot-scope="scope">
 									<el-link type="primary" :underline="false" @click="logistics(scope.row)">物流信息</el-link>
@@ -158,6 +174,9 @@
 </template>
 <script>
 	import Breadcrumb from '@/components/Breadcrumb';
+	import { 
+		POST_APPRAISALORDER_VIEW 
+	} from '@/api/request';
 	export default {
 		name: '',
 		components: {
@@ -178,7 +197,7 @@
 				codeTime: 60,
 				timer: false,
 				options: [],
-				tableData:[{date:1}],
+				tableData:[],
 				sendAlert:false,
 				expressAlert:false,
 				// 物流公司
@@ -190,13 +209,22 @@
 		},
 		// 模板渲染前钩子函数
 		created() {
-
+			this.getDetail();
 		},
 		// 模板渲染后钩子函数
 		mounted() {
 
 		},
 		methods: {
+			getDetail(){
+				let params={
+					orderMainId:this.$route.query.orderMainId
+				}
+				POST_APPRAISALORDER_VIEW(params).then(res =>{
+					this.form=res;
+					this.tableData=res.stampListVo;
+				})
+			},
 			goDetails(val){
 				this.$router.push({
 				  path: '/business/appraisalOrder/childDetails',

@@ -101,6 +101,22 @@ export function POST_AREA_LIST(params) {
 export function POST_GETPACKTYPE(params) {
   return post(baseURL + '/philatelic/business/orderMain/get/getPackType', params);
 }
+// 绑定-查询子订单邮票列表
+export function GET_QUERYITEMSBYORDERID(params) {
+  return get(baseURL + '/philatelic/business/orderitem/queryItemsByOrderId', params);
+}
+// 绑定-查询采集邮票图
+export function POST_QUERYBOUNDSTAMPDATA(params) {
+  return post(baseURL + '/collection/business/collectionSheet/queryBoundStampData', params);
+}
+// 邮票查看
+export function GET_STAMPVIEW(params) {
+  return get(baseURL + '/philatelic/business/order/stampView', params);
+}
+// 鉴评单/封装厂详情页
+export function POST_APPRAISALORDER_VIEW(params) {
+  return post(baseURL + '/philatelic/business/appraisalOrder/view', params);
+}
 /**
  * 业务中心 End
  */

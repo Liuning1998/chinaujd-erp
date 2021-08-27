@@ -142,14 +142,12 @@
 				</el-table-column>
 				<el-table-column fixed="right" label="操作" width="120" align="center">
 					<template slot-scope="scope">
-						<el-button type="text" v-if="showSendBtn(scope.row)" @click="send(scope.row.orderMainId)">发货</el-button>
-						<el-divider v-if="showSendBtn(scope.row)" direction="vertical"></el-divider>
 						<el-button type="text" @click="detail(scope.row)">查看</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
 		</div>
-		<div class="pagination" v-if="total > pageSize">
+		<div class="pagination" >
 			<el-pagination
 				background
 				@size-change="handleSizeChange"
@@ -160,39 +158,6 @@
 				:total="total">
 			</el-pagination>
 		</div>
-		<el-dialog
-			title="请填写物流信息"
-			:visible.sync="sendDialigVisible"
-			width="480"
-			:before-close="handleClose">
-			<div>
-				<el-form ref="form" :rules="logisticsRules" :model="logisticsForm" label-width="100px">
-					<el-form-item label="物流公司：" prop="ruleLogisticsId">
-						<el-select v-model="logisticsForm.ruleLogisticsId" placeholder="请选择单位">
-							<el-option
-								v-for="item in logisticsCompanys"
-								:key="item.ruleLogisticsId"
-								:label="item.logisticsName"
-								:value="item.ruleLogisticsId">
-							</el-option>
-						</el-select>
-					</el-form-item>
-					<el-form-item label="发货类型：" prop="shipmentType">
-						<el-radio-group v-model="logisticsForm.shipmentType">
-							<el-radio label="正常发货" :value="0"></el-radio>
-							<el-radio label="退货" :value="1"></el-radio>
-						</el-radio-group>
-					</el-form-item>
-					<el-form-item label="物流单号：" prop="logisticsOrderNo">
-						<el-input v-model="logisticsForm.logisticsOrderNo" placeholder="请输入物流单号："></el-input>
-					</el-form-item>
-				</el-form>
-			</div>
-			<div slot="footer">
-				<el-button @click="handleClose">取 消</el-button>
-				<el-button type="primary" @click="handleSubmit">确 定</el-button>
-			</div>
-		</el-dialog>
 	</div>
 </template>
 <script>
@@ -270,19 +235,6 @@ export default {
 				{name: '已关闭', value: 7},
 				{name: '待核验', value: 5}
 			],
-			sendDialigVisible: false,
-			logisticsForm: {
-				orderMainId: null,
-				ruleLogisticsId: null,
-				logisticsOrderNo: null,
-				shipmentType: null,
-			},
-			logisticsRules: {
-				ruleLogisticsId: [{required: true, message: '请选择单位', trigger: ['change', 'blur']}],
-				logisticsOrderNo: [{required: true, message: '请输入物流单号', trigger: ['change', 'blur']}],
-				shipmentType: [{required: true, message: '请选择发货类型', trigger: ['change', 'blur']}],
-			},
-			logisticsCompanys: [],
 		}
 	},
 	// 模板渲染前钩子函数
@@ -296,11 +248,6 @@ export default {
 
 	},
 	methods: {
-		getLogistiscs() {
-			POST_BUSINESS_LOGISTISCS_CHANNEL().then(res => {
-				this.logisticsCompanys = res.data;
-			});
-		},
 		getAgent() {
 			let params = {
 				currentPage: 1,
@@ -355,8 +302,8 @@ export default {
 			};
 			POST_BUSINESS_ORDER_LISTPAGE(params).then(res => {
 				this.tableData = res.rows;
-				// this.currentPage=res.currentPage-0;
-				// this.pageSize=res.pageSize-0;
+				this.currentPage=Number(res.currentPage);
+				this.pageSize=Number(res.pageSize);
 				this.total = Number(res.total);
 			});
 		},

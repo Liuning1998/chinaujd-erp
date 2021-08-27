@@ -97,11 +97,6 @@
 									¥{{ scope.row.cost }}
 								</template>
 							</el-table-column>
-							<!-- <el-table-column label="鉴评方式">
-								<template slot-scope="scope">
-									{{ appraisalMode.find(item => item.value === scope.row.evalmethod).name }}
-								</template>
-							</el-table-column> -->
 							<el-table-column label="订单状态">
 								<template slot-scope="scope">
 									<span v-if="scope.row.orderstatus">{{scope.row.orderstatus.desc}}</span>
@@ -112,7 +107,7 @@
 									<el-link
 										v-if="scope.row.bindStatus.value === 0 && [2].includes(form.orderMainStatus.value)"
 										type="primary"
-										@click="bound(scope.row.orderId)">绑定</el-link>
+										@click="bound(scope.row)">绑定</el-link>
 									<el-divider
 										v-if="scope.row.bindStatus.value === 0 && [2].includes(form.orderMainStatus.value)"
 										direction="vertical"></el-divider>
@@ -151,6 +146,44 @@
 					type="primary" size="small" @click="print">打印订单</el-button>
 			</div>
 		</div>
+		<!-- 绑定弹窗 -->
+		<el-dialog title="信息解绑" :visible.sync="alertBind" width="850px" @close="handleClose" class="infoBind">
+			<div>
+				<el-row>
+					<el-col :span="12" class="borderRight">
+						<h3>子订单邮票信息</h3>
+						<el-table :data="stampList" ref="bindBox" @row-click="stampItem" highlight-current-row max-height	="340px">
+							<el-table-column prop="name" label="邮票名称" ></el-table-column>
+							<el-table-column label="样例" width="60px">
+								<template slot-scope="scope">
+									<el-image :src="scope.row.url" fit="contain" :preview-src-list="[scope.row.url]" :z-index="3000" style="width: 40px; height:40px;"></el-image>
+								</template>
+							</el-table-column>
+							<el-table-column label="绑定数量" width="80px" align="center">
+								<template slot-scope="scope">
+									({{ scope.row.bindArr.length }})
+								</template>
+							</el-table-column>
+						</el-table>
+					</el-col>
+					<el-col :span="11">
+						<h3>邮票采集信息</h3>
+						<div class="stampImgList">
+							<el-checkbox-group v-model="tempBindData" @change="selectImg">
+								<div v-for="(item,index) in stampImgList" :key="index" class="imgItem">
+									<el-checkbox :label="item">{{ }}</el-checkbox>
+									<el-image :src="item.imageUrl" fit="contain" :preview-src-list="[item.imageUrl]" :z-index="3000" style="width: 144px;height: 144px;background:#333333;"></el-image>
+								</div>
+							</el-checkbox-group>
+						</div>
+					</el-col>
+				</el-row>
+			</div>
+			<div slot="footer">
+				<el-button @click="cancelBind" size="small">取消</el-button>
+				<el-button @click="addBind" size="small" type="primary">确定</el-button>
+			</div>
+		</el-dialog>
 	</div>
 </template>
 <script>
@@ -159,7 +192,8 @@ import {
 	POST_BUSINESS_ORDER_UBIND,
 	POST_BUSINESS_ORDERMAIN_CANCEL,
 	POST_BUSINESS_ORDERMAIN_AUDIT,
-	GET_BUSINESS_ORDERMAIN_PRINT,
+	GET_QUERYITEMSBYORDERID,
+	POST_QUERYBOUNDSTAMPDATA
 } from '@/api/request';
 
 import Breadcrumb from '@/components/Breadcrumb';
@@ -170,6 +204,14 @@ export default {
 	},
 	data() {
 		return {
+			alertBind:false,
+			tempBindData:[],
+			stampImgList:[], //全部图片集合
+			unselectImgList:[], //剩余未选集合
+			checkedImg:[],  //已选集合
+			currentRow:null, //当前点击行
+			currentRowIndex:0, //当前行的下标
+			orderId:'',
 			form: {
 				orderUserInfoVO: {
 					userPhone: ''
@@ -189,40 +231,7 @@ export default {
 				orderMainCode: '',
 				orderMainAmount: ''
 			},
-			orderState: [
-				{name: '已提交', value: 0},
-				{name: '待审核', value: 2},
-				{name: '待鉴评', value: 3},
-				{name: '封装中', value: 4},
-				{name: '已完成', value: 6},
-				{name: '售后中', value: 8},
-				{name: '已关闭', value: 7},
-				{name: '待核验', value: 5}
-			],
-			appraisalMode:[
-				{name: '远程鉴评',value:0},
-				{name: '批量鉴评',value:1}
-			],
-			payState:[
-				{name: '未支付',value:0},
-				{name: '已支付',value:1}
-			],
-			paymentMethod: [
-				{name: '微信小程序支付', value: 'WX'},
-				{name: '微信扫码支付', value: 'WX_OFFLINE'}
-			],
-			serviceType:[
-				{name: '采集+鉴别',value:0},
-				{name: '采集+评级',value:1},
-				{name: '采集+鉴别+封装',value:2},
-				{name: '采集+评级+封装',value:3},
-				{name: '核验',value:4}
-			],
-			refundStatus: [
-				{name: '退款中', value: 0},
-				{name: '已退款', value: 1}
-			],
-			bindDialogVisible: false,
+			stampList:[],
 		}
 	},
 	// 模板渲染前钩子函数
@@ -258,39 +267,19 @@ export default {
 				this.form.paymentMethod=res.paymentMethod&&JSON.parse(res.paymentMethod);
 			});
 		},
-		/**
-		 * 获取邮票列表-绑定用
-		 * @function getStampList
-		 * @params {Number} orderMainId
-		 */
-		getStampList() {
-			
-		},
 		goDetails(orderId){
 			this.$router.push({
 				path: '/business/orderList/childDetails',
 				query: {
-				orderId,
+					orderId,
 				}
 			});
 		},
 		print(){
-			GET_BUSINESS_ORDERMAIN_PRINT({
-				orderMainId: this.$route.query.orderMainId
-			}).then(res => {
-				const blob = new Blob([res], {
-					type: 'application/vnd.ms-excel;charset=utf-8'
-				});
-				let curDate = `${new Date().getFullYear()}年${(new Date().getMonth() + 1)}月${new Date().getDate()}日`
-				const file_name = `订单列表${curDate}.xls`;
-				if (window.navigator && window.navigator.msSaveOrOpenBlob) {
-					window.navigator.msSaveOrOpenBlob(blob, file_name);
-				} else {
-					const aLink = document.createElement('a');
-					aLink.href = URL.createObjectURL(blob);
-					aLink.setAttribute('download', file_name);
-					aLink.click();
-					window.URL.revokeObjectURL(blob);
+			this.$router.push({
+				path: '/business/orderList/print',
+				query: {
+					orderMainId:this.$route.query.orderMainId,
 				}
 			});
 		},
@@ -327,8 +316,102 @@ export default {
 				
 			});
 		},
-		// 绑定
-		bound(orderId) {},
+		// 绑定查询子邮票
+		queryStamp(orderId){
+			let params={
+				orderId:orderId
+			}
+			GET_QUERYITEMSBYORDERID(params).then(res =>{
+				res.forEach(item =>{
+					item.bindArr=[]
+				});
+				this.stampList=res;
+				this.$refs.bindBox.setCurrentRow(this.stampList[0]);
+				this.currentRow=this.stampList[0];
+			})
+		},
+		// 查询邮票图
+		getImg(){
+			let params={
+				agentId:'751169582139441152',
+				userPhoneNumber:'13760321295'
+			}
+			POST_QUERYBOUNDSTAMPDATA(params).then(res =>{
+				this.stampImgList=res.collectionBoundStampVoList;
+			})
+		},
+		// 选择采集图片
+		selectImg(){
+			// 单选
+			if(this.stampList.length > 1){
+				if(this.tempBindData.length>1){
+					this.tempBindData.splice(0,1)
+				}
+			}
+			// 多选
+			this.stampList[this.currentRowIndex].bindArr=this.tempBindData;
+		},
+		// 表格点击
+		stampItem(row, event, column){
+			if(this.currentRow == row) return false; //防止重复点击
+			this.currentRow=row;
+			this.currentRowIndex=this.stampList.indexOf(row);
+			this.checkedImg=this.checkedImg.concat(this.tempBindData);
+			this.stampImgList=this.stampImgList.filter(item => !this.tempBindData.includes(item));
+			this.stampImgList=row.bindArr.concat(this.stampImgList);
+			this.tempBindData=row.bindArr;
+		},
+		// 绑定弹窗
+		bound(row) {
+			this.alertBind=true;
+			this.orderId=row.orderId;
+			this.queryStamp(row.orderId);
+			this.getImg();
+		},
+		// 绑定关闭
+		handleClose(){
+			this.alertBind=false;
+			this.tempBindData=[];
+			this.stampImgList=[];
+			this.unselectImgList=[];
+			this.checkedImg=[];
+			this.currentRow=null;
+			this.currentRowIndex=0;
+		},
+		// 取消绑定
+		cancelBind(){
+			this.handleClose();
+		},
+		// 确认绑定提交
+		addBind(){
+			let orderItems=[];
+			if(this.stampList.length>1){
+				orderItems=this.stampList.map(item =>{
+					return {
+						'collectionStampId':item.bindArr[0]?item.bindArr[0].collectionStampId:null,
+						'mcNo':item.bindArr[0]?item.bindArr[0].mcNo:null,
+						'orderItemId':item.orderItemId,
+						'stampId':item.stampId
+					}
+				})
+			}else{
+				let that=this;
+				orderItems=this.stampList[0].bindArr.map(item =>{
+					return {
+						'collectionStampId':item.collectionStampId,
+						'mcNo':item.mcNo,
+						'orderItemId':this.stampList[0].orderItemId,
+						'stampId':this.stampList[0].stampId
+					}
+				})
+			}
+			let params={
+				orderId:this.orderId,
+				orderItems:orderItems
+			}
+			console.log(params)
+			this.handleClose();
+		},
 		// 解绑操作
 		Unbound(orderId){
 			this.$confirm('您确认要解除该子订单与邮票关系吗？', '提示：解绑', {
@@ -413,5 +496,48 @@ export default {
 		width: 120px;
 		text-align: right;
 		margin-bottom: 20px;
+	}
+	.infoBind {
+		>>>.el-dialog__body {
+			padding: 0px 20px;
+			max-height: 450px;
+			overflow: auto;
+		}
+		h3{
+			font-size: 14px;
+			color: #333333;
+		}
+		>>>.cell{
+			font-size: 14px;
+			color: #333333;
+			font-weight: normal;
+		}
+		.borderRight{
+			border-right: 1px solid #E9E9E9;
+			padding-right: 20px;
+			margin-right: 20px;
+			height: 360px;
+		}
+		.stampImgList{
+			height: 340px;
+			overflow: auto;
+			>>>.el-checkbox-group{
+				overflow: hidden;
+				.imgItem{
+					display: flex;
+					float: left;
+					justify-content:center;
+					align-items:center;
+					margin-top: 14px;
+					
+					>>>.el-checkbox{
+						
+					}
+				}
+				.imgItem:nth-child(odd){
+					margin-right: 10px;
+				}
+			}
+		}
 	}
 </style>

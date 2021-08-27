@@ -103,17 +103,17 @@
 				<el-table-column prop="paymentDate" label="支付时间"></el-table-column>
 				<el-table-column label="订单状态">
 					<template slot-scope="scope">
-						{{ orderState.find(item => item.value === scope.row.orderMainStatus).name || '' }}
+						<span v-if="scope.row.orderMainStatus">{{ scope.row.orderMainStatus.desc }}</span>
 					</template>
 				</el-table-column>
 				<el-table-column label="支付状态">
 					<template slot-scope="scope">
-						{{ payState.find(item => item.value === scope.row.paymentStatus).name || '' }}
+						<span v-if="scope.row.paymentStatus">{{ scope.row.paymentStatus.desc }}</span>
 					</template>
 				</el-table-column>
 				<el-table-column label="鉴评方式">
 					<template slot-scope="scope">
-						{{ appraisalMode.find(item => item.value === scope.row.evalmethod).name || '' }}
+						<span v-if="scope.row.evalmethod">{{ scope.row.evalmethod.desc }}</span>
 					</template>
 				</el-table-column>
 				<el-table-column fixed="right" label="操作" width="120" align="center">
@@ -208,10 +208,8 @@ export default {
 			},
 			tableData:[],
 			total: 110,
-			currentPage:0,
+			currentPage:1,
 			pageSize:15,
-			// 服务商名称
-			agentName:[],
 			// 服务类型
 			serviceType:[
 				{name: '采集+鉴别',value:0},
@@ -268,9 +266,8 @@ export default {
 	},
 	// 模板渲染前钩子函数
 	created() {
-		this.getAgent();
-		this.getList();
 		this.getLogistiscs();
+		this.getList();
 	},
 	// 模板渲染后钩子函数
 	mounted() {
@@ -282,18 +279,9 @@ export default {
 				this.logisticsCompanys = res.data;
 			});
 		},
-		getAgent() {
-			let params = {
-				currentPage: 1,
-				pageSize: 1000
-			}
-			POST_USERCENTER_SERVER_PAGELIST(params).then(res => {
-				this.agentName = res.data.rows;
-			});
-		},
 		detail(val){
 			this.$router.push({
-				path: '/business/orderList/details',
+				path: '/business/appraisalOrder/details',
 				query: {
 				orderMainId: val.orderMainId,
 				}
@@ -341,15 +329,15 @@ export default {
 				evalMethod: this.form.evalmethod,
 			};
 			POST_BUSINESS_APPRAISAL_ORDER_LIST(params).then(res => {
-				res.data.rows.forEach(item => {
-					item.evalmethod = JSON.parse(item.evalmethod).value;
-					item.orderMainStatus = JSON.parse(item.orderMainStatus).value;
-					item.paymentStatus = JSON.parse(item.paymentStatus).value;
-					item.appraisalStatus = JSON.parse(item.appraisalStatus).value;
-					item.logisticsStatus = JSON.parse(item.logisticsStatus).value;
+				res.rows.forEach(item => {
+					item.evalmethod = item.evalmethod&&JSON.parse(item.evalmethod);
+					item.orderMainStatus = item.orderMainStatus&&JSON.parse(item.orderMainStatus);
+					item.paymentStatus = item.paymentStatus&&JSON.parse(item.paymentStatus);
+					item.appraisalStatus = item.appraisalStatus&&JSON.parse(item.appraisalStatus);
+					item.logisticsStatus = item.logisticsStatus&&JSON.parse(item.logisticsStatus);
 				});
-				this.tableData = res.data.rows;
-				this.total = Number(res.data.total);
+				this.tableData = res.rows;
+				this.total = Number(res.total);
 			});
 		},
 		orderExport(){
@@ -403,24 +391,24 @@ export default {
 		showSendBtn(val) {
 			let currentRegSys = sessionStorage.getItem('currentRegSys');
 			if ([3].includes(currentRegSys) &&
-				[0].includes(val.evalmethod) &&
-				[4].includes(val.orderMainStatus) &&
-				[0].includes(val.logisticsStatus) &&
-				[1].includes(val.appraisalStatus)) {
+				[0].includes(val.evalmethod.value) &&
+				[4].includes(val.orderMainStatus.value) &&
+				[0].includes(val.logisticsStatus.value) &&
+				[1].includes(val.appraisalStatus.value)) {
 				return true;
 			} else if (
 				[3].includes(currentRegSys) &&
-				[1].includes(val.evalmethod) &&
-				[0].includes(val.appraisalStatus)) {
+				[1].includes(val.evalmethod.value) &&
+				[0].includes(val.appraisalStatus.value)) {
 				return true;
 			} else if (
 				[6].includes(currentRegSys) &&
-				[1].includes(val.evalmethod) &&
-				[2].includes(val.logisticsStatus)) {
+				[1].includes(val.evalmethod.value) &&
+				[2].includes(val.logisticsStatus.value)) {
 				return true;
 			} else if (
 				[6].includes(currentRegSys) &&
-				[2, 3].includes(val.serviceType)) {
+				[2, 3].includes(val.serviceType.value)) {
 				return true;
 			} else {
 				return false;
@@ -434,7 +422,11 @@ export default {
 			this.$confirm('是否确认收货，该操作不可撤销？', '提示', {
 				confirmButtonText: '确定收货',
 				cancelButtonText: '取消',
-			}).then(() => {});
+			}).then(() => {
+				
+			}).catch(() =>{
+						
+			});
 		},
 		handleSubmit() {
 			this.$refs.form.validate((valid) => {
@@ -456,6 +448,8 @@ export default {
 							Object.assign(this.logisticsForm, form);
 							this.sendDialigVisible = false;
 						});
+					}).catch(() =>{
+						
 					});
 				} else {
 					return;

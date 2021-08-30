@@ -37,6 +37,10 @@ export function getImageCode() {
 export function POST_BUSINESS_ORDER_LISTPAGE(params) {
   return post(baseURL + '/philatelic/business/orderMain/listPage', params);
 }
+//  服务商下拉列表
+export function GET_AGENT_LIST(params) {
+  return get(baseURL + '/philatelic/base/list/agent', params);
+}
 // 订单列表-导出
 export function POST_EXPORT_BUSINESS_ORDER_EXPORT(params) {
   return postExport(baseURL + '/philatelic/business/orderMain/export', params);
@@ -67,7 +71,7 @@ export function POST_BUSINESS_ORDER_UBIND(params) {
 }
 // 取消订单
 export function POST_BUSINESS_ORDERMAIN_CANCEL(params) {
-  return post(baseURL + '/philatelic/business/orderMain/cancel'. params);
+  return post(baseURL + '/philatelic/business/orderMain/cancel', params);
 }
 // 审核订单
 export function POST_BUSINESS_ORDERMAIN_AUDIT(params) {
@@ -100,6 +104,10 @@ export function POST_AREA_LIST(params) {
 // 获取封装套餐
 export function POST_GETPACKTYPE(params) {
   return post(baseURL + '/philatelic/business/orderMain/get/getPackType', params);
+}
+// 子订单列表-绑定
+export function POST_OREDR_BIND(params) {
+  return post(baseURL + '/philatelic/business/order/bind', params);
 }
 // 绑定-查询子订单邮票列表
 export function GET_QUERYITEMSBYORDERID(params) {

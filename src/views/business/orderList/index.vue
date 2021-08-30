@@ -68,8 +68,8 @@
 						<el-form-item label="服务商名称:">
 							<el-select v-model="form.agentName" placeholder="请选择" class="w240">
 								<el-option label="全部" value=""></el-option>
-								<el-option v-for="(item,index) in agentName" :key="index" :label="item.name"
-									:value="item.name"></el-option>
+								<el-option v-for="(item,index) in agentName" :key="index" :label="item.agentName"
+									:value="item.agentId"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
@@ -164,7 +164,7 @@
 import {
 	POST_BUSINESS_ORDER_LISTPAGE,
 	POST_EXPORT_BUSINESS_ORDER_EXPORT,
-	POST_USERCENTER_SERVER_PAGELIST,
+	GET_AGENT_LIST,
 	POST_BUSINESS_LOGISTISCS_CHANNEL,
 	POST_BUSINESS_DELIVERGOODS,
 } from '@/api/request';
@@ -239,9 +239,8 @@ export default {
 	},
 	// 模板渲染前钩子函数
 	created() {
-		// this.getAgent();
+		this.getAgent();
 		this.getList();
-		// this.getLogistiscs();
 	},
 	// 模板渲染后钩子函数
 	mounted() {
@@ -249,12 +248,8 @@ export default {
 	},
 	methods: {
 		getAgent() {
-			let params = {
-				currentPage: 1,
-				pageSize: 1000
-			}
-			POST_USERCENTER_SERVER_PAGELIST(params).then(res => {
-				this.agentName = res.data.rows;
+			GET_AGENT_LIST().then(res => {
+				this.agentName = res.agentVos;
 			});
 		},
 		detail(val){

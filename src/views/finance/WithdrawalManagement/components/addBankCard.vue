@@ -13,7 +13,14 @@
                     <el-input v-model="form.idCard" placeholder="请输入身份证号码"></el-input>
                 </el-form-item>
                 <el-form-item label="银行名称：" prop="bankName">
-                    <el-input v-model="form.bankName" placeholder="请输入银行名称"></el-input>
+                    <el-select v-model="form.bankName" filterable placeholder="请选择银行名称">
+                        <el-option
+                            v-for="item in bankOptions"
+                            :key="item.bankId"
+                            :label="item.bankName"
+                            :value="item.bankName">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="银行卡号：" prop="cardNumber">
                     <el-input v-model="form.cardNumber" placeholder="请输入银行卡号"></el-input>
@@ -25,6 +32,9 @@
                     <el-cascader
                         v-model="form.openingBank"
                         :options="options"
+                        :disabled="!form.bankName"
+                        filterable
+                        placeholder="请选择开户行"
                         @expand-change="handleChange">
                     </el-cascader>
                 </el-form-item>
@@ -57,6 +67,7 @@
 
 <script>
 import {
+    POST_FINANCE_SLIP_BANK_LIST,
     POST_BASE_QUERY_PROVINCE_CITY_LIST,
     POST_FINANCE_SLIP_OPENBANK_LIST,
     POST_FINANCE_SLIP_ADD_BANKCARD,
@@ -84,6 +95,7 @@ export default {
             },
             bankCardDisalogVisible: false,
             options: [],
+            bankOptions: [],
         }
     },
     props: {
@@ -98,15 +110,25 @@ export default {
     },
     created() {
         this.getData();
+        this.getBankData();
     },
     methods: {
+        /**
+         * 获取银行列表
+         * @function getBankData()
+         */
+        getBankData() {
+            POST_FINANCE_SLIP_BANK_LIST({}).then(res => {
+                this.bankOptions = res.bankList;
+            });
+        },
         /**
          * 查询省市集合
          * @function getData
          */
         getData() {
             POST_BASE_QUERY_PROVINCE_CITY_LIST().then(res => {
-                res.data.forEach(item => {
+                res.forEach(item => {
                     item.cityList.forEach(city => {
                         city.value = city.cityName;
                         city.label = city.cityName;
@@ -116,7 +138,7 @@ export default {
                     item.value = item.provinceName;
                     item.label = item.provinceName;
                 });
-                this.options = res.data;
+                this.options = res;
             });
         },
         /**
@@ -160,7 +182,7 @@ export default {
                 bankName
             };
             POST_FINANCE_SLIP_OPENBANK_LIST(params).then(res => {
-                res.data.forEach(item => {
+                res.forEach(item => {
                     item.value = item.openingBank;
                     item.label = item.openingBank;
                 });
@@ -168,7 +190,7 @@ export default {
                     if (item.value === provinceName) {
                         item.children.forEach(city => {
                             if(city.value === cityName) {
-                                city.children = res.data;
+                                city.children = res;
                             }
                         });
                     }
@@ -243,6 +265,9 @@ export default {
                         &__content {
                             height: 32px;
                             line-height: 32px;
+                            .el-select__caret {
+                                line-height: 32px;
+                            }
                         }
                     }
                 }

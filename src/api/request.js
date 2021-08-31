@@ -227,6 +227,10 @@ export function POST_BASE_QUERY_PROVINCE_CITY_LIST() {
 export function POST_FINANCE_SLIP_OPENBANK_LIST(params) {
   return post(baseURL + '/financeCenter/bank/queryOpenBankList', params);
 }
+// 查询银行列表
+export function POST_FINANCE_SLIP_BANK_LIST(params) {
+  return post(baseURL + '/financeCenter/bank/queryBankList', params);
+}
 // 查询资金明细
 export function POST_FINANCE_SLIP_QUERY_ACCOUNT_HISTORY(params) {
   return post(baseURL + '/philatelic/finance/history/queryAccountHistory', params);

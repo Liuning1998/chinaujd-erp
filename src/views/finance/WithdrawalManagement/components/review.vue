@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <el-radio-group v-model="radio">
+        <el-radio-group v-model="radio" @change="handleChange">
             <el-radio-button :label="0">待审核</el-radio-button>
             <el-radio-button :label="1">待支付</el-radio-button>
             <el-radio-button :label="2">审核历史</el-radio-button>
@@ -54,7 +54,7 @@ export default {
         return {
             radio: 0,
             tableData: [],
-            total: 110,
+            total: 0,
             currentPage: 1,
             pageSize: 15,
         }
@@ -74,8 +74,8 @@ export default {
                 status: this.radio
             };
             POST_FINANCE_SLIP_CASHOUT_LIST(params).then(res => {
-                this.tableData = res.data.rows;
-                this.total = Number(res.data.total);
+                this.tableData = res.rows;
+                this.total = Number(res.total);
             });
         },
         /**
@@ -96,6 +96,14 @@ export default {
             this.currentPage = currentPage;
             this.getData();
         },
+        /**
+         * 切换
+         * @function handleChange
+         */
+        handleChange(val) {
+            this.radio = val;
+            this.getData();
+        }
     }
 }
 </script>

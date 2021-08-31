@@ -79,7 +79,7 @@ export default {
                 cashoutRecId: this.cashoutRecId
             };
             POST_FINANCE_SLIP_CASHOUT_INFO(params).then(res => {
-                Object.assign(this.form, res.data);
+                Object.assign(this.form, res);
             });
         },
         /**

@@ -12,7 +12,7 @@
                 </el-option>
             </el-select>
         </div>
-        <div class="capital-info">
+        <div class="capital-info" v-if="tableData.length">
             <div class="capital-info-item" v-for="(item, index) in tableData" :key="item.historyId">
                 <img v-if="item.flag === 1" src="~@/assets/images/finance/icon_appraisal_income.png" alt="鉴定收益">
                 <img v-else src="~@/assets/images/finance/icon_cash_out.png" alt="提现">
@@ -67,6 +67,9 @@
                     </el-row>
                 </div>
             </div>
+        </div>
+        <div class="default" v-else>
+            <span>暂无数据</span>
         </div>
         <div class="pagination" v-if="total > pageSize">
             <el-pagination
@@ -145,6 +148,7 @@ export default {
                 cashoutRecId: this.tableData[index].historyId
             }
             this.tableData[index].showMoreIcon === 'up' && POST_FINANCE_SLIP_CASHOUT_INFO(params).then(res => {
+                console.log(res);
                 Object.assign(this.tableData[index].form, res.data);
             })
         },
@@ -305,6 +309,10 @@ export default {
             &-item:not(:last-child) {
                 border-bottom: 1px solid #E9E9E9;
             }
+        }
+        .default {
+            text-align: center;
+            margin: 20px 0;
         }
         .pagination {
             width: 100%;

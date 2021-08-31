@@ -20,9 +20,8 @@
                     <div class="bankcard">
                         <span v-if="!withdrawalForm.cardBagId">请添加银行卡</span>
                         <span v-else>
-                            <i class="el-icon-search"></i>
                             <span>{{ withdrawalForm.bankName }}</span>
-                            <span>({{ (withdrawalForm.cardNumber).substring(withdrawalForm.cardNumber.length - 4) }})</span>
+                            <span>({{ withdrawalForm.cardNumber}})</span>
                         </span>
                     </div>
                     <el-button
@@ -86,7 +85,8 @@ export default {
                 {content: '平台提现手续费为2%'},
                 {content: '鉴定师提现，由中国集邮有限公司代缴个人所得税'}
             ],
-            dialogVisible: false
+            dialogVisible: false,
+            timeout: null,
         }
     },
     created() {
@@ -98,8 +98,8 @@ export default {
          * @function getData
          */
         getData() {
-            POST_FINANCE_SLIP_ACCOUNT_MESSAGE().then(res => {
-                Object.assign(this.withdrawalForm, res.data);
+            POST_FINANCE_SLIP_ACCOUNT_MESSAGE({}).then(res => {
+                Object.assign(this.withdrawalForm, res);
             });
         },
         /**
@@ -107,13 +107,18 @@ export default {
          * @function handleWithdrawal
          */
         handleWithdrawalAll() {
-            let balance = Number(this.withdrawalForm.balance);
-            if (!balance) {
-                this.$message.warning('余额不足');
-                return;
+            if (this.timeout) {
+                clearTimeout(this.timeout);
             }
-            this.withdrawalForm.cashoutAmount = this.withdrawalForm.balance;
-            this.handleBlur();
+            this.timeout = setTimeout(() => {
+                let balance = Number(this.withdrawalForm.balance);
+                if (!balance) {
+                    this.$message.warning('余额不足');
+                    return;
+                }
+                this.withdrawalForm.cashoutAmount = this.withdrawalForm.balance;
+                this.handleBlur();
+            }, 1000);
         },
         /**
          * 提现
@@ -157,20 +162,25 @@ export default {
          * @function handleInput
          */
         handleInput(val) {
-            // [整数, 小数]
-            let [integers = '', decimal = ''] = String(val).split('.');
-            if (decimal && decimal.length > 2) {
-                this.$message.warning('小数点限制两位');
-                this.withdrawalForm.cashoutAmount = Number(val).toFixed(2);
+            if (this.timeout) {
+                clearTimeout(this.timeout);
             }
-            if (Number(val) <= 0) {
-                this.withdrawalForm.cashoutAmount = null;
-                this.$message.warning('请输入正确金额');
-            }
-            if (Number(val) > this.withdrawalForm.balance) {
-                this.$message.warning('余额不足');
-                this.withdrawalForm.cashoutAmount = null;
-            }
+            this.timeout = setTimeout(() => {
+                // [整数, 小数]
+                let [integers = '', decimal = ''] = String(val).split('.');
+                if (decimal && decimal.length > 2) {
+                    this.$message.warning('小数点限制两位');
+                    this.withdrawalForm.cashoutAmount = Number(val).toFixed(2);
+                }
+                if (Number(val) <= 0) {
+                    this.withdrawalForm.cashoutAmount = null;
+                    this.$message.warning('请输入正确金额');
+                }
+                if (Number(val) > this.withdrawalForm.balance) {
+                    this.$message.warning('余额不足');
+                    this.withdrawalForm.cashoutAmount = null;
+                }
+            }, 1000);
         },
         /**
          * 失去焦点计算手续费、个税

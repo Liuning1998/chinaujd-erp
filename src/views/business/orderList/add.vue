@@ -386,7 +386,7 @@
 					collectionStampId:this.formAlertHY.collectionStampId
 				}
 				GET_ORDERITEM_QUERY(params).then(res =>{
-					
+					this.tempStampHY=res;
 				});
 			},
 			// 核验弹窗关闭回调
@@ -399,11 +399,22 @@
 			},
 			// 核验确定
 			addConfirmHY(){
-				
+				if(this.tempStampHY) {
+					let tempData=this.tempStampHY;
+					tempData.quantity=1;
+					tempData.serviceType=4;
+					tempData.unit='0';
+					this.tableData.push(tempData);
+					this.clearAlertHY();
+				}else{
+					this.$message.warning('请先查询核验吗！');
+					return false;
+				}
 			},
 			// 核验取消
 			cancelHY() {
 				this.addAlertHY=false;
+				this.clearAlertHY();
 			},
 			clearStamp() {
 				this.formAlert.signalNo='';
@@ -478,7 +489,6 @@
 						this.clearAlert();
 					}
 				})
-
 			},
 			cancel() {
 				this.clearAlert();

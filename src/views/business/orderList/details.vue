@@ -136,7 +136,7 @@
 			<div class="button_btn">
 				<el-button @click="goBack" size="small">返回</el-button>
 				<el-button
-					v-if="[2].includes(form.orderMainStatus.value)"
+					v-if="[2].includes(form.orderMainStatus.value) && showExamine"
 					type="primary" size="small" @click="audit">审核</el-button>
 				<el-button
 					v-if="[2].includes(form.orderMainStatus.value)"
@@ -193,7 +193,8 @@ import {
 	POST_BUSINESS_ORDERMAIN_CANCEL,
 	POST_BUSINESS_ORDERMAIN_AUDIT,
 	GET_QUERYITEMSBYORDERID,
-	POST_QUERYBOUNDSTAMPDATA
+	POST_QUERYBOUNDSTAMPDATA,
+	POST_OREDR_BIND
 } from '@/api/request';
 
 import Breadcrumb from '@/components/Breadcrumb';
@@ -232,6 +233,26 @@ export default {
 				orderMainAmount: ''
 			},
 			stampList:[],
+		}
+	},
+	computed:{
+		// 是否全部绑定
+		showExamine(){
+			let flag=false;
+			for(let i=0; i<this.form.ordersInfoVOS.length; i++){
+				let item=this.form.ordersInfoVOS[i]
+				if(item.bindStatus.value == 1){
+					flag=true;
+				}else{
+					flag=false;
+					break;
+				}
+			}
+			if(flag){
+				return true;
+			}else{
+				return false;
+			}
 		}
 	},
 	// 模板渲染前钩子函数
@@ -296,6 +317,7 @@ export default {
 					orderMainId: this.$route.query.orderMainId
 				}).then(() => {
 					this.$message.success('取消成功!');
+					this.goBack();
 				});
 			}).catch(() => {
 				
@@ -311,6 +333,7 @@ export default {
 					orderMainId: this.$route.query.orderMainId
 				}).then(() => {
 					this.$message.success('审核成功!');
+					this.getData();
 				});
 			}).catch(() => {
 				
@@ -385,7 +408,19 @@ export default {
 		// 确认绑定提交
 		addBind(){
 			let orderItems=[];
+			let flag=true;
 			if(this.stampList.length>1){
+				for(var i=0; i<this.stampList.length; i++){
+					let item=this.stampList[i]
+					if(item.bindArr.length != item.number){
+						this.$message.warning('绑定数量不正确！');
+						flag=false;
+						break;
+					}else{
+						flag=true;
+					}
+				}
+				if(!flag) return false;
 				orderItems=this.stampList.map(item =>{
 					return {
 						'collectionStampId':item.bindArr[0]?item.bindArr[0].collectionStampId:null,
@@ -395,7 +430,17 @@ export default {
 					}
 				})
 			}else{
-				let that=this;
+				for(var i=0; i<this.stampList.length; i++){
+					let item=this.stampList[i]
+					if(item.bindArr.length != item.number){
+						this.$message.warning('绑定数量不正确！');
+						flag=false;
+						break;
+					}else{
+						flag=true;
+					}
+				}
+				if(!flag) return false;
 				orderItems=this.stampList[0].bindArr.map(item =>{
 					return {
 						'collectionStampId':item.collectionStampId,
@@ -409,11 +454,15 @@ export default {
 				orderId:this.orderId,
 				orderItems:orderItems
 			}
-			console.log(params)
+			POST_OREDR_BIND(params).then(res =>{
+				this.$message.success('绑定成功！');
+				this.getData();
+			})
 			this.handleClose();
 		},
 		// 解绑操作
 		Unbound(orderId){
+			console.log({orderId})
 			this.$confirm('您确认要解除该子订单与邮票关系吗？', '提示：解绑', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
@@ -465,7 +514,8 @@ export default {
 			color: #333333;
 			line-height: 24px;
 			border-bottom: 1px solid #E9E9E9;
-			padding: 15px;
+			text-indent: 15px;
+			padding: 15px 0;
 			margin-bottom: 24px;
 			overflow: hidden;
 

@@ -78,9 +78,9 @@ export function get(url, param) {
       })
       .then(res => {
         let {resultState = {}, appraisalResultState = {}} = res.data;
-        if (String(resultState.code === '10000') || String(appraisalResultState.code) === '10000') {
+        if (resultState.code == '10000' || appraisalResultState.code == '10000') {
           resolve(res.data.data);
-        } else if (String(resultState.code) === '-11000' || String(appraisalResultState.code) === '-10000') {
+        } else if (resultState.code == '-11000' || appraisalResultState.code == '-10000') {
           Message({
             showClose: true,
             message: res.data.data,
@@ -116,9 +116,9 @@ export function post(url, params) {
     axios.post(url, params)
       .then(res => {
         let {resultState = {}, appraisalResultState = {}} = res.data;
-        if (String(resultState.code) === '10000' || String(appraisalResultState.code) === '10000') {
+        if (resultState.code == '10000' || appraisalResultState.code == '10000') {
           resolve(res.data.data);
-        } else if (String(resultState.code) === '-11000' || String(appraisalResultState.code) === '-10000') {
+        } else if (resultState.code == '-11000' || appraisalResultState.code == '-10000') {
           Message({
             showClose: true,
             message: res.data.data,

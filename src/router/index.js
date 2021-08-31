@@ -43,7 +43,7 @@ let router = new Router({
 			redirect: '/welcome',
 			children: [{
 				path: '/welcome',
-				component: () => import("@/views/index/Index"),
+				component: () => import("@/views/index/index"),
 				meta: {
 					value: '/welcome',
 				},
@@ -205,7 +205,7 @@ let router = new Router({
 			},
 			children: [{
 					path: '/finance/inquiry',
-					component: () => import("@/views/finance/orderInquiry/Index"),
+					component: () => import("@/views/finance/orderInquiry/index"),
 					meta: {
 						value: '/finance/inquiry',
 						title: '订单查询'
@@ -223,7 +223,7 @@ let router = new Router({
 					name: 'record',
 					children: [{
 							path: '/finance/record/index',
-							component: () => import('@/views/finance/orderRecord/Index'),
+							component: () => import('@/views/finance/orderRecord/index'),
 							meta: {
 								value: '/finance/record/index'
 							},
@@ -231,7 +231,7 @@ let router = new Router({
 						},
 						{
 							path: '/finance/record/detail',
-							component: () => import("@/views/finance/orderRecord/Detail"),
+							component: () => import("@/views/finance/orderRecord/detail"),
 							meta: {
 								value: '/finance/record/index',
 								title: '对账单详情'
@@ -252,7 +252,7 @@ let router = new Router({
 					children: [
 						{
 							path: '/finance/settle/index',
-							component: () => import('@/views/finance/orderSettle/Index'),
+							component: () => import('@/views/finance/orderSettle/index'),
 							meta: {
 								value: '/finance/settle/index'
 							},
@@ -260,7 +260,7 @@ let router = new Router({
 						},
 						{
 							path: '/finance/settle/detail',
-							component: () => import("@/views/finance/orderSettle/components/Detail"),
+							component: () => import("@/views/finance/orderSettle/components/detail"),
 							meta: {
 								value: '/finance/settle/index',
 								title: '对账单详情'
@@ -271,7 +271,7 @@ let router = new Router({
 				},
 				{
 					path: '/finance/withdraw',
-					component: () => import("@/views/finance/withdrawalManagement/Index"),
+					component: () => import("@/views/finance/withdrawalManagement/index"),
 					meta: {
 						value: '/finance/withdraw',
 						title: '提现管理'

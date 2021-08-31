@@ -260,7 +260,7 @@ let router = new Router({
 						},
 						{
 							path: '/finance/settle/detail',
-							component: () => import("@/views/finance/orderSettle/components/detail"),
+							component: () => import("@/views/finance/orderSettle/components/Detail"),
 							meta: {
 								value: '/finance/settle/index',
 								title: '对账单详情'
@@ -271,7 +271,7 @@ let router = new Router({
 				},
 				{
 					path: '/finance/withdraw',
-					component: () => import("@/views/finance/withdrawalManagement/index"),
+					component: () => import("@/views/finance/withdrawalManagement/Index"),
 					meta: {
 						value: '/finance/withdraw',
 						title: '提现管理'

@@ -21,7 +21,7 @@
 					ref="tree"
 					:data="dataQList"
 					show-checkbox
-					node-key="authorityId"
+					node-key="menuId"
 					:default-checked-keys="form.authList"
 					:props="defaultProps"
 					@check-change="handleClickNode">
@@ -56,7 +56,7 @@ export default {
 			},
 			defaultProps: {
 				children: 'children',
-				label: 'authorityName'
+				label: 'menuName'
 			},
 			rules: {
 				roleName: [{required: true, message: "请填写角色名称", trigger: ["change", "blur"]}],

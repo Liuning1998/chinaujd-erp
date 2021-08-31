@@ -43,7 +43,7 @@ let router = new Router({
 			redirect: '/welcome',
 			children: [{
 				path: '/welcome',
-				component: () => import("@/views/index/index"),
+				component: () => import("@/views/index/Index"),
 				meta: {
 					value: '/welcome',
 				},
@@ -205,7 +205,7 @@ let router = new Router({
 			},
 			children: [{
 					path: '/finance/inquiry',
-					component: () => import("@/views/finance/orderInquiry/index"),
+					component: () => import("@/views/finance/orderInquiry/Index"),
 					meta: {
 						value: '/finance/inquiry',
 						title: '订单查询'
@@ -223,7 +223,7 @@ let router = new Router({
 					name: 'record',
 					children: [{
 							path: '/finance/record/index',
-							component: () => import('@/views/finance/orderRecord/index'),
+							component: () => import('@/views/finance/orderRecord/Index'),
 							meta: {
 								value: '/finance/record/index'
 							},
@@ -231,7 +231,7 @@ let router = new Router({
 						},
 						{
 							path: '/finance/record/detail',
-							component: () => import("@/views/finance/orderRecord/detail"),
+							component: () => import("@/views/finance/orderRecord/Detail"),
 							meta: {
 								value: '/finance/record/index',
 								title: '对账单详情'
@@ -252,7 +252,7 @@ let router = new Router({
 					children: [
 						{
 							path: '/finance/settle/index',
-							component: () => import('@/views/finance/orderSettle/index'),
+							component: () => import('@/views/finance/orderSettle/Index'),
 							meta: {
 								value: '/finance/settle/index'
 							},
